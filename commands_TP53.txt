@@ -1,0 +1,48 @@
+bwa index TP53.fasta
+samtools faidx TP53.fasta
+java -jar ../picard.jar CreateSequenceDictionary R=TP53.fasta O=TP53.dict
+########################################################
+sed '1,13006d' capture_targets_chr5_12_17.bed > TP53.bed
+sed '14102,25227d' TP53.bed > TP53.bed
+sed '14102,$d' TP53.bed > chr17.bed
+########################################################
+python gen_reads.py -r testing/TP53/TP53.fasta -R 150 -c 5000 -M 0.1 -o testing/TP53/TP53 --pe 300 30 --bam --vcf
+
+Using default sequencing error model.
+Warning: Read length of error model (147) does not match -R value (150), rescaling model...
+Using default gc-bias model.
+Using artificial fragment length distribution. mean=300 std=30
+found index testing/TP53/TP53.fasta.fai
+reading hg38_knownGene_ENST00000610292.4...
+0.036 (sec)
+--------------------------------
+sampling reads...
+[]
+Read sampling completed in 396 (sec)
+Writing output VCF...
+NEAT finished the simulation in 397.56481647491455
+
+samtools sort -o TP53_golden_edit.sorted.bam TP53_golden_edit.bam 
+samtools view -h -F 0x904 -b TP53_golden_edit.sorted.bam > TP53_golden_edit.sorted.uniq.bam  
+
+samtools flagstat TP53_golden_edit.sorted.uniq.bam > TP53_golden_edit.align.stats.txt  
+samtools addreplacerg -r '@RG\tID:1\tSM:1' TP53_golden_edit.sorted.uniq.bam -o TP53_golden_edit.sorted.uniq.rg.bam
+samtools depth TP53_golden_edit.sorted.uniq.rg.bam -o TP53_golden_edit.depth.txt
+samtools index TP53_golden_edit.sorted.uniq.rg.bam
+java -jar ../gatk-4.3.0.0.jar Mutect2 --reference TP53.fasta --input TP53_golden_edit.sorted.uniq.rg.bam --tumor-sample TP53_golden_edit  --output TP53_golden_edit_GATK_variants.vcf > TP53_golden_edit.Mutect2.out 2>&1
+
+#for merged
+
+samtools sort -o Merged2.sorted.bam Merged2.bam 
+samtools view -h -F 0x904 -b Merged2.sorted.bam > Merged2.sorted.uniq.bam 
+samtools flagstat Merged2.sorted.uniq.bam > Merged2.align.stats.txt  
+samtools addreplacerg -r '@RG\tID:Merged2\tSM:Merged2' Merged2.sorted.uniq.bam -o Merged2.sorted.uniq.rg.bam
+samtools depth Merged2.sorted.uniq.rg.bam -o Merged2.depth.txt
+samtools index Merged2.sorted.uniq.rg.bam
+java -jar ../gatk-4.3.0.0.jar Mutect2 --reference TP53.fasta --input Merged2.sorted.uniq.rg.bam --tumor-sample Merged2  --output Merged2.vcf > Merged2.Mutect2.out 2>&1
+
+/home/sfragkoul/bam-readcount/build/bin/bam-readcount
+/home/sfragkoul/bam-readcount/build/bin/bam-readcount -f ../TP53.fasta -w 0 Merged2.bam > Merged2_report.tsv
+
+
+
