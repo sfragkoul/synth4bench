@@ -42,7 +42,23 @@ samtools index Merged2.sorted.uniq.rg.bam
 java -jar ../gatk-4.3.0.0.jar Mutect2 --reference TP53.fasta --input Merged2.sorted.uniq.rg.bam --tumor-sample Merged2  --output Merged2.vcf > Merged2.Mutect2.out 2>&1
 
 /home/sfragkoul/bam-readcount/build/bin/bam-readcount
-/home/sfragkoul/bam-readcount/build/bin/bam-readcount -f ../TP53.fasta -w 0 Merged2.bam > Merged2_report.tsv
+/home/sfragkoul/bam-readcount/build/bin/bam-readcount -w 0 -D -f reference/TP53.fasta Merged2.bam > Merged2_report2.tsv
+
+
+
+samtools stats Merged2.bam > stats.txt
+
+#bcftools merge 1/1_golden.vcf.gz 2/2_golden.vcf.gz 3/3_golden.vcf.gz 4/4_golden.vcf.gz 5/5_golden.vcf.gz 6/6_golden.vcf.gz 7/7_golden.vcf.gz 8/8_golden.vcf.gz 9/9_golden.vcf.gz 10/10_golden.vcf.gz 
+
+
+
+
+
+
+
+
+
+
 
 
 
