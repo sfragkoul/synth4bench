@@ -42,7 +42,10 @@ gr1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         legend.position = "none",
         
         axis.title.x = element_blank(),
-        strip.text = element_text(face = "bold", size = 11),
+        axis.title.y = element_text(face = "bold", size = 13),
+        strip.text = element_text(face = "bold", size = 13),
+        axis.text.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 13),
         
         panel.spacing = unit(1, "lines"),
         
@@ -69,8 +72,11 @@ gr2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutec
     
     theme(
         legend.position = "none",
-        axis.title.x = element_text(face = "bold", size = 11),
-        strip.text = element_text(face = "bold", size = 11),
+        axis.title.x = element_text(face = "bold", size = 13),
+        axis.title.y = element_text(face = "bold", size = 13),
+        strip.text = element_text(face = "bold", size = 13),
+        axis.text.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 13),
         
         panel.spacing = unit(1, "lines"),
         

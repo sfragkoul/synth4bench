@@ -140,6 +140,7 @@ gr = ggplot(data = df[which(!is.na(value) & value != 0)]) +
         legend.position = "none",
         
         axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "bold", size = 13),
         axis.text.x = element_text(face = "bold", size = 13),
         axis.text.y = element_text(face = "bold", size = 13),
         

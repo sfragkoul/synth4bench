@@ -4,7 +4,7 @@
 library(patchwork)
 
 
-source("03_coverage_plots.R")
+source("03_bar_plots.R")
 source("03_density_plot.R")
 source("03_bubble_plots.R")
 source("04_mutation_overlap.R")

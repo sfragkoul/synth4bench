@@ -62,7 +62,10 @@ gr = ggplot(data = df) +
         axis.line.x = element_line(),
         axis.ticks.x = element_line(),
         
-        axis.text.y = element_text(face = "bold", size = 11),
+        axis.text.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 13),
+        axis.title.y = element_text(face = "bold", size = 13),
+        axis.title.x = element_text(face = "bold", size = 13),
         
         panel.grid.minor = element_blank(),
         panel.grid.major.x = element_blank(),
