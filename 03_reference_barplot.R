@@ -10,7 +10,7 @@ library(stringr)
 
 
 
-read_fasta = read.fasta(file="reference/TP53.fasta", as.string = FALSE)
+read_fasta = read.fasta(file="../reference/TP53.fasta", as.string = FALSE)
 
 test = read_fasta$hg38_knownGene_ENST00000610292.4[c(1:19080)]
 
@@ -33,9 +33,9 @@ gr = ggplot(data=test, aes(x = Base, y = Perc, fill = Base)) +
     theme_minimal() +
     theme(
         legend.position = "none",
-        axis.title.x = element_text(face = "bold", size = 11),
-        strip.text = element_text(face = "bold", size = 11),
-        axis.title.y = element_text(face = "bold", size = 11),
+        axis.title.x = element_text(face = "bold", size = 13),
+        strip.text = element_text(face = "bold", size = 13),
+        axis.title.y = element_text(face = "bold", size = 13),
         panel.spacing = unit(1, "lines"),
         panel.grid = element_line(linetype = "dashed")
     ) +
