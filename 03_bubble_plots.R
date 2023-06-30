@@ -1,7 +1,7 @@
 
 
 
-rm(list = ls())
+# rm(list = ls())
 gc()
 
 library(data.table)
@@ -93,4 +93,4 @@ ggsave(
 )
 
 
-
+gr5 = gr

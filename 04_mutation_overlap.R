@@ -1,6 +1,6 @@
 
 
-rm(list = ls())
+# rm(list = ls())
 gc()
 
 library(data.table)
@@ -63,8 +63,11 @@ y = list(
 gr = ggvenn(
     y,
     fill_color = c("#43ae8d", "#ae4364")
-)
+) +
+    
+    coord_equal(clip = "off")
 
+gr6 = gr
 
 ggsave(
     plot = gr, filename = "Plots/All-overlap-plot.pdf", device = cairo_pdf,

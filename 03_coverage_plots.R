@@ -1,7 +1,7 @@
 
 # coverage plot ----------------------------------------
 
-rm(list = ls())
+# rm(list = ls())
 gc()
 
 library(data.table)
@@ -83,9 +83,11 @@ ggsave(
     width = 8, height = 8, units = "in", dpi = 600
 )    
 
+gr3 = gr
+
 # allele frequency plot ----------------------------------------
 
-rm(list = ls())
+# rm(list = ls())
 gc()
 
 library(data.table)
@@ -166,3 +168,5 @@ ggsave(
     plot = gr, filename = "Plots/AF-plot.jpeg",
     width = 8, height = 8, units = "in", dpi = 600
 )
+
+gr4 = gr
