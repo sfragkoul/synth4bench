@@ -25,9 +25,6 @@ vcf_gatk$scenario = "GATK"
 
 
 rm(vcf_read_GT, vcf_read_gatk)
-#scenarioA =  "vcf_illumina"
-#scenarioB = "vcf_gatk"
-
 x = rbind(vcf_GT, vcf_gatk)
 
 rm(vcf_GT, vcf_gatk)
@@ -55,7 +52,6 @@ fwrite(
 library(ggvenn)
 library(ggplot2)
 
-#y1 = split(y, y$scenario)
 y = split(y, y$scenario)
 
 
@@ -70,19 +66,17 @@ gr = ggvenn(
 )
 
 
-
-
 ggsave(
-    plot = gr, filename = "All-overlap-plot.pdf", device = cairo_pdf,
+    plot = gr, filename = "Plots/All-overlap-plot.pdf", device = cairo_pdf,
     width = 8, height = 8, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "All-overlap-plot.svg",
+    plot = gr, filename = "Plots/All-overlap-plot.svg",
     width = 8, height = 8, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "All-overlap-plot.jpeg",
+    plot = gr, filename = "Plots/All-overlap-plot.jpeg",
     width = 8, height = 8, units = "in", dpi = 600
 )

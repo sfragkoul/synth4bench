@@ -88,17 +88,17 @@ library(patchwork)
 multi = gr1 / gr2
 
 ggsave(
-    plot = multi, filename = "density-plot.pdf", device = cairo_pdf,
+    plot = multi, filename = "Plots/density-plot.pdf", device = cairo_pdf,
     width = 12, height = 10, units = "in"
 )
 
 ggsave(
-    plot = multi, filename = "density-plot.svg",
+    plot = multi, filename = "Plots/density-plot.svg",
     width = 12, height = 10, units = "in"
 )
 
 ggsave(
-    plot = multi, filename = "density-plot.jpeg",
+    plot = multi, filename = "Plots/density-plot.jpeg",
     width = 12, height = 10, units = "in", dpi = 600
 )
 

@@ -78,28 +78,19 @@ gr = ggplot(data = df) +
 
 
 ggsave(
-    plot = gr, filename = "Bubble-plot.pdf", device = cairo_pdf,
+    plot = gr, filename = "Plots/Bubble-plot.pdf", device = cairo_pdf,
     width = 12, height = 6, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "Bubble-plot.svg",
+    plot = gr, filename = "Plots/Bubble-plot.svg",
     width = 12, height = 6, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "Bubble-plot.jpeg",
+    plot = gr, filename = "Plots/Bubble-plot.jpeg",
     width = 12, height = 6, units = "in", dpi = 600
 )
-
-
-
-
-
-
-
-
-
 
 
 

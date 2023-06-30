@@ -69,17 +69,17 @@ gr = ggplot(data = df) +
 
 
 ggsave(
-    plot = gr, filename = "coverage-plot.pdf", device = cairo_pdf,
+    plot = gr, filename = "Plots/coverage-plot.pdf", device = cairo_pdf,
     width = 8, height = 8, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "coverage-plot.svg",
+    plot = gr, filename = "Plots/coverage-plot.svg",
     width = 8, height = 8, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "coverage-plot.jpeg",
+    plot = gr, filename = "Plots/coverage-plot.jpeg",
     width = 8, height = 8, units = "in", dpi = 600
 )    
 
@@ -153,16 +153,16 @@ gr = ggplot(data = df[which(!is.na(value) & value != 0)]) +
 
 
 ggsave(
-    plot = gr, filename = "AF-plot.pdf", device = cairo_pdf,
+    plot = gr, filename = "Plots/AF-plot.pdf", device = cairo_pdf,
     width = 8, height = 8, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "AF-plot.svg",
+    plot = gr, filename = "Plots/AF-plot.svg",
     width = 8, height = 8, units = "in"
 )
 
 ggsave(
-    plot = gr, filename = "AF-plot.jpeg",
+    plot = gr, filename = "Plots/AF-plot.jpeg",
     width = 8, height = 8, units = "in", dpi = 600
 )

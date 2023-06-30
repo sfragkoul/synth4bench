@@ -16,14 +16,6 @@ test = read_fasta$hg38_knownGene_ENST00000610292.4[c(1:19080)]
 
 test = test |> str_to_upper()
 
-# test = test |> as.data.frame()
-# test = str_replace_all(test$test, "a", "A")
-# test = test |> as.data.frame()
-# test = str_replace_all(test$test, "c", "C")
-# test = test |> as.data.frame()
-# test = str_replace_all(test$test, "g", "G")
-# test = test |> as.data.frame()
-# test = str_replace_all(test$test, "t", "T")
 
 test = test |> table()
 test = test |> as.data.frame()
@@ -31,12 +23,6 @@ test = test |> as.data.frame()
 colnames(test) = c("Base", "Frequency")
 
 test$Perc = test$Frequency / sum(test$Frequency)
-
-# sum = as.numeric(test[1, 2] + test[2, 2] + test[3, 2] + test[4, 2])
-# test$percentage = test$Frequency/sum
-# test$Frequency = as.numeric(test$Frequency)
-# test$Frequency = NULL
-
 
 
 
@@ -59,14 +45,14 @@ gr = ggplot(data=test, aes(x = Base, y = Perc, fill = Base)) +
     )
 
 ggsave(
-    plot = gr, filename = "reference-plot.pdf", device = cairo_pdf,
+    plot = gr, filename = "Plots/reference-plot.pdf", device = cairo_pdf,
     width = 12, height = 10, units = "in"
 )
 ggsave(
-    plot = gr, filename = "reference-plot.svg",
+    plot = gr, filename = "Plots/reference-plot.svg",
     width = 12, height = 10, units = "in"
 )
 ggsave(
-    plot = gr, filename = "reference-plot.jpeg",
+    plot = gr, filename = "Plots/reference-plot.jpeg",
     width = 12, height = 10, units = "in", dpi = 600
 )
