@@ -6,7 +6,7 @@ gc()
 
 library(data.table)
 library(stringr)
-
+library(ggplot2)
 library(ggsci)
 
 df = fread("Ground_truth_vs_Mutect2.clean.annotated.tsv")
@@ -23,13 +23,13 @@ df = df[, c(
 ), with = FALSE] |>
     unique()
 
-gr1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
+ gr1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
     
     geom_density(aes(color = `Ground Truth ALT`, fill = `Ground Truth ALT`),
                  alpha = .5) +
     
     scale_x_continuous(expand = c(0, 0), breaks = c(.25, .5, .75, 1), limits = c(0, 1), labels = scales::percent) +
-    scale_y_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 15), breaks = c(5, 10, 15)) +
     
     scale_fill_npg() +
     scale_color_npg() +
@@ -45,7 +45,7 @@ gr1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         axis.title.y = element_text(face = "bold", size = 13),
         strip.text = element_text(face = "bold", size = 13),
         axis.text.y = element_text(face = "bold", size = 13),
-        axis.text.x = element_text(face = "bold", size = 13),
+        axis.text.x = element_blank(),
         
         panel.spacing = unit(1, "lines"),
         
@@ -61,7 +61,7 @@ gr2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutec
                  alpha = .5) +
     
     scale_x_continuous(expand = c(0, 0), breaks = c(.25, .5, .75, 1), limits = c(0, 1), labels = scales::percent) +
-    scale_y_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 15), breaks = c(5, 10, 15))+
     
     scale_fill_npg() +
     scale_color_npg() +
@@ -74,7 +74,7 @@ gr2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutec
         legend.position = "none",
         axis.title.x = element_text(face = "bold", size = 13),
         axis.title.y = element_text(face = "bold", size = 13),
-        strip.text = element_text(face = "bold", size = 13),
+        strip.text = element_blank(), # element_text(face = "bold", size = 13),
         axis.text.y = element_text(face = "bold", size = 13),
         axis.text.x = element_text(face = "bold", size = 13),
         
@@ -91,7 +91,11 @@ gr2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutec
 
 library(patchwork)
 
-multi = gr1 / gr2
+multi = gr1 / gr2 &
+    
+    theme(
+        plot.margin = margin(10, 10, 10, 10)
+    )
 
 ggsave(
     plot = multi, filename = "Plots/density-plot.pdf", device = cairo_pdf,
