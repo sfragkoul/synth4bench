@@ -76,7 +76,7 @@ gr2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutec
         axis.title.y = element_text(face = "bold", size = 13),
         strip.text = element_blank(), # element_text(face = "bold", size = 13),
         axis.text.y = element_text(face = "bold", size = 13),
-        axis.text.x = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 11),
         
         panel.spacing = unit(1, "lines"),
         

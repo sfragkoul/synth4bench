@@ -51,8 +51,9 @@ gr = ggplot(data = df) +
         )
     ) +
     
-    scale_x_continuous(labels = scales::comma, expand = c(0, 0),
-                       limits = c(0, 19500)) +
+    scale_x_continuous(labels = scales::comma_format(suffix = " bp"), 
+                       expand = c(0, 0),
+                       limits = c(0, 20000)) +
     
     theme_minimal() +
     
@@ -63,14 +64,14 @@ gr = ggplot(data = df) +
         axis.ticks.x = element_line(),
         
         axis.text.y = element_text(face = "bold", size = 13),
-        axis.text.x = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 11),
         axis.title.y = element_text(face = "bold", size = 13),
         axis.title.x = element_text(face = "bold", size = 13),
         
         panel.grid.minor = element_blank(),
         panel.grid.major.x = element_blank(),
         
-        plot.margin = margin(20, 20, 20, 20)
+        plot.margin = margin(20, 30, 20, 20)
     ) +
     
     labs(
