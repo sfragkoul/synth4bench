@@ -47,19 +47,43 @@ Here follows the list of all scripts and their description:
 							 
 - Output: annotated tsv file containing information regarding the ground truth variants and annotation information
 
-`06_position_annotation.R` - 
+`06_bar_plots.R` - 
 
-`07_bar_plots.R` - 
+- Input:  
+							 
+- Output: 
 
-`07_bubble_plots.R` - 
+`06_bubble_plots.R` - 
 
-`07_density_plot.R` - 
+- Input:  
+							 
+- Output: 
 
-`07_reference_barplot.R` - 
+`06_density_plot.R` - 
 
-`08_mutation_overlap.R` - 
+- Input:  
+							 
+- Output: 
 
-`09_patchwork.R` - 
+`06_reference_barplot.R` - 
+
+- Input:  
+							 
+- Output: 
+
+`07_mutation_overlap.R` - 
+
+- Input:  
+							 
+- Output: 
+
+
+`08_patchwork.R` - 
+
+- Input:  
+							 
+- Output: 
+
 
 (The first 3 steps of the pipeline are optional since all the files are provided either in this repository or in the zenodo link.)
 
