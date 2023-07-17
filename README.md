@@ -1,7 +1,9 @@
 # Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms
 
 
-This is the repository for the analysis that was presented as poster in ISMB/ECCB23, Lyon, France.
+This is the repository for the analysis that was presented as poster in the 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23), Lyon, France.
+
+<img src="/poster%20files/ISMBECCB2023_1226_Fragkouli_poster.pdf" alt="ISΜB-ECCB23 Poster" width="300"/>
 
 All data are open and available [here](https://zenodo.org/record/8095898).
 
