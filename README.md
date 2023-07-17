@@ -18,8 +18,9 @@ All data are open and available [here](https://zenodo.org/record/8095898).
 Here follows the list of all scripts and their description:
 
 `01_SynthDataGeneration.sh` - This bach script calls NEAT in order to generate 10 individual synthetic data datasets.
-							 `Input:`
-							 `Output:`
+							 `Input:` fasta reference file
+							 
+							 `Output:` fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file
 
 `02_bam-readcount_reports.sh` - 
 
