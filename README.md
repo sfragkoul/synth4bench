@@ -10,7 +10,8 @@ All data are open and available [here](https://zenodo.org/record/8095898).
 ## Installation
 1. To install Neat follow the intructions [here](https://github.com/ncsa/NEAT/blob/master/README.md#installation).
 2. To install GATK-Mutect2 follow the intructions [here](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4).
-3. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
+3. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
+4. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
 
 
 ## Execution
