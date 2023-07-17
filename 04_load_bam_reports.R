@@ -1,4 +1,15 @@
-
+#'
+#'This R script compares the variants that Mutect2 reported against the ground 
+#'truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in 
+#'the individual bam files and then caclulates their AF in the final Merged 
+#'bam file.
+#'
+#'
+#'Input:  bam-readcount tsv reports, vcf file from Mutect2
+#'
+#'Output: tsv file containing infrtomation regarding the ground truth variants
+#'
+#'
 
 rm(list = ls())
 gc()
@@ -66,9 +77,6 @@ gt_runs = nt_runs[which(POS %in% pos_of_interest)]
 
 rm(a, b, r, runs)
 
-# overlaps = gt_runs[, by = .(POS, Nt), .(
-#     `No of runs` = Run |> unique() |> length()
-# )]
 
 
 a <- readLines(
@@ -113,14 +121,6 @@ a = a[which(REF != a$Nt & Count != 0)]
 b = a[which(Nt %in% c("A", "C", "G", "T")), ]
 
 
-# overlaps$key = paste0(overlaps$POS, " - ", overlaps$Nt)
-# b$key        = paste0(b$POS, " - ", b$Nt)
-
-
-
-# merged_gt = b[which(key %in% overlaps$key)]
-# merged_gt$key = NULL
-
 merged_gt = b[which(POS %in% gt_runs$POS)]
 merged_gt = merged_gt[order(POS)]
 
@@ -145,26 +145,6 @@ s21 = extract_info_tidy(somatic_vcf) |> setDT()
 somatic = cbind(s0[s1$Key, ], s1)
 rm(somatic_vcf, s0, s1, s21)
 
-# merged_gt$key = paste(
-#     merged_gt$POS,
-#     merged_gt$REF,
-#     merged_gt$Nt,
-#     sep = ";"
-# )
-
-# somatic$key = paste(
-#     somatic$POS,
-#     somatic$REF,
-#     somatic$ALT,
-#     sep = ";"
-# )
-
-# gt_somatic = somatic[which(key %in% merged_gt$key)]
-
-# index = match(merged_gt$key, somatic$key)
-
-# merged_gt$`Mutect AF` = 100 * as.numeric(somatic[index, ]$gt_AF)
-
 merged_gt$POS = as.character(merged_gt$POS)
 
 merged_bnch = merge(merged_gt, somatic, by = "POS", all.x = TRUE)
@@ -188,27 +168,7 @@ colnames(merged_bnch) = c(
 
 
 fwrite(
-    merged_bnch, "Ground_truth_vs_Mutect2.20230626.tsv",
+    merged_bnch, "Ground_truth_vs_Mutect2.tsv",
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
-
-#Analyze the results.
-
-# DT <- merged_bnch[is.na(merged_bnch$`Mutect2 REF`)]
-# DT2 <- merged_bnch[!is.na(merged_bnch$`Mutect2 REF`)]
-# DT2$POS = as.numeric(DT2$POS)
-# 
-# DT = DT[,c(1, 2, 3, 4, 5, 6)]
-# DT$POS = as.numeric(DT$POS)
-# 
-# DT$`Ground Truth AF` = as.numeric(DT$`Ground Truth AF`)
-# 
-# ggplot(DT, aes(x=DT$POS, y=DT$`Ground Truth AF`)) + 
-#         geom_point()
-# 
-# DT %>%
-# ggplot( aes(x=DT$`Ground Truth AF`)) +
-#     geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8)
-
-
 

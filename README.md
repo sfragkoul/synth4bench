@@ -33,9 +33,13 @@ Here follows the list of all scripts and their description:
 
 - Input: Merged bam file, fasta reference file
 							 
-- Output: processed bam files and vcf file with all variants that were detected.
+- Output: processed bam files and vcf file with all variants that were detected
 
-`04_load_bam_reports.R` - 
+`04_load_bam_reports.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
+
+- Input:  bam-readcount tsv reports, vcf file from Mutect2
+							 
+- Output: tsv file containing infrtomation regarding the ground truth variants
 
 `05_clean_and_annotate.R` - 
 
