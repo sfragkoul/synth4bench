@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+#This bash script calls bam-readcount to produce the bam reports with the genomic content at certain chromosomal positions.
+#
+#Input: fasta reference file, "golden" bam file
+#Output: tsv file with the genomic content
+#
 echo  "Run bam-readcount"
 bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta 1/1_golden.bam > 1/1.tsv
 bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta 2/2_golden.bam > 2/2.tsv
@@ -10,4 +16,4 @@ bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta 7/7_golden.bam > 7/7
 bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta 8/8_golden.bam > 8/8.tsv
 bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta 9/9_golden.bam > 9/9.tsv
 bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta 10/10_golden.bam > 10/10.tsv
-bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta Merged2.bam > Merged2_report2.tsv
+bam-readcount/build/bin/bam-readcount -w 0 -D -f TP53.fasta Merged2.bam > Merged2_report.tsv

@@ -8,7 +8,7 @@ All data are open and available [here](https://zenodo.org/record/8095898).
 
 
 ## Installation
-1. To install Neat follow the intructions [here](https://github.com/ncsa/NEAT/blob/master/README.md#installation).
+1. To install NEAT follow the intructions [here](https://github.com/ncsa/NEAT/blob/master/README.md#installation).
 2. To install GATK-Mutect2 follow the intructions [here](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4).
 3. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
 4. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
@@ -23,7 +23,11 @@ Here follows the list of all scripts and their description:
 							 
 - Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file
 
-`02_bam-readcount_reports.sh` - 
+`02_bam-readcount_reports.sh` - This bash script calls bam-readcount to produce the bam reports with the genomic content at certain chromosomal positions.
+
+- Input: fasta reference file, "golden" bam file
+							 
+- Output: tsv file with the genomic content
 
 `03_VariantCalling.sh` - 
 
