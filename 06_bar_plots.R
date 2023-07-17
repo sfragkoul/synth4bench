@@ -1,5 +1,14 @@
+#'
+#'This R script produces the Allele Frequency and Coverage Barplots of the  
+#' ground truth and the detected variants.
+#'
+#'Input: annotated tsv file
+#'
+#'Output: Allele Frequency and Coverage Barplots
+#'
+#'
 
-# coverage plot ----------------------------------------
+# coverage plot ---------------------------------------------------------------
 
 # rm(list = ls())
 gc()

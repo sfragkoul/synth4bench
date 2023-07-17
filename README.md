@@ -69,13 +69,13 @@ Here follows the list of all scripts and their description:
 
 - Input:  fasta reference file
 							 
-- Output: 
+- Output: barplots of the genomic content of the reference
 
-`07_mutation_overlap.R` - 
+`07_mutation_overlap.R` - This R script produces the Venn plot of the Overall Variants
 
-- Input:  
+- Input:  ground truth vcf and Mutect2 vcf
 							 
-- Output: 
+- Output: Venn plot of the Overall Variants
 
 
 `08_patchwork.R` - 

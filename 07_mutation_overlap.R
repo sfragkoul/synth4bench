@@ -1,3 +1,10 @@
+#'
+#'This R script produces the Venn plot of the Overall Variants
+#'
+#'Input: ground truth vcf and Mutect2 vcf
+#'
+#'Output:  Venn plot of the Overall Variants
+#'
 
 
 # rm(list = ls())
