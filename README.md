@@ -7,6 +7,14 @@ This is the repository for the analysis that was presented as poster in the 31st
 
 All data are open and available [here](https://zenodo.org/record/8095898).
 
+## Abstract
+Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. However, evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation and evaluation framework for benchmarking somatic variant calling algorithms. We generated synthetic datasets based on data from the TP53 gene, using the NEAT simulator. We then thoroughly evaluated the performance of GATK-Mutect2 on these datasets, and compared the results to the “golden” files produced by NEAT that contain the true variations. Our results demonstrate that the synthetic datasets generated using our framework can accurately capture the complexity and diversity of real cancer genome data. Moreover, the synthetic datasets provide an excellent ground truth for evaluating the performance of somatic variant calling algorithms. Our framework provides a valuable resource for testing the performance of somatic variant calling algorithms, enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.
+
+## Motivation
+
+Variant calling plays an important role in identifying genetic lesions. In the case of variants at low frequency (≤10%) identification becomes more difficult and the challenge that rises is the absence of a Ground Truth for reliable and consistent identification and benchmarking.
+
+## Discription of Pipeline
 
 
 ## Installation
