@@ -1,4 +1,5 @@
 #!/bin/sh
+#Individual files
 echo  "Starting Run 1"
 mkdir 1
 python gen_reads.py -r TP53.fasta -R 150 -c 500 -M 0.1 -o 1 --pe 300 30 --bam --vcf
@@ -46,3 +47,7 @@ python gen_reads.py -r TP53.fasta -R 150 -c 500 -M 0.1 -o 9 --pe 300 30 --bam --
 echo  "Starting Run 10"
 mkdir 10
 python gen_reads.py -r TP53.fasta -R 150 -c 500 -M 0.1 -o 10 --pe 300 30 --bam --vcf
+
+#Merged file
+echo  "Merging bam files"
+bcftools merge Merged2.bam 1/1_golden.bam 2/2_golden.bam 3/3_golden.bam 4/4_golden.bam 5/5_golden.bam 6/6_golden.bam 7/7_golden.bam 8/8_golden.bam 9/9_golden.bam 10/10_golden.bam
