@@ -1,4 +1,13 @@
-
+#'
+#'This R script takes the tsv file and adds annotation information based on 
+#'the gene chromosomal positions.
+#'
+#'
+#'Input: tsv file containing information regarding the ground truth variants
+#'
+#'Output: annotated tsv file containing information regarding the ground 
+#'truth variants and annotation information
+#'
 
 
 rm(list = ls())
@@ -7,7 +16,7 @@ gc()
 library(data.table)
 library(stringr)
 
-df = "Ground_truth_vs_Mutect2.20230626.tsv" |> fread()
+df = "Ground_truth_vs_Mutect2.tsv" |> fread()
 
 df2 = df[, c(
     "POS",
@@ -22,13 +31,6 @@ df2 = df[, c(
     "Mutect2 DP",
     "Mutect2 AF"
 ), with = FALSE]
-
-
-
-
-
-
-
 
 
 

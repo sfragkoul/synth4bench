@@ -39,9 +39,13 @@ Here follows the list of all scripts and their description:
 
 - Input:  bam-readcount tsv reports, vcf file from Mutect2
 							 
-- Output: tsv file containing infrtomation regarding the ground truth variants
+- Output: tsv file containing information regarding the ground truth variants
 
-`05_clean_and_annotate.R` - 
+`05_clean_and_annotate.R` - This R script takes the tsv file and adds annotation information based on the gene chromosomal positions.
+
+- Input:  tsv file containing information regarding the ground truth variants
+							 
+- Output: annotated tsv file containing information regarding the ground truth variants and annotation information
 
 `06_position_annotation.R` - 
 
