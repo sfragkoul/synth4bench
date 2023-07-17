@@ -1,4 +1,11 @@
-
+#'
+#'This R script produces the Allele Frequency Density plots of Ground Truth 
+#'and detected Variants per DNA Base.
+#'
+#'Input: annotated tsv file
+#'
+#'Output: Allele Frequency Density plots
+#'
 
 
 # rm(list = ls())

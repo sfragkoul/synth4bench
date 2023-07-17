@@ -47,27 +47,27 @@ Here follows the list of all scripts and their description:
 							 
 - Output: annotated tsv file containing information regarding the ground truth variants and annotation information
 
-`06_bar_plots.R` - 
+`06_bar_plots.R` - This R script produces the Allele Frequency and Coverage Barplots of the ground truth and the detected variants.
 
-- Input:  
+- Input: annotated tsv file
 							 
-- Output: 
+- Output: Allele Frequency and Coverage Barplots
 
-`06_bubble_plots.R` - 
+`06_bubble_plots.R` - This R script produces the bubble plot of the SNIPs of the ground truth and the detected variants.
 
-- Input:  
+- Input:  annotated tsv file
 							 
-- Output: 
+- Output: bubble plot of the SNIPs
 
-`06_density_plot.R` - 
+`06_density_plot.R` - This R script produces the Allele Frequency Density plots of Ground Truth and detected Variants per DNA Base.
 
-- Input:  
+- Input:  annotated tsv file
 							 
-- Output: 
+- Output: Allele Frequency Density plots
 
-`06_reference_barplot.R` - 
+`06_reference_barplot.R` - This R script produces the barplots of the genomic content of the reference.
 
-- Input:  
+- Input:  fasta reference file
 							 
 - Output: 
 

@@ -1,3 +1,14 @@
+#'
+#' This R script produces the barplots of the genomic content of the reference.
+#'
+#'
+#'Input: fasta reference file
+#'
+#'Output: barplots of the genomic content of the reference
+#'
+#'
+#'
+
 rm(list = ls())
 gc()
 

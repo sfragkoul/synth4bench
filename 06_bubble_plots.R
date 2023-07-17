@@ -1,4 +1,11 @@
-
+#'
+#'This R script produces the bubble plot of the SNIPs of the ground truth 
+#'and the detected variants.
+#'
+#'Input: annotated tsv file
+#'
+#'Output: bubble plot of the SNIPs
+#'
 
 
 # rm(list = ls())
