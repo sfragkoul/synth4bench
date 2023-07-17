@@ -78,11 +78,11 @@ Here follows the list of all scripts and their description:
 - Output: Venn plot of the Overall Variants
 
 
-`08_patchwork.R` - 
+`08_patchwork.R` - This R script produces the final Figure of the Benchmarking of the poster.
 
-- Input:  
+- Input:  all produced plots
 							 
-- Output: 
+- Output: final Figure for the poster
 
 
 (The first 3 steps of the pipeline are optional since all the files are provided either in this repository or in the zenodo link.)

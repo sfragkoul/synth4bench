@@ -1,3 +1,10 @@
+#'
+#'This This R script produces the final Figure of the Benchmarking of the 
+#'poster.
+#'Input: all produced plots
+#'
+#'Output: final Figure for the poster
+#'
 
 
 
