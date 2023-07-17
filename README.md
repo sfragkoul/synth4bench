@@ -16,7 +16,10 @@ All data are open and available [here](https://zenodo.org/record/8095898).
 ## Execution
 
 
-## Contribution
+## Contribute
+
+We welcome any sort of contribution!
+If you have any developer-related questions, please open an issue or write us at sfragkoul@certh.gr.
 
 
 ## Citation
