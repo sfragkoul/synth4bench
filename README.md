@@ -1,11 +1,11 @@
 # Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms
 
 
-This is the repository for the analysis that was presented as poster in the 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23), Lyon, France.
+This is the repository for the analysis that was presented as poster in the **31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23)**, Lyon, France.
 
 <img src="/poster%20files/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" width="600"/>
 
-All data are open and available [here](https://zenodo.org/record/8095898).
+All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 
 ## Abstract
 Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. However, evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation and evaluation framework for benchmarking somatic variant calling algorithms. We generated synthetic datasets based on data from the TP53 gene, using the NEAT simulator. We then thoroughly evaluated the performance of GATK-Mutect2 on these datasets, and compared the results to the “golden” files produced by NEAT that contain the true variations. Our results demonstrate that the synthetic datasets generated using our framework can accurately capture the complexity and diversity of real cancer genome data. Moreover, the synthetic datasets provide an excellent ground truth for evaluating the performance of somatic variant calling algorithms. Our framework provides a valuable resource for testing the performance of somatic variant calling algorithms, enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.
