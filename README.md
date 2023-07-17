@@ -15,6 +15,22 @@ All data are open and available [here](https://zenodo.org/record/8095898).
 
 
 ## Execution
+Here follows the list of all scripts and their description:
+
+`01_SynthDataGeneration.sh` - This bach script calls NEAT in order to generate 10 individual synthetic data datasets.
+`02_bam-readcount_reports.sh` - 
+`03_VariantCalling.sh` - 
+`04_load_bam_reports.R` - 
+`05_clean_and_annotate.R` - 
+`06_position_annotation.R` - 
+`07_bar_plots.R` - 
+`07_bubble_plots.R` - 
+`07_density_plot.R` - 
+`07_reference_barplot.R` - 
+`08_mutation_overlap.R` - 
+`09_patchwork.R` - 
+
+(The first 3 steps of the pipeline are optional since all the files are provided either in this repository or in the zenodo link.)
 
 
 ## Contribute
