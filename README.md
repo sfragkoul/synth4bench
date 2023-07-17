@@ -29,7 +29,11 @@ Here follows the list of all scripts and their description:
 							 
 - Output: tsv file with the genomic content
 
-`03_VariantCalling.sh` - 
+`03_VariantCalling.sh` - This bash script takes the Merged bam file and performs some preprocess steps before using Mutect2 to implement somatic variant calling.
+
+- Input: Merged bam file, fasta reference file
+							 
+- Output: processed bam files and vcf file with all variants that were detected.
 
 `04_load_bam_reports.R` - 
 
