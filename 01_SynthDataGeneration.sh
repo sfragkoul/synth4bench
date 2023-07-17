@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+#This bach script calls NEAT in order to generate 10 individual synthetic data datasets.
+#
+#Input: fasta reference file
+#Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file
+#
 #Individual files
 echo  "Starting Run 1"
 mkdir 1
