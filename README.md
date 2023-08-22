@@ -115,5 +115,5 @@ If you have any developer-related questions, please open an issue or write us at
 
 
 ## Citation
-Styliani-Christina Fragkouli and Nikolaos Pechlivanis and Andreas Agathangelidis and Fotis Psomopoulos, *Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms*, 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23), 2023, doi: TBA
+Styliani-Christina Fragkouli and Nikolaos Pechlivanis and Andreas Agathangelidis and Fotis Psomopoulos, *Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms*, 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23), 2023, doi: [10.7490/f1000research.1119575.1](https://doi.org/10.7490/f1000research.1119575.1)
 
