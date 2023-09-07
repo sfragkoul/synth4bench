@@ -5,6 +5,18 @@
 #Input: fasta reference file, "golden" bam file
 #Output: tsv file with the genomic content
 #
+echo "Index bam files"
+samtools index 1/1_golden.bam
+samtools index 2/2_golden.bam
+samtools index 3/3_golden.bam
+samtools index 4/4_golden.bam
+samtools index 5/5_golden.bam
+samtools index 6/6_golden.bam
+samtools index 7/7_golden.bam
+samtools index 8/8_golden.bam
+samtools index 9/9_golden.bam
+samtools index 10/10_golden.bam
+
 echo  "Run bam-readcount"
 bam-readcount/build/bin/bam-readcount -w 0 -f TP53.fasta 1/1_golden.bam > 1/1.tsv
 bam-readcount/build/bin/bam-readcount -w 0 -f TP53.fasta 2/2_golden.bam > 2/2.tsv
