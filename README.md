@@ -43,17 +43,18 @@ Here follows the list of all scripts and their description:
 							 
 - Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file
 
-`02_bam-readcount_reports.sh` - This bash script calls bam-readcount to produce the bam reports with the genomic content at certain chromosomal positions.
+`02_VariantCalling.sh` - This bash script takes the Merged bam file and performs some preprocess steps before using Mutect2 to implement somatic variant calling.
+
+- Input: Merged bam file, fasta reference file
+							 
+- Output: processed bam files and vcf file with all variants that were detected
+
+`03_bam-readcount_reports.sh` - This bash script calls bam-readcount to produce the bam reports with the genomic content at certain chromosomal positions.
 
 - Input: fasta reference file, "golden" bam file
 							 
 - Output: tsv file with the genomic content
 
-`03_VariantCalling.sh` - This bash script takes the Merged bam file and performs some preprocess steps before using Mutect2 to implement somatic variant calling.
-
-- Input: Merged bam file, fasta reference file
-							 
-- Output: processed bam files and vcf file with all variants that were detected
 
 `04_load_bam_reports.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
