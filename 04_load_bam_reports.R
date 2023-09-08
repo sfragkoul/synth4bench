@@ -7,7 +7,7 @@
 #'
 #'Input:  bam-readcount tsv reports, vcf file from Mutect2
 #'
-#'Output: tsv file containing infrtomation regarding the ground truth variants
+#'Output: tsv file containing information regarding the ground truth variants
 #'
 #'
 
