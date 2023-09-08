@@ -1,7 +1,7 @@
 #'
 #'This R script compares the variants that Mutect2 reported against the ground 
-#'truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in 
-#'the individual bam files and then caclulates their AF in the final Merged 
+#'truth. Firstly, it identifies the variants with 100% Allele Frequency (AF) in 
+#'the individual bam files and then calculates their AF in the final Merged 
 #'bam file.
 #'
 #'
