@@ -32,6 +32,7 @@ The pipeline's overall aim is to provide a robust framework for evaluating the p
 2. To install GATK-Mutect2 follow the intructions [here](https://gatk.broadinstitute.org/hc/en-us/articles/360036194592-Getting-started-with-GATK4).
 3. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
 4. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
+5. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "dplyr", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "GenomicRanges", "systemPipeR", "AnnotationHub", "seqinr", "patchwork"))`
 
 
 ## Execution
