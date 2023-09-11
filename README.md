@@ -5,6 +5,17 @@ This is the repository for the analysis that was presented as poster in the **31
 
 <img src="/poster%20files/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" width="600"/>
 
+## Table of Contents
+- [Data Download](https://github.com/sfragkoul/synth4bench/tree/main#data-download)
+- [Abstract](https://github.com/sfragkoul/synth4bench/tree/main#abstract)
+- [Motivation](https://github.com/sfragkoul/synth4bench/tree/main#motivation)
+- [Discription of Pipeline](https://github.com/sfragkoul/synth4bench/tree/main#discription-of-pipeline)
+- [Installation](https://github.com/sfragkoul/synth4bench/tree/main#installation)
+- [Execution](https://github.com/sfragkoul/synth4bench/tree/main#execution)
+- [Contribute](https://github.com/sfragkoul/synth4bench/tree/main#contribute)
+- [Citation](https://github.com/sfragkoul/synth4bench/tree/main#citation)
+
+
 ## Data Download
 All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 
