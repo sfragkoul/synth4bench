@@ -49,69 +49,56 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 ## Execution
 Here follows the list of all scripts and their description:
 
-`01_SynthDataGeneration.sh` - This bach script calls NEAT in order to generate 10 individual synthetic data datasets.
+`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEAT in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all "path/to/generated/files/", "path/to/gatk/", "path/to/reference/" and  "path/to/bam-readcount/"  with desired folders.
 
 - Input: fasta reference file
 							 
-- Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file
+- Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file, Merged bam file, processed bam files and vcf file with all variants that were detected, tsv file with the genomic content
 
-`02_VariantCalling.sh` - This bash script takes the Merged bam file and performs some preprocess steps before using Mutect2 to implement somatic variant calling.
-
-- Input: Merged bam file, fasta reference file
-							 
-- Output: processed bam files and vcf file with all variants that were detected
-
-`03_bam-readcount_reports.sh` - This bash script calls bam-readcount to produce the bam reports with the genomic content at certain chromosomal positions.
-
-- Input: fasta reference file, "golden" bam file
-							 
-- Output: tsv file with the genomic content
-
-
-`04_load_bam_reports.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
+`02_load_bam_reports.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
 - Input:  bam-readcount tsv reports, vcf file from Mutect2
 							 
 - Output: tsv file containing information regarding the ground truth variants
 
-`05_clean_and_annotate.R` - This R script takes the tsv file and adds annotation information based on the gene chromosomal positions.
+`03_clean_and_annotate.R` - This R script takes the tsv file and adds annotation information based on the gene chromosomal positions.
 
 - Input:  tsv file containing information regarding the ground truth variants
 							 
 - Output: annotated tsv file containing information regarding the ground truth variants and annotation information
 
-`06_bar_plots.R` - This R script produces the Allele Frequency and Coverage Barplots of the ground truth and the detected variants.
+`04_bar_plots.R` - This R script produces the Allele Frequency and Coverage Barplots of the ground truth and the detected variants.
 
 - Input: annotated tsv file
 							 
 - Output: Allele Frequency and Coverage Barplots
 
-`06_bubble_plots.R` - This R script produces the bubble plot of the SNIPs of the ground truth and the detected variants.
+`04_bubble_plots.R` - This R script produces the bubble plot of the SNIPs of the ground truth and the detected variants.
 
 - Input:  annotated tsv file
 							 
 - Output: bubble plot of the SNIPs
 
-`06_density_plot.R` - This R script produces the Allele Frequency Density plots of Ground Truth and detected Variants per DNA Base.
+`04_density_plot.R` - This R script produces the Allele Frequency Density plots of Ground Truth and detected Variants per DNA Base.
 
 - Input:  annotated tsv file
 							 
 - Output: Allele Frequency Density plots
 
-`06_reference_barplot.R` - This R script produces the barplots of the genomic content of the reference.
+`04_reference_barplot.R` - This R script produces the barplots of the genomic content of the reference.
 
 - Input:  fasta reference file
 							 
 - Output: barplots of the genomic content of the reference
 
-`07_mutation_overlap.R` - This R script produces the Venn plot of the Overall Variants
+`05_mutation_overlap.R` - This R script produces the Venn plot of the Overall Variants
 
 - Input:  ground truth vcf and Mutect2 vcf
 							 
 - Output: Venn plot of the Overall Variants
 
 
-`08_patchwork.R` - This R script produces the final Figure of the Benchmarking of the poster.
+`06_patchwork.R` - This R script produces the final Figure of the Benchmarking of the poster.
 
 - Input:  all produced plots
 							 
