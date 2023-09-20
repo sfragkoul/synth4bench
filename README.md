@@ -14,7 +14,6 @@ Somatic variant calling algorithms are widely used to detect genomic alterations
 - [Execution](https://github.com/sfragkoul/synth4bench/tree/main#execution)
 - [Contribute](https://github.com/sfragkoul/synth4bench/tree/main#contribute)
 - [Citation](https://github.com/sfragkoul/synth4bench/tree/main#citation)
-- [ISΜB-ECCB23 Poster](https://github.com/sfragkoul/synth4bench/tree/main#31st-Conference-in-Intelligent-Systems-For-Molecular-Biology-and-the-22nd-European-Conference-On-Computational-Biology)
 
 
 ## Motivation
@@ -115,8 +114,5 @@ If you have any developer-related questions, please open an issue or write us at
 ## Citation
 Styliani-Christina Fragkouli and Nikolaos Pechlivanis and Andreas Agathangelidis and Fotis Psomopoulos, *Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms*, 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23), 2023, doi: [10.7490/f1000research.1119575.1](https://doi.org/10.7490/f1000research.1119575.1)
 
-### 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology
-
-The present workflow analysis was acceoted and presented as poster in the **31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23)**, Lyon, France.
 
 <img src="/poster%20files/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" width="600"/>
