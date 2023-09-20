@@ -11,10 +11,10 @@
 library(patchwork)
 
 
-source("06_bar_plots.R")
-source("06_density_plot.R")
-source("06_bubble_plots.R")
-source("07_mutation_overlap.R")
+source("04_bar_plots.R")
+source("04_density_plot.R")
+source("04_bubble_plots.R")
+source("05_mutation_overlap.R")
 
 multi2 = gr1 / gr2 &
     
