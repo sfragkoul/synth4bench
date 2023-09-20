@@ -1,8 +1,7 @@
 # synth4bench: a framework for generating synthetic genomics data for the evaluation of somatic variant calling algorithms
 
 ## Abstract
-
-Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation and evaluation framework for benchmarking somatic variant calling algorithms. We generated synthetic datasets based on sequence data from the TP53 gene, using the NEAT(NExt-generation sequencing Analysis Toolkit) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variations. Our results demonstrate that the synthetic datasets generated using our framework can accurately capture the complexity and diversity of real cancer genomic data. Moreover, the synthetic datasets provide an excellent ground truth for evaluating the performance of somatic variant calling algorithms. Altogether, our framework provides a valuable resource for testing the performance of somatic variant calling algorithms, enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.
+<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation and evaluation framework for benchmarking somatic variant calling algorithms. We generated synthetic datasets based on sequence data from the TP53 gene, using the NEAT(NExt-generation sequencing Analysis Toolkit) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variations. Our results demonstrate that the synthetic datasets generated using our framework can accurately capture the complexity and diversity of real cancer genomic data. Moreover, the synthetic datasets provide an excellent ground truth for evaluating the performance of somatic variant calling algorithms. Altogether, our framework provides a valuable resource for testing the performance of somatic variant calling algorithms, enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
 
 ## Table of Contents
 
@@ -18,11 +17,11 @@ Somatic variant calling algorithms are widely used to detect genomic alterations
 
 ## Motivation
 
-Variant calling plays an important role in identifying genetic lesions. In the case of variants at low frequency (≤10%) identification becomes more difficult and the challenge that rises is the absence of a Ground Truth for reliable and consistent identification and benchmarking.
+<div align='justify'> Variant calling plays an important role in identifying genetic lesions. In the case of variants at low frequency (≤10%) identification becomes more difficult and the challenge that rises is the absence of a Ground Truth for reliable and consistent identification and benchmarking. </div>
 
 ## Discription of Pipeline
 
-Our pipeline focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the pipeline:
+<div align='justify'> Our pipeline focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the pipeline:
 
 1. Data Generation: Synthetic genomics data is generated based on the TP53 gene using the NEAT simulator in order to create synthetic datasets that mimic real cancer genome data.
 
@@ -30,7 +29,7 @@ Our pipeline focuses on addressing the challenge of variant calling, particularl
 
 3. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. The GATK-Mutect2 variant caller is specifically assessed for its performance on our synthetic dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
 
-The pipeline's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This pipeline represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases.
+The pipeline's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This pipeline represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
 
 ## Data Download
 All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
@@ -44,7 +43,7 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 
 
 ## Execution
-Here follows the list of all scripts and their description:
+<div align='justify'> Here follows the list of all scripts and their description:
 
 `01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEAT in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/generated/files/`, `path/to/gatk/`, `path/to/reference/` and `path/to/bam-readcount/`  with desired folders.
 
@@ -99,10 +98,7 @@ Here follows the list of all scripts and their description:
 
 - Input:  all produced plots
 							 
-- Output: final Figure for the poster
-
-
-(The first 3 steps of the pipeline are optional since all the files are provided either in this repository or in the zenodo link.)
+- Output: final Figure for the poster </div>
 
 
 ## Contribute
