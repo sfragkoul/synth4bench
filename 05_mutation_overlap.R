@@ -20,9 +20,6 @@ vcf_read_GT <- read.vcfR("Merged_Ground_Truth.vcf",
 
 vcf_GT = vcfR::getFIX(vcf_read_GT) |> as.data.frame() |> setDT()
 vcf_GT$scenario = "GT"
-vcf_GT[which(vcf_GT$POS == unique(vcf_GT$POS))]
-
-vcf_GT = distinct(vcf_GT)
 
 vcf_read_gatk <- read.vcfR("Merged2_GATK.vcf", 
                                verbose = FALSE )
