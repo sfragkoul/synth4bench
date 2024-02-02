@@ -27,7 +27,7 @@
 
 2. Defining Ground Truth: The "Ground Truth" is established by creating 10 individual datasets (each one of average 500 coverage)containing Single Nucleotide Polymorphisms (SNPs) and Insertions/Deletions (INDELs). The genomic regions where variants accure with 100% Allele Frequency are chosen. The reason behind this choice is to avoid variants that are related to errors and products of noise. Then all these datasets are merged into one single file of 5000 coverage and the allele frequency is again measured at these genomic regions of interest.
 
-3. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. The GATK-Mutect2 variant caller is specifically assessed for its performance on our synthetic dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
+3. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. The GATK-Mutect2, Freebayes, VarDict, VarScan2 and LoFreq variant callesr are assessed for their performance on our synthetic dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
 
 The pipeline's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This pipeline represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
 
