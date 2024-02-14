@@ -106,6 +106,8 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 							 
 - Output: final Figure for the poster </div>
 
+### Extra scripts
+For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script that was developed can be found [here](https://github.com/sfragkoul/Varscan2VCF).
 
 ## Contribute
 
