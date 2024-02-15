@@ -45,7 +45,7 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 8. To install BCFtools follow the intructions [here](https://anaconda.org/bioconda/bcftools).
 9. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
 10. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
-11. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "dplyr", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "GenomicRanges", "systemPipeR", "AnnotationHub", "seqinr", "patchwork"))`
+11. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "dplyr", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "seqinr", "patchwork"))`
 
 
 ## Execution
