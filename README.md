@@ -69,42 +69,15 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 							 
 - Output: annotated tsv file containing information regarding the ground truth variants and annotation information
 
-`04_bar_plots.R` - This R script produces the Allele Frequency and Coverage Barplots of the ground truth and the detected variants.
+`04_patchwork_gatk.R` - This R script produces the final Figure of the Benchmarking of GATK.
 
-- Input: annotated tsv file
+- Input:  annotated tsv file, ground truth vcf, Mutect2 vcf
 							 
-- Output: Allele Frequency and Coverage Barplots
+- Output: final Figure for the Benchmarking of GATK </div>
 
-`04_bubble_plots.R` - This R script produces the bubble plot of the SNIPs of the ground truth and the detected variants.
+`plot_helpers_gatk.R` - This R script incudes all necessary funtions for `04_patchwork_gatk.R` script.
 
-- Input:  annotated tsv file
-							 
-- Output: bubble plot of the SNIPs
-
-`04_density_plot.R` - This R script produces the Allele Frequency Density plots of Ground Truth and detected Variants per DNA Base.
-
-- Input:  annotated tsv file
-							 
-- Output: Allele Frequency Density plots
-
-`04_reference_barplot.R` - This R script produces the barplots of the genomic content of the reference.
-
-- Input:  fasta reference file
-							 
-- Output: barplots of the genomic content of the reference
-
-`05_mutation_overlap.R` - This R script produces the Venn plot of the Overall Variants
-
-- Input:  ground truth vcf and Mutect2 vcf
-							 
-- Output: Venn plot of the Overall Variants
-
-
-`06_patchwork.R` - This R script produces the final Figure of the Benchmarking of the poster.
-
-- Input:  all produced plots
-							 
-- Output: final Figure for the poster </div>
+`plot_libraries.R` - This R script incudes all necessary libraries for `04_patchwork_gatk.R` script.
 
 ### Extra scripts
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script that was developed can be found [here](https://github.com/sfragkoul/Varscan2VCF).
