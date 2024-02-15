@@ -57,27 +57,23 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 							 
 - Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file, Merged bam file, processed bam files and vcf file with all variants that were detected, tsv file with the genomic content
 
-`02_load_bam_reports.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
+`02_downstream_analysis_gatk.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
 - Input:  bam-readcount tsv reports, vcf file from Mutect2
 							 
 - Output: tsv file containing information regarding the ground truth variants
 
-`03_clean_and_annotate.R` - This R script takes the tsv file and adds annotation information based on the gene chromosomal positions.
-
-- Input:  tsv file containing information regarding the ground truth variants
-							 
-- Output: annotated tsv file containing information regarding the ground truth variants and annotation information
-
-`04_patchwork_gatk.R` - This R script produces the final Figure of the Benchmarking of GATK.
+`03_plot_patchwork_gatk.R` - This R script produces the final Figure of the Benchmarking of GATK.
 
 - Input:  annotated tsv file, ground truth vcf, Mutect2 vcf
 							 
 - Output: final Figure for the Benchmarking of GATK </div>
 
-`plot_helpers_gatk.R` - This R script incudes all necessary funtions for `04_patchwork_gatk.R` script.
+`analysis_helpers_gatk.R` - This R script incudes all necessary functions for `02_patchwork_gatk.R` script.
 
-`plot_libraries.R` - This R script incudes all necessary libraries for `04_patchwork_gatk.R` script.
+`plot_helpers_gatk.R` - This R script incudes all necessary functions for `03_patchwork_gatk.R` script.
+
+`libraries.R` - This R script incudes all necessary libraries for `02_patchwork_gatk.R` and `03_patchwork_gatk.R` scripts.
 
 ### Extra scripts
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script that was developed can be found [here](https://github.com/sfragkoul/Varscan2VCF).
