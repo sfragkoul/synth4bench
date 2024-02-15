@@ -1,10 +1,11 @@
 library(data.table)
 library(stringr)
+
+library(vcfR)
+
 library(ggplot2)
 library(ggforce)
 library(ggsci)
-
-library(vcfR)
-# library(dplyr)
-
 library(ggvenn)
+
+# library(GenomicRanges)
