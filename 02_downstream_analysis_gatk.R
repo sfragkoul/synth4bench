@@ -6,7 +6,7 @@ gc()
 
 
 source("libraries.R")
-source("analysis_helpers_gatk.R")
+source("helpers_gatk.R")
 
 
 folder = 'read_length/1000_200'

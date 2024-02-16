@@ -11,8 +11,8 @@ gc()
 
 
 
-source("plot_libraries.R")
-source("plot_helpers_gatk.R")
+source("libraries.R")
+source("helpers_gatk.R")
 
 
 folder = 'read_length/1000_200'
