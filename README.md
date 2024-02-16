@@ -1,7 +1,7 @@
 # synth4bench: a framework for generating synthetic genomics data for the evaluation of somatic variant calling algorithms
 
 ## Abstract
-<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation and evaluation framework for benchmarking somatic variant calling algorithms. We generated synthetic datasets based on sequence data from the TP53 gene, using the NEAT(NExt-generation sequencing Analysis Toolkit) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong>Mutect2, Freebayes, VarDict, VarScan and LoFreq</strong> on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variations. Our results demonstrate that the synthetic datasets generated using our framework can accurately capture the complexity and diversity of real cancer genomic data. Moreover, the synthetic datasets provide an excellent ground truth for evaluating the performance of somatic variant calling algorithms. Altogether, our framework provides a valuable resource for testing the performance of somatic variant calling algorithms, enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
+<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation and evaluation framework for benchmarking somatic variant calling algorithms. We generated synthetic datasets based on sequence data from the TP53 gene, using the NEAT(NExt-generation sequencing Analysis Toolkit) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong> Mutect2, Freebayes, VarDict, VarScan and LoFreq </strong> on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variations. Our results demonstrate that the synthetic datasets generated using our framework can accurately capture the complexity and diversity of real cancer genomic data. Moreover, the synthetic datasets provide an excellent ground truth for evaluating the performance of somatic variant calling algorithms. Altogether, our framework provides a valuable resource for testing the performance of somatic variant calling algorithms, enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@
 
 2. Defining Ground Truth: The "Ground Truth" is established by creating 10 individual datasets (each one of average 500 coverage)containing Single Nucleotide Polymorphisms (SNPs) and Insertions/Deletions (INDELs). The genomic regions where variants accure with 100% Allele Frequency are chosen. The reason behind this choice is to avoid variants that are related to errors and products of noise. Then all these datasets are merged into one single file of 5000 coverage and the allele frequency is again measured at these genomic regions of interest.
 
-3. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. The GATK-Mutect2, Freebayes, VarDict, VarScan2 and LoFreq variant callesr are assessed for their performance on our synthetic dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
+3. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. The GATK-a selected caller, Freebayes, VarDict, VarScan2 and LoFreq variant callesr are assessed for their performance on our synthetic dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
 
 The pipeline's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This pipeline represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
 
@@ -57,23 +57,23 @@ All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
 							 
 - Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file, Merged bam file, processed bam files and vcf file with all variants that were detected, tsv file with the genomic content
 
-`02_downstream_analysis_gatk.R` - This R script compares the variants that Mutect2 reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
+`02_downstream_analysis_*.R` - This R script compares the variants that a selected caller reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
-- Input:  bam-readcount tsv reports, vcf file from Mutect2
+- Input:  bam-readcount tsv reports, vcf file from a selected caller
 							 
 - Output: tsv file containing information regarding the ground truth variants
 
-`03_plot_patchwork_gatk.R` - This R script produces the final Figure of the Benchmarking of GATK.
+`03_plot_patchwork_*.R` - This R script produces the final Figure of the Benchmarking of a selected caller.
 
-- Input:  annotated tsv file, ground truth vcf, Mutect2 vcf
+- Input:  annotated tsv file, ground truth vcf, a selected caller vcf
 							 
-- Output: final Figure for the Benchmarking of GATK </div>
+- Output: final Figure for the Benchmarking of a selected caller </div>
 
-`analysis_helpers_gatk.R` - This R script incudes all necessary functions for `02_patchwork_gatk.R` script.
+`helpers_*.R` - This R script incudes all necessary functions for `02_patchwork_*.R` and  `03_patchwork_*.R` scripts.
 
-`plot_helpers_gatk.R` - This R script incudes all necessary functions for `03_patchwork_gatk.R` script.
+`libraries.R` - This R script incudes all necessary libraries for `02_patchwork_*.R` and `03_patchwork_*.R` scripts.
 
-`libraries.R` - This R script incudes all necessary libraries for `02_patchwork_gatk.R` and `03_patchwork_gatk.R` scripts.
+*Note that * is one of the following = (Mutect2, Freebayes, VarDict, VarScan, LoFreq).*
 
 ### Extra scripts
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script that was developed can be found [here](https://github.com/sfragkoul/Varscan2VCF).
