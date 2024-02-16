@@ -115,7 +115,7 @@ bcftools norm path/to/files/Merged_VarScan.vcf --output path/to/files/Merged_Var
 
 #lofreq
 lofreq indelqual --dindel -f testing/TP53/TP53.fasta -o testing/TP53/read_length/1000_100/Merged_indels.sorted.uniq.rg.bam testing/TP53/read_length/1000_100/Merged.sorted.uniq.rg.bam
-lofreq call -f testing/TP53/TP53.fasta --call-indels -o testing/TP53/read_length/1000_100/Lofreq.vcf testing/TP53/read_length/1000_100/Merged.sorted.uniq.rg.bam
+lofreq call -f testing/TP53/TP53.fasta --call-indels -o testing/TP53/read_length/1000_100/Lofreq.vcf testing/TP53/read_length/1000_100/Merged_indels.sorted.uniq.rg.bam
 bcftools reheader --fai testing/TP53/TP53.fasta.fai -o testing/TP53/read_length/1000_100/Merged_Lofreq_norm.vcf  testing/TP53/read_length/1000_100/Lofreq.vcf
 rm testing/TP53/read_length/1000_100/Lofreq.vcf
 
