@@ -1,4 +1,4 @@
-name: synth_data
+name: synth4bench
 channels:
   - conda-forge
   - bioconda
@@ -14,7 +14,7 @@ dependencies:
   - bwidget=1.9.14=ha770c72_1
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.18.1=h7f98852_0
-  - ca-certificates=2022.12.7=ha878542_0
+  - ca-certificates=2024.2.2=hbcca054_0
   - cairo=1.16.0=ha61ee94_1014
   - curl=7.86.0=h7bff187_1
   - exonerate=2.4.0=h09da616_5
@@ -26,8 +26,10 @@ dependencies:
   - fontconfig=2.14.1=hc2a2eb6_0
   - fonts-conda-ecosystem=1=0
   - fonts-conda-forge=1=0
+  - freebayes=0.9.21.7=0
   - freetype=2.12.1=hca18f0e_1
   - fribidi=1.0.10=h36c2ea0_0
+  - gatk4=4.4.0.0=py36hdfd78af_0
   - gcc_impl_linux-64=12.2.0=hcc96c02_19
   - gettext=0.21.1=h27087fc_0
   - gfortran_impl_linux-64=12.2.0=h55be85b_19
@@ -78,10 +80,11 @@ dependencies:
   - libxcb=1.13=h7f98852_1004
   - libxml2=2.10.3=h7463322_0
   - libzlib=1.2.13=h166bdaf_4
+  - lofreq=2.1.5=py310h24f5f0b_8
   - make=4.3=hd18ef5c_1
   - ncurses=6.3=h27087fc_1
   - openjdk=17.0.3=hafdced1_4
-  - openssl=1.1.1s=h0b41bf4_1
+  - openssl=1.1.1w=hd590300_0
   - pango=1.50.12=h382ae3d_0
   - pcre=8.45=h9c3ff4c_0
   - pcre2=10.40=hc3806b6_0
@@ -91,6 +94,7 @@ dependencies:
   - pixman=0.40.0=h36c2ea0_0
   - pthread-stubs=0.4=h36c2ea0_1001
   - python=3.10.8=h257c98d_0_cpython
+  - python_abi=3.10=4_cp310
   - r-base=4.2.2=hb87df5d_1
   - readline=8.1.2=h0f457ee_0
   - samtools=1.16.1=h6899075_1
@@ -100,6 +104,8 @@ dependencies:
   - tk=8.6.12=h27826a3_0
   - tktable=2.10=hb7b940f_3
   - tzdata=2022g=h191b570_0
+  - vardict-java=1.8.3=hdfd78af_0
+  - varscan=2.4.6=hdfd78af_0
   - velvet=1.2.10=h7132678_5
   - wheel=0.38.4=pyhd8ed1ab_0
   - xorg-fixesproto=5.0=h7f98852_1002
@@ -141,4 +147,3 @@ dependencies:
       - pytz==2022.7
       - scipy==1.9.3
       - six==1.16.0
-
