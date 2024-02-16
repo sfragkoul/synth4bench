@@ -17,7 +17,7 @@ source("helpers_gatk.R")
 
 folder = 'read_length/1000_200'
 
-df = fread(paste0(folder, "/Ground_truth_vs_Mutect2.clean.annotated.tsv"))
+df = fread(paste0(folder, "/Ground_truth_vs_Mutect2.clean.tsv"))
 
 vcf_read_GT <- read.vcfR(paste0(folder, "/Merged_ground_truth.vcf"), verbose = FALSE )
 
