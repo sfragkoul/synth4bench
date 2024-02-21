@@ -7,7 +7,7 @@
 
 - [Abstract](https://github.com/sfragkoul/synth4bench/tree/main#abstract)
 - [Motivation](https://github.com/sfragkoul/synth4bench/tree/main#motivation)
-- [Discription of Framework](https://github.com/sfragkoul/synth4bench/tree/main#discription-of-framework)
+- [Description of Framework](https://github.com/sfragkoul/synth4bench/tree/main#description-of-framework)
 - [Installation](https://github.com/sfragkoul/synth4bench/tree/main#installation)
 - [Data Download](https://github.com/sfragkoul/synth4bench/tree/main#data-download)
 - [Execution](https://github.com/sfragkoul/synth4bench/tree/main#execution)
@@ -19,7 +19,7 @@
 
 <div align='justify'> Variant calling plays an important role in identifying genetic lesions. In the case of variants at low frequency (≤10%) identification becomes more difficult and the challenge that rises is the absence of a Ground Truth for reliable and consistent identification and benchmarking. </div>
 
-## Discription of Framework
+## Description of Framework
 
 <div align='justify'> Our framework focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the framework:
 
