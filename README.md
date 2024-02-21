@@ -7,7 +7,7 @@
 
 - [Abstract](https://github.com/sfragkoul/synth4bench/tree/main#abstract)
 - [Motivation](https://github.com/sfragkoul/synth4bench/tree/main#motivation)
-- [Discription of Pipeline](https://github.com/sfragkoul/synth4bench/tree/main#discription-of-pipeline)
+- [Discription of Framework](https://github.com/sfragkoul/synth4bench/tree/main#discription-of-framework)
 - [Installation](https://github.com/sfragkoul/synth4bench/tree/main#installation)
 - [Data Download](https://github.com/sfragkoul/synth4bench/tree/main#data-download)
 - [Execution](https://github.com/sfragkoul/synth4bench/tree/main#execution)
@@ -19,9 +19,9 @@
 
 <div align='justify'> Variant calling plays an important role in identifying genetic lesions. In the case of variants at low frequency (≤10%) identification becomes more difficult and the challenge that rises is the absence of a Ground Truth for reliable and consistent identification and benchmarking. </div>
 
-## Discription of Pipeline
+## Discription of Framework
 
-<div align='justify'> Our pipeline focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the pipeline:
+<div align='justify'> Our framework focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the framework:
 
 1. Data Generation: Synthetic genomics data is generated based on the TP53 gene using the NEAT simulator in order to create synthetic datasets that mimic real cancer genome data.
 
@@ -29,7 +29,7 @@
 
 3. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. The GATK-a selected caller, Freebayes, VarDict, VarScan2 and LoFreq variant callesr are assessed for their performance on our synthetic dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
 
-The pipeline's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This pipeline represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
+The framework's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This framework represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
 
 ## Data Download
 All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
