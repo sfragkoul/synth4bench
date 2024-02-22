@@ -32,7 +32,7 @@
 The framework's overall aim is to provide a robust framework for evaluating the performance of somatic variant calling algorithms by using synthetic datasets that closely resemble real cancer genome data. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This framework represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
 
 ## Data Download
-All data are open and available in [Zenodo](https://zenodo.org/record/8095898).
+All data are open and available in [Zenodo](https://zenodo.org/records/10683211).
 
 ## Installation
 1. To install NEAT follow the intructions [here](https://github.com/ncsa/NEAT/blob/master/README.md#installation).
