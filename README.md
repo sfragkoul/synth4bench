@@ -37,17 +37,10 @@ The framework's overall aim is to provide a robust framework for evaluating the 
 All data are open and available in [Zenodo](https://zenodo.org/records/10683211).
 
 ## Installation
-1. To install NEAT follow the intructions [here](https://github.com/ncsa/NEAT/blob/master/README.md#installation).
-2. To install GATK-Mutect2 follow the intructions [here](https://anaconda.org/bioconda/gatk).
-3. To install FreeBayes follow the intructions [here](https://anaconda.org/bioconda/freebayes).
-4. To install VarDict follow the intructions [here](https://anaconda.org/bioconda/vardict).
-5. To install VarScan follow the intructions [here](https://anaconda.org/bioconda/varscan).
-6. To install LoFreq follow the intructions [here](https://anaconda.org/bioconda/lofreq).
-7. To install SAMtools follow the intructions [here](https://anaconda.org/bioconda/samtools).
-8. To install BCFtools follow the intructions [here](https://anaconda.org/bioconda/bcftools).
-9. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
-10. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
-11. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "dplyr", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "seqinr", "patchwork"))`
+1. To install NEAT v3 follow the intructions [here](https://github.com/ncsa/NEAT/blob/master/README.md#installation).
+2. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
+3. To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
+4. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "dplyr", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "seqinr", "patchwork"))`
 
 
 ## Execution
