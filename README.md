@@ -92,4 +92,6 @@ If you have any developer-related questions, please open an issue or write us at
   
 - <div align='justify'>  Styliani-Christina Fragkouli, Nikolaos Pechlivanis, Andreas Agathangelidis and Fotis Psomopoulos, <em>Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms</em>, 31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23), Jul 2023, Lyon, France doi:<a href="https://doi.org/10.7490/f1000research.1119575.1">10.7490/f1000research.1119575.1</a> </div>
 
+<p align="center"> 
 <img src="https://github.com/sfragkoul/synth4bench/blob/main/poster%20files/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" style="height: 700px; width:500px;"/>
+</p>
