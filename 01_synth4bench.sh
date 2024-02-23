@@ -88,7 +88,7 @@ samtools addreplacerg -r '@RG\tID:Merged\tSM:Merged' path/to/files/Merged.sorted
 samtools depth path/to/files/Merged.sorted.uniq.rg.bam -o path/to/files/Merged.depth.txt
 samtools index path/to/files/Merged.sorted.uniq.rg.bam
 #GATK
-java -jar testing/gatk-4.3.0.0.jar Mutect2 --reference path/to/files/TP53.fasta --input path/to/files/Merged.sorted.uniq.rg.bam --tumor-sample Merged  --output path/to/files/Merged_GATK.vcf > path/to/files/Merged.Mutect.out 2>&1
+gatk Mutect2 --reference path/to/files/TP53.fasta --input path/to/files/Merged.sorted.uniq.rg.bam --tumor-sample Merged  --output path/to/files/Merged_GATK.vcf > path/to/files/Merged.Mutect.out 2>&1
 bcftools norm path/to/files/Merged_GATK.vcf --output path/to/files/Merged_GATK_norm.vcf --output-type v -m "-"
 
 #freebayes
