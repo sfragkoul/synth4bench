@@ -30,7 +30,7 @@ out4 = venn_plot_VarDict(vcf_read_GT, vcf_read_VarDict)
 
 library(patchwork)
 
-multi2 = out2$groundtruth / out2$mutect2 &
+multi2 = out2$groundtruth / out2$VarDict &
     
     theme(
         plot.margin = margin(10, 10, 10, 10)

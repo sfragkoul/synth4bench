@@ -30,7 +30,7 @@ out4 = venn_plot_VarScan(vcf_read_GT, vcf_read_VarScan)
 
 library(patchwork)
 
-multi2 = out2$groundtruth / out2$mutect2 &
+multi2 = out2$groundtruth / out2$VarScan &
     
     theme(
         plot.margin = margin(10, 10, 10, 10)

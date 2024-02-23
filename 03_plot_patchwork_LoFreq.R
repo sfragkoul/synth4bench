@@ -30,7 +30,7 @@ out4 = venn_plot_LoFreq(vcf_read_GT, vcf_read_LoFreq)
 
 library(patchwork)
 
-multi2 = out2$groundtruth / out2$mutect2 &
+multi2 = out2$groundtruth / out2$LoFreq &
     
     theme(
         plot.margin = margin(10, 10, 10, 10)

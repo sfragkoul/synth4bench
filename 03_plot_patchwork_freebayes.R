@@ -30,7 +30,7 @@ out4 = venn_plot_freebayes(vcf_read_GT, vcf_read_freebayes)
 
 library(patchwork)
 
-multi2 = out2$groundtruth / out2$freebayes &
+multi2 = out2$groundtruth / out2$Freebayes &
     
     theme(
         plot.margin = margin(10, 10, 10, 10)
