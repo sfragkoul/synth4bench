@@ -47,7 +47,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 ## Execution
 <div align='justify'> Here follows the list of all scripts and their description:
 
-`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEATv3.3 in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/files/` with desired paths.
+`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEATv3.3 in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/` with desired paths in all commands.
 
 - Input: fasta reference file
 							 
