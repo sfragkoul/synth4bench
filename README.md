@@ -37,7 +37,7 @@ The framework's overall aim is to provide a robust framework for evaluating the 
 All data are open and available in [Zenodo](https://zenodo.org/records/10683211).
 
 ## Installation
-1.  To create the conda environment that was used for the analysis run `conda env create -f environment.yml`
+1.  To create the conda environment that was used for the analysis run `conda env create -f environment.yml` and to activate it run `conda activate synth4bench`.
 2. To install NEAT, dowload version v3.3 [here](https://github.com/ncsa/NEAT/releases/tag/3.3). To call the main script run the command `python gen_reads.py --help`. For any further info please see the README.md file from the downloaded files of version 3.3.
 3. To install bam-readcount follow the instructions [here](https://github.com/genome/bam-readcount/tree/master#installation).
 4. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "dplyr", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "seqinr", "patchwork"))`.
