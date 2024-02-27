@@ -21,7 +21,7 @@ df = fread(paste0(folder, "/Ground_truth_vs_freebayes.clean_norm.tsv"))
 
 vcf_read_GT <- read.vcfR(paste0(folder, "/Merged_ground_truth_norm.vcf"), verbose = FALSE )
 
-vcf_read_freebayes <- read.vcfR(paste0(folder, "/Merged.freebayes_norm.vcf"), verbose = FALSE )
+vcf_read_freebayes <- read.vcfR(paste0(folder, "/Merged_freebayes_norm.vcf"), verbose = FALSE )
 
 out1 = bar_plots_freebayes(df)
 out2 = density_plot_freebayes(df)
