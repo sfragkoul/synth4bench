@@ -1,4 +1,11 @@
-
+#'
+#'This R script produces the final tsv file with the comparison for each caller
+#' against the ground truth.
+#'
+#'Input: ground truth vcf, caller's vcf (from function)
+#'
+#'Output: tsv file with the comparison
+#'
 
 rm(list = ls())
 gc()

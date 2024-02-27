@@ -1,6 +1,7 @@
 
 
-
+#function to locate variants of 100% AF in the individual files and
+#search their POS in the Merged bam file
 gt_analysis <- function(runs, folder) {
     
     nt_runs = list()
@@ -105,6 +106,7 @@ gt_analysis <- function(runs, folder) {
     
 }
 
+#function to search the POS of interest from the caller's vcf file
 merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     
     VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -139,6 +141,7 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     
 }
 
+#function to produce the caller's reported variants in the desired format 
 clean_VarScan <- function(df) {
     
     df2 = df[, c(
@@ -214,10 +217,7 @@ clean_VarScan <- function(df) {
     
 }
 
-
-
-
-
+#function to produce variants' barplots for coverage and AF
 bar_plots_VarScan <- function(q) {
     
     q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
@@ -346,6 +346,7 @@ bar_plots_VarScan <- function(q) {
     
 }
 
+#function to produce AF density plots
 density_plot_VarScan <- function(q) {
     
     q[which(df$`VarScan ALT` == "")]$`VarScan ALT` = NA
@@ -439,6 +440,7 @@ density_plot_VarScan <- function(q) {
     
 }
 
+#function to produce SNVs bubble plot
 bubble_plots_VarScan <- function(q) {
     
     # q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
@@ -520,6 +522,7 @@ bubble_plots_VarScan <- function(q) {
     
 }
 
+#function to produce Venn plot for each caller
 venn_plot_VarScan <- function(q, p) {
     
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()

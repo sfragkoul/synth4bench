@@ -1,9 +1,10 @@
 #'
-#'This This R script produces the final Figure of the Benchmarking of the 
-#'poster.
-#'Input: all produced plots
+#'This R script produces the final Multipanel Figure of the Benchmarking 
+#'process.
 #'
-#'Output: final Figure for the poster
+#'Input: comparison tsv file, ground truth vcf, caller's vcf
+#'
+#'Output: final Multipanel Figure
 #'
 
 rm(list = ls())

@@ -1,6 +1,7 @@
 
 
-
+#function to locate variants of 100% AF in the individual files and
+#search their POS of interest in the Merged bam file
 gt_analysis <- function(runs, folder) {
     
     nt_runs = list()
@@ -105,6 +106,7 @@ gt_analysis <- function(runs, folder) {
     
 }
 
+#function to search the POS of interest from the caller's vcf file
 merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     
     freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -137,6 +139,7 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     
 }
 
+#function to produce the caller's reported variants in the desired format 
 clean_freebayes <- function(df) {
     
     df2 = df[, c(
@@ -215,9 +218,7 @@ clean_freebayes <- function(df) {
     
 }
 
-
-
-
+#function to produce variants' barplots for coverage and AF
 bar_plots_freebayes <- function(q) {
     
     q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
@@ -346,6 +347,7 @@ bar_plots_freebayes <- function(q) {
     
 }
 
+#function to produce AF density plots
 density_plot_freebayes <- function(q) {
     
     q[which(df$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
@@ -439,6 +441,7 @@ density_plot_freebayes <- function(q) {
     
 }
 
+#function to produce SNVs bubble plot
 bubble_plots_freebayes <- function(q) {
     
     # q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
@@ -520,6 +523,7 @@ bubble_plots_freebayes <- function(q) {
     
 }
 
+#function to produce Venn plot for each caller
 venn_plot_freebayes <- function(q, p) {
     
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()

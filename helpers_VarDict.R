@@ -1,6 +1,7 @@
 
 
-
+#function to locate variants of 100% AF in the individual files and
+#search their POS in the Merged bam file
 gt_analysis <- function(runs, folder) {
     
     nt_runs = list()
@@ -105,6 +106,7 @@ gt_analysis <- function(runs, folder) {
     
 }
 
+#function to search the POS of interest from the caller's vcf file
 merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
     
     VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -136,6 +138,7 @@ merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
     
 }
 
+#function to produce the caller's reported variants in the desired format 
 clean_VarDict <- function(df) {
     
     df2 = df[, c(
@@ -211,8 +214,7 @@ clean_VarDict <- function(df) {
     
 }
 
-
-
+#function to produce variants' barplots for coverage and AF
 bar_plots_VarDict <- function(q) {
     
     q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
@@ -341,6 +343,7 @@ bar_plots_VarDict <- function(q) {
     
 }
 
+#function to produce AF density plots
 density_plot_VarDict <- function(q) {
     
     q[which(df$`VarDict ALT` == "")]$`VarDict ALT` = NA
@@ -434,6 +437,7 @@ density_plot_VarDict <- function(q) {
     
 }
 
+#function to produce SNVs bubble plot
 bubble_plots_VarDict <- function(q) {
     
     # q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
@@ -515,6 +519,7 @@ bubble_plots_VarDict <- function(q) {
     
 }
 
+#function to produce Venn plot for each caller
 venn_plot_VarDict <- function(q, p) {
     
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
