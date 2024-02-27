@@ -21,6 +21,6 @@ v1 = freebayes_somatic_vcf |>
     clean_freebayes()
 
 fwrite(
-    v1, paste0(folder, "/Ground_truth_vs_freebayes.clean.tsv"),
+    v1, paste0(folder, "/Ground_truth_vs_freebayes.clean_norm.tsv"),
     sep = "\t", row.names = FALSE, quote = FALSE
 )

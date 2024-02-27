@@ -17,11 +17,11 @@ source("helpers_freebayes.R")
 
 folder = 'read_length/1000_300'
 
-df = fread(paste0(folder, "/Ground_truth_vs_freebayes.clean.tsv"))
+df = fread(paste0(folder, "/Ground_truth_vs_freebayes.clean_norm.tsv"))
 
-vcf_read_GT <- read.vcfR(paste0(folder, "/Merged_ground_truth.vcf"), verbose = FALSE )
+vcf_read_GT <- read.vcfR(paste0(folder, "/Merged_ground_truth_norm.vcf"), verbose = FALSE )
 
-vcf_read_freebayes <- read.vcfR(paste0(folder, "/Merged.freebayes.vcf"), verbose = FALSE )
+vcf_read_freebayes <- read.vcfR(paste0(folder, "/Merged.freebayes_norm.vcf"), verbose = FALSE )
 
 out1 = bar_plots_freebayes(df)
 out2 = density_plot_freebayes(df)
@@ -68,12 +68,12 @@ multi = ann1 / ann2 +
 #)
 
 ggsave(
-    plot = multi, filename = paste0(folder, "/Plots/Poster_freebayes.png"),
+    plot = multi, filename = paste0(folder, "/Plots/Poster_freebayes_norm.png"),
     width = 16, height = 12, units = "in", dpi = 600
 )
 
 ggsave(
-    plot = out4, filename = paste0(folder, "/Plots/Venn_freebayes.png"),
+    plot = out4, filename = paste0(folder, "/Plots/Venn_freebayes_norm.png"),
     width = 8, height = 8, units = "in", dpi = 600
 )
 
