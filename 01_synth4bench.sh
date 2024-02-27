@@ -109,15 +109,15 @@ bcftools norm path/to/Merged_VarDict.vcf --output path/to/Merged_VarDict_norm.vc
 #varcan
 samtools mpileup -f path/to/TP53.fasta path/to/Merged.sorted.uniq.rg.bam -a -o path/to/Merged.sorted.uniq.rg.mpileup
 varscan pileup2cns path/to/Merged.sorted.uniq.rg.mpileup > path/to/VarScan.tsv
-python Varscan2VCF/vscan_pileup2cns2vcf.py path/to/VarScan.tsv > path/to/Merged_VarScan.vcf
+python path/to/Varscan2VCF/vscan_pileup2cns2vcf.py path/to/VarScan.tsv > path/to/Merged_VarScan.vcf
 rm path/to/VarScan.tsv 
 bcftools norm path/to/Merged_VarScan.vcf --output path/to/Merged_VarScan_norm.vcf --output-type v -m "-"
 
 #lofreq
-lofreq indelqual --dindel -f testing/TP53/TP53.fasta -o testing/TP53/read_length/1000_100/Merged_indels.sorted.uniq.rg.bam testing/TP53/read_length/1000_100/Merged.sorted.uniq.rg.bam
-lofreq call -f testing/TP53/TP53.fasta --call-indels -o testing/TP53/read_length/1000_100/Lofreq.vcf testing/TP53/read_length/1000_100/Merged_indels.sorted.uniq.rg.bam
-bcftools reheader --fai testing/TP53/TP53.fasta.fai -o testing/TP53/read_length/1000_100/Merged_Lofreq_norm.vcf  testing/TP53/read_length/1000_100/Lofreq.vcf
-rm testing/TP53/read_length/1000_100/Lofreq.vcf
+lofreq indelqual --dindel -f path/to/TP53/TP53.fasta -o path/to/TP53/read_length/1000_100/Merged_indels.sorted.uniq.rg.bam path/to/TP53/read_length/1000_100/Merged.sorted.uniq.rg.bam
+lofreq call -f path/to/TP53/TP53.fasta --call-indels -o path/to/TP53/read_length/1000_100/Lofreq.vcf path/to/TP53/read_length/1000_100/Merged_indels.sorted.uniq.rg.bam
+bcftools reheader --fai path/to/TP53/TP53.fasta.fai -o path/to/TP53/read_length/1000_100/Merged_Lofreq_norm.vcf  path/to/TP53/read_length/1000_100/Lofreq.vcf
+rm path/to/TP53/read_length/1000_100/Lofreq.vcf
 
 echo  "\n bam-readcount reporting" 
 samtools index path/to/1/1_golden.bam
