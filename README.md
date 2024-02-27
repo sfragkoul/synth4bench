@@ -3,7 +3,7 @@
 </p>
 
 ## Abstract
-<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation framework for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets based on <i>TP53</i> gene, using the NEAT v3.3 (NExt-generation sequencing Analysis Toolkit version 3) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong> Mutect2, Freebayes, VarDict, VarScan and LoFreq </strong> on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variants. Our results demonstrate that synthetic datasets provide an excellent ground truth for studying the performance of somatic variant calling algorithms, thus enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
+<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation framework for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets based on <i>TP53</i> gene, using the NEAT v3.3 (NExt-generation sequencing Analysis Toolkit version 3) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong> GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq </strong> on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variants. Our results demonstrate that synthetic datasets provide an excellent ground truth for studying the performance of somatic variant calling algorithms, thus enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
 
 ## Table of Contents
 
@@ -47,7 +47,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 ## Execution
 <div align='justify'> Here follows the list of all scripts and their description:
 
-`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEAT in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/files/` with desired paths.
+`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEAT in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/files/` with desired paths.
 
 - Input: fasta reference file
 							 
