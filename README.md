@@ -1,9 +1,9 @@
-<p align="center"> 
+Ν<p align="center"> 
 <img src="https://github.com/sfragkoul/synth4bench/blob/main/images/synth4bench_logo_no_bg.png" alt="synth4bench logo" style="center; height: 80px; width:700px;"/>
 </p>
 
 ## Abstract
-<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation framework for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets based on <i>TP53</i> gene, using the NEAT v3.3 (NExt-generation sequencing Analysis Toolkit version 3) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong> GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq </strong> on these datasets, and compared the results to the “golden” files produced by NEAT containing the actual variants. Our results demonstrate that synthetic datasets provide an excellent ground truth for studying the performance of somatic variant calling algorithms, thus enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
+<div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation framework for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets based on <i>TP53</i> gene, using the NEATv3.3 (NExt-generation sequencing Analysis Toolkit version 3) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong> GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq </strong> on these datasets, and compared the results to the “golden” files produced by NEATv3.3 containing the actual variants. Our results demonstrate that synthetic datasets provide an excellent ground truth for studying the performance of somatic variant calling algorithms, thus enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@
 
 <div align='justify'> Our framework focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the framework:
 
-1. Data Generation: Synthetic genomics data is generated based on the TP53 gene using the NEAT simulator in order to create synthetic datasets that mimic real cancer genome data.
+1. Data Generation: Synthetic genomics data is generated based on the TP53 gene using the NEATv3.3 simulator in order to create synthetic datasets that mimic real cancer genome data.
 
 2. Defining Ground Truth: The "Ground Truth" is established by creating 10 individual datasets (each one of the same characteristics) containing Single Nucleotide Polymorphisms (SNPs) and Insertions/Deletions (INDELs). The genomic regions where variants accure with 100% Allele Frequency are chosen. The reason behind this choice is to avoid variants that are related to errors and products of noise. Then all these datasets are merged into one single file and the allele frequency is again measured at these genomic regions of interest.
 
@@ -38,7 +38,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 
 ## Installation
 1.  To create the conda environment that was used for the analysis run `conda env create -f environment.yml` and to activate it run `conda activate synth4bench`.
-2. To install NEAT, dowload version [v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3). To call the main script run the command `python gen_reads.py --help`. For any further info please see the README.md file from the downloaded files of version 3.3.
+2. To install NEATv3.3, dowload version [v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3). To call the main script run the command `python gen_reads.py --help`. For any further info please see the README.md file from the downloaded files of version 3.3.
 3. To install bam-readcount follow their [instructions](https://github.com/genome/bam-readcount/tree/master?tab=readme-ov-file#build).
 4. To install R packages dependencies run this command `install.packages(c("stringr", "data.table", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "patchwork"))`.
 5. The extra script `vscan_pileup2cns2vcf.py` for VarScan can be found [here](https://github.com/sfragkoul/Varscan2VCF).
@@ -47,7 +47,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 ## Execution
 <div align='justify'> Here follows the list of all scripts and their description:
 
-`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEAT in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/files/` with desired paths.
+`01_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEATv3.3 in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/files/` with desired paths.
 
 - Input: fasta reference file
 							 
