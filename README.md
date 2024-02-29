@@ -58,7 +58,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 `02_downstream_analysis_*.R` - This R script compares the variants that a selected caller reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
 - Input:  bam-readcount tsv reports, vcf file from a selected caller
-							 
+	-						 
 - Output: tsv file containing information regarding the ground truth variants
 
 `03_plot_patchwork_*.R` - This R script produces the final Figure of the Benchmarking of a selected caller.
@@ -72,6 +72,12 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 `libraries.R` - This R script incudes all necessary libraries for `02_patchwork_*.R` and `03_patchwork_*.R` scripts.
 
 *Note that * is one of the following = (Mutect2, Freebayes, VarDict, VarScan, LoFreq).*
+
+`paper_plots.R` - This R script produces the final Multipanel Figure for the paper.
+
+- Input: comparison tsv file, ground truth vcf, caller's vcf
+
+- Output: Paper Multipanel Figure
 
 ### Extra scripts
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script `vscan_pileup2cns2vcf.py` can be found [here](https://github.com/sfragkoul/Varscan2VCF).
