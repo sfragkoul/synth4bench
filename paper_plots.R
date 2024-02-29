@@ -1,4 +1,11 @@
-
+#'
+#'This R script produces the final Multipanel Figure for the paper.
+#'
+#'Input: comparison tsv file, ground truth vcf, caller's vcf
+#'
+#'Output: Paper Multipanel Figure
+#'
+#'
 rm(list = ls())
 gc()
 
