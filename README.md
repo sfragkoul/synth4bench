@@ -58,7 +58,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 `02_downstream_analysis_*.R` - This R script compares the variants that a selected caller reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
 - Input:  bam-readcount tsv reports, vcf file from a selected caller
-	-						 
+  			 
 - Output: tsv file containing information regarding the ground truth variants
 
 `03_plot_patchwork_*.R` - This R script produces the final Figure of the Benchmarking of a selected caller.
