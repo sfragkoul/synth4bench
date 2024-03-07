@@ -87,6 +87,7 @@ For the case of VarScan an extra step was required to convert its output to the 
 We welcome any sort of contribution!
 If you have any developer-related questions, please open an issue or write us at sfragkoul@certh.gr.
 
+## Citation
 
 ## Related Publications
 - <div align='justify'> Styliani-Christina Fragkouli, Nikolaos Pechlivanis, Aspasia Orfanou, Anastasia Anastasiadou, Andreas Agathangelidis and Fotis Psomopoulos, <em>Synth4bench: a framework for generating synthetic genomics data for the evaluation of somatic variant calling algorithms</em>, 17th Conference of Hellenic Society for Computational Biology and Bioinformatics (HSCBB), Oct 2023, Thessaloniki, Greece, doi:<a href="https://doi.org/10.5281/zenodo.8432060">10.5281/zenodo.8432060</a> </div>
