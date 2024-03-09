@@ -88,6 +88,9 @@ We welcome any sort of contribution!
 If you have any developer-related questions, please open an issue or write us at sfragkoul@certh.gr.
 
 ## Citation
+Our work has been submitted to the *bioRxiv* preprint repository . Please, use the citation as follows:
+
+S.-C. Fragkouli, N. Pechlivanis, A. Anastasiadou, G. Karakatsoulis, A. Orfanou, P. Kollia, A. Agathangelidis, and F. E. Psomopoulos, *“Synth4bench: a framework for generating synthetic genomics data for the evaluation of tumor-only somatic variant calling algorithms.”* 2024, doi:[10.1101/2024.03.07.582313](https://www.biorxiv.org/content/10.1101/2024.03.07.582313v1).
 
 ## Related Publications
 - <div align='justify'> Styliani-Christina Fragkouli, Nikolaos Pechlivanis, Aspasia Orfanou, Anastasia Anastasiadou, Andreas Agathangelidis and Fotis Psomopoulos, <em>Synth4bench: a framework for generating synthetic genomics data for the evaluation of somatic variant calling algorithms</em>, 17th Conference of Hellenic Society for Computational Biology and Bioinformatics (HSCBB), Oct 2023, Thessaloniki, Greece, doi:<a href="https://doi.org/10.5281/zenodo.8432060">10.5281/zenodo.8432060</a> </div>
