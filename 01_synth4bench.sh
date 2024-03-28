@@ -9,6 +9,9 @@
 #		 Merged bam file, processed bam files and vcf file with all variants that were detected, tsv file with the genomic content
 #
 #please replace all "path/to/files/"  with desired folders
+#
+# Author: Stella Fragkouli(github:sfragkoul)
+#'
 
 
 mkdir path/to/1000_100
