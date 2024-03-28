@@ -1,0 +1,1010 @@
+---
+title: "Analysis"
+output: word_document
+---
+
+```{r}
+#'This script runs the statistical analysis for a given dataset.
+#' 
+#'Input: A csv file with variants that were either detected or not detected
+#'by each caller.
+#' 
+#'Output: A word document with the results of the fatalistically analyses.
+#'
+#'Author: Georgios Karakatsoulis
+#' 
+#'
+```
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+knitr::opts_chunk$set(results = 'asis')
+```
+
+
+```{r libraries, include=FALSE}
+library(dplyr)
+library(rstatix)
+library(ggplot2)
+library(pROC)
+library(cutpointr)
+library(glmnet)
+library(caret)
+```
+
+```{r read_file, include=FALSE}
+
+myfile_wd = gsub('Rscripts', 'Desktop/', getwd())
+
+df = read.csv(paste0(myfile_wd, '1000_100_10_All_Freebayes_read_pos_bins_report.csv'))
+
+colnames(df)[6] = 'sequences'
+
+df$ref_alt = paste(df$REF, df$ALT)
+
+
+df$outcome = ifelse(df$Found == 'Yes', 1, 0)
+
+```
+
+# Correlation between Found and the categorical variables
+
+```{r categorical}
+
+
+tmp = df %>%
+  
+  select(REF, ALT, bin, Found) %>%
+  
+  gather(., key = 'RiskFactor', value = 'RF_Value', -Found) %>%
+  
+  freq_table(RiskFactor, RF_Value, Found) %>%
+  
+  mutate(
+    
+    result = paste0(n, ' (', prop, '%', ')')
+    
+  ) %>%
+  
+  select(-n, -prop) %>%
+  
+  spread(., key = 'Found', value = 'result')
+
+tmp$p_value = NA
+
+tmp$p_value[which(tmp$RiskFactor == 'REF')] = chisq.test(df$Found, df$REF)$p.value
+
+tmp$p_value[which(tmp$RiskFactor == 'ALT')] = chisq.test(df$Found, df$ALT)$p.value
+
+a = glm(ifelse(Found == 'Yes', 1, 0) ~ bin, data = df, family = 'binomial') %>%
+  
+  summary() %>%
+  
+  coefficients()
+
+tmp$p_value[which(tmp$RiskFactor == 'bin')] = a[2,4] 
+
+tmp$p_value = ifelse(
+  
+  tmp$p_value < 0.001,
+  '<0.001',
+  as.character(round(tmp$p_value, 3))
+)
+
+tmp$p_value[which(duplicated(tmp$RiskFactor))] = ''
+
+knitr::kable(tmp)
+
+
+```
+
+
+# Correlation between Found and the numeric variables
+
+
+```{r numeric}
+
+df_long = df %>%
+  
+  select(pos_chromosomal, pos_read, sequences, Found) %>%
+  
+  gather(., key = 'RiskFactor', value = 'RF_Value', -Found)
+
+
+ggplot(data = df_long, 
+       
+       aes(
+         x = as.factor(Found),
+         fill = as.factor(Found),
+         y = RF_Value)) +
+  
+  geom_boxplot() +
+  
+  labs(
+    
+    fill = 'Found',
+    x = 'Found') +
+  
+  facet_wrap(~RiskFactor, scales = 'free_y') 
+
+
+
+tmp = df %>%
+  
+  select(pos_chromosomal, pos_read, sequences, Found) %>%
+  
+  group_by(Found) %>%
+  
+  get_summary_stats() %>%
+
+  select(-iqr, -mad, -se, -ci, -min, -max) %>%
+    
+  arrange(variable) %>%
+  
+  rename('RiskFactor' = 'variable')
+
+tmp$p_value = NA
+  
+a = glm(ifelse(Found == 'Yes', 1, 0) ~ pos_chromosomal, data = df, family = 'binomial') %>%
+  
+  summary() %>%
+  
+  coefficients()
+
+tmp$p_value[which(tmp$RiskFactor == 'pos_chromosomal')] = a[2,4] 
+
+a = glm(ifelse(Found == 'Yes', 1, 0) ~ pos_read, data = df, family = 'binomial') %>%
+  
+  summary() %>%
+  
+  coefficients()
+
+tmp$p_value[which(tmp$RiskFactor == 'pos_read')] = a[2,4] 
+
+
+a = glm(ifelse(Found == 'Yes', 1, 0) ~ sequences, data = df, family = 'binomial') %>%
+  
+  summary() %>%
+  
+  coefficients()
+
+tmp$p_value[which(tmp$RiskFactor == 'sequences')] = a[2,4] 
+
+
+tmp$p_value = ifelse(
+  
+  tmp$p_value < 0.001,
+  '<0.001',
+  as.character(round(tmp$p_value, 3))
+)
+
+tmp$p_value[which(duplicated(tmp$RiskFactor))] = ''
+
+knitr::kable(tmp)
+
+df_scale = df %>%
+  
+  select(outcome, pos_chromosomal, sequences, pos_read) %>%
+  
+  mutate_at(c('pos_chromosomal', 'pos_read', 'sequences'), scale)
+
+tmp = matrix(nrow = 3, ncol = 5) %>%
+  
+  as.data.frame()
+
+colnames(tmp) = c('RiskFactor', 'optimal_cutpoint', 'acc', 'sensitivity', 'specificity')
+
+cutpointr(df_scale,
+          x = pos_chromosomal,
+          class = outcome,
+          pos_class = 1,
+          neg_class = 0,
+          method = maximize_metric,
+          metric = youden) -> cp
+
+a = summary(cp)
+
+tmp[1, ]= a$cutpointr %>%
+  
+  as.data.frame() %>%
+  
+  mutate(RiskFactor = 'pos_chromosomal') %>%
+  
+  select(all_of(colnames(tmp)))
+
+
+cat('Pos_Chromosomal')
+
+plot(cp)
+
+
+cutpointr(df_scale,
+          x = pos_read,
+          class = outcome,
+          pos_class = 1,
+          neg_class = 0,
+          method = maximize_metric,
+          metric = youden) -> cp
+
+a = summary(cp)
+
+tmp[2, ]= a$cutpointr %>%
+  
+  as.data.frame() %>%
+  
+  mutate(RiskFactor = 'pos_read') %>%
+  
+  select(all_of(colnames(tmp)))
+
+cat('Pos_read')
+
+plot(cp)
+
+
+cutpointr(df_scale,
+          x = sequences,
+          class = outcome,
+          pos_class = 1,
+          neg_class = 0,
+          method = maximize_metric,
+          metric = youden) -> cp
+
+a = summary(cp)
+
+tmp[3, ]= a$cutpointr %>%
+  
+  as.data.frame() %>%
+  
+  mutate(RiskFactor = 'sequences') %>%
+  
+  select(all_of(colnames(tmp)))
+
+cat('Number of Sequences')
+
+plot(cp)
+
+knitr::kable(tmp)
+
+
+```
+
+
+# Correlation between Found, REF and ALT
+
+```{r ref_alt}
+
+tmp = df %>%
+  
+  freq_table(REF, ALT, Found) %>%
+  
+  filter(Found == 'Yes') %>%
+  
+  select(-Found) %>%
+  
+  tidyr::complete(., REF, ALT, fill = list(n = 0, prop = 0)) %>%
+  
+  filter(REF != ALT) %>%
+  
+  rename(
+    
+    'N_found' = 'n',
+    'Pct_found' = 'prop'
+    
+  )
+  
+  
+knitr::kable(tmp)
+
+
+```
+
+# Correlation of Position Chromosomal with Found (within REF and ALT)
+
+```{r boxplot_pos_chromosomal}
+
+df$REF = paste('REF:', df$REF)
+
+ggplot(data = df, 
+       
+       aes(
+         x = ALT,
+         fill = as.factor(Found),
+         y = pos_chromosomal)) +
+  
+  geom_boxplot() +
+  
+  labs(fill = 'Found') +
+  
+  facet_wrap(~REF)
+
+```
+
+
+# Correlation of Position Read with Found (within REF and ALT)
+
+```{r boxplot_pos_read}
+
+ggplot(data = df, 
+       
+       aes(
+         x = ALT,
+         fill = as.factor(Found),
+         y = pos_read)) +
+  
+  geom_boxplot() +
+  
+  labs(fill = 'Found') +
+  
+  facet_wrap(~REF)
+
+```
+
+
+
+# Correlation of N of sequences Read with Found (within REF and ALT)
+
+```{r boxplot_n_of_seq}
+
+ggplot(data = df, 
+       
+       aes(
+         x = ALT,
+         fill = as.factor(Found),
+         y = sequences)) +
+  
+  geom_boxplot() +
+  
+  labs(fill = 'Found', y = 'N of sequences') +
+  
+  facet_wrap(~REF)
+
+```
+
+
+```{r data_for_prediction}
+
+df$REF = gsub('REF: ', '', df$REF)
+
+df$Found = ifelse(df$Found == 'Yes', 1, 0)
+
+rfs = c('pos_chromosomal', 'pos_read', 'REF', 'ALT', 'sequences')
+
+
+```
+
+# Logistic Regression Model (with interaction terms)
+
+```{r logit_model, eval = T}
+
+df1 = df %>%
+  
+  mutate(
+    
+    pos_chromosomal = scale(pos_chromosomal)
+    
+    )
+
+model = glm(Found ~ pos_chromosomal * REF + pos_chromosomal * ALT +
+              
+              pos_read * REF + pos_read * ALT,
+            family = 'binomial',
+            data = df1)
+
+
+tmp2 = summary(model)$coefficients %>%
+  
+  as.data.frame() %>%
+  
+  transmute(
+    
+    Riskfactor = rownames(.),
+    OR = round(exp(Estimate),2),
+    
+    CI = paste0(
+      
+      '(',
+      
+      round(exp(Estimate - 1.96 * `Std. Error`), 2),
+      ', ',
+      round(exp(Estimate + 1.96 * `Std. Error`), 2)
+      
+      ,
+      ')'
+      
+      
+    ),
+    p = round(`Pr(>|z|)`,3)
+    
+    ) %>%
+  
+  mutate(p = ifelse(p == 0, '<0.001', as.character(p))) %>%
+  
+  filter(Riskfactor != '(Intercept)') 
+
+rownames(tmp2) = NULL
+
+# tmp2$Riskfactor = gsub('scale\\(pos_chromosomal)', 'pos_chromosomal', tmp2$Riskfactor)
+
+knitr::kable(tmp2)
+
+
+myroc = pROC::roc(
+  
+  df1$Found,
+  model$fitted.values,
+  plot      = F,
+  print.auc = T,
+  ci        = T
+  
+)
+
+
+ggroc(
+  
+  myroc,
+  colour      = 'steelblue',
+  size        = 1,
+  legacy.axes = T
+  
+) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 1),
+    
+    linetype = 'dashed',
+    
+    colour   = 'darkgrey'
+  ) +
+  
+  theme_minimal() +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 1, xend = 1, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 0, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 1, y = 1, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_text(
+    
+    aes(
+      
+      x     = 0.75,
+      y     = 0.45,
+      label = paste0(
+        
+        'AUC = ',
+        round(myroc$ci[2], 3),
+        ' (',
+        round(myroc$ci[1], 3),
+        '-',
+        round(myroc$ci[3], 3),
+        ')'
+        
+      )
+      
+    ),
+    
+    size = 4
+    
+  )
+
+
+```
+
+
+# Logistic Regression Model (without interaction terms)
+
+```{r logit_model_no_interaction}
+
+rfs = c('pos_chromosomal', 'pos_read', 'REF', 'ALT', 'sequences')
+
+df1 = df %>%
+  
+  mutate(
+    
+    pos_chromosomal = scale(pos_chromosomal),
+    pos_read = scale(pos_read),
+    sequences = scale(sequences)
+    
+    )
+
+model = glm(Found ~ pos_chromosomal + REF + ALT + pos_read,
+            family = 'binomial',
+            data = df1)
+
+
+tmp2 = summary(model)$coefficients %>%
+  
+  as.data.frame() %>%
+  
+  transmute(
+    
+    Riskfactor = rownames(.),
+    OR = round(exp(Estimate),2),
+    
+    CI = paste0(
+      
+      '(',
+      
+      round(exp(Estimate - 1.96 * `Std. Error`), 2),
+      ', ',
+      round(exp(Estimate + 1.96 * `Std. Error`), 2)
+      
+      ,
+      ')'
+      
+      
+    ),
+    p = round(`Pr(>|z|)`,3)
+    
+    ) %>%
+  
+  mutate(p = ifelse(p == 0, '<0.001', as.character(p))) %>%
+  
+  filter(Riskfactor != '(Intercept)') 
+
+rownames(tmp2) = NULL
+
+# tmp2$Riskfactor = gsub('scale\\(pos_chromosomal)', 'pos_chromosomal', tmp2$Riskfactor)
+
+knitr::kable(tmp2)
+
+
+myroc = pROC::roc(
+  
+  df1$Found,
+  model$fitted.values,
+  plot      = F,
+  print.auc = T,
+  ci        = T
+  
+)
+
+
+ggroc(
+  
+  myroc,
+  colour      = 'steelblue',
+  size        = 1,
+  legacy.axes = T
+  
+) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 1),
+    
+    linetype = 'dashed',
+    
+    colour   = 'darkgrey'
+  ) +
+  
+  theme_minimal() +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 1, xend = 1, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 0, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 1, y = 1, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_text(
+    
+    aes(
+      
+      x     = 0.75,
+      y     = 0.45,
+      label = paste0(
+        
+        'AUC = ',
+        round(myroc$ci[2], 3),
+        ' (',
+        round(myroc$ci[1], 3),
+        '-',
+        round(myroc$ci[3], 3),
+        ')'
+        
+      )
+      
+    ),
+    
+    size = 4
+    
+  )
+
+
+```
+
+
+
+
+# LASSO penalty in logistic regression (with interaction terms)
+
+
+```{r lasso, eval = T}
+
+rfs = c('pos_chromosomal', 'pos_read', 'REF', 'ALT', 'sequences')
+
+
+df1 = df %>%
+  
+  select(Found, all_of(rfs)) %>%
+  
+  na.omit() %>%
+  
+  mutate(
+    
+    pos_chromosomal = scale(pos_chromosomal),
+    pos_read = scale(pos_read)
+    
+    )
+
+
+set.seed(123)
+
+training.samples <- df1$Found %>% 
+  createDataPartition(p = 0.8, list = FALSE)
+
+train.data  <- df1[training.samples, ]
+
+test.data <- df1[-training.samples, ]
+
+# Dummy code categorical predictor variables
+x <- model.matrix(Found~ pos_chromosomal * REF + pos_chromosomal * ALT + 
+                    
+                    pos_read * REF + pos_read * ALT + 
+                    
+                    sequences * REF + sequences * ALT, train.data)[,-1]
+
+# Convert the outcome (class) to a numerical variable
+y <- train.data$Found
+
+# Find the best lambda using cross-validation
+set.seed(123) 
+
+cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
+
+# Fit the final model on the training data
+model <- glmnet(x, y, alpha = 1, family = "binomial",
+                lambda = cv.lasso$lambda.min)
+
+# Display regression coefficients
+tmp2 = exp(coef(model))
+
+tmp2 = data.frame(
+  
+  rownames(tmp2),
+  round(as.vector(tmp2),2)
+  
+)
+
+colnames(tmp2) = c('Riskfactor', 'OR')
+
+tmp2 = tmp2 %>%
+  
+  filter(Riskfactor != '(Intercept)')
+
+knitr::kable(tmp2)
+
+
+# Make predictions on the test data
+x.test <- model.matrix(Found ~ pos_chromosomal * REF + pos_chromosomal * ALT + 
+                    
+                    pos_read * REF + pos_read * ALT + 
+                    
+                    sequences * REF + sequences * ALT, test.data)[,-1]
+
+probabilities <- model %>%
+  
+  predict(newx = x.test)
+
+myroc = pROC::roc(
+  
+  test.data$Found,
+  probabilities,
+  plot      = F,
+  print.auc = T,
+  ci        = T
+  
+)
+
+
+ggroc(
+  
+  myroc,
+  colour      = 'steelblue',
+  size        = 1,
+  legacy.axes = T
+  
+) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 1),
+    
+    linetype = 'dashed',
+    
+    colour   = 'darkgrey'
+  ) +
+  
+  theme_minimal() +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 1, xend = 1, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 0, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 1, y = 1, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_text(
+    
+    aes(
+      
+      x     = 0.75,
+      y     = 0.45,
+      label = paste0(
+        
+        'AUC = ',
+        round(myroc$ci[2], 3),
+        ' (',
+        round(myroc$ci[1], 3),
+        '-',
+        round(myroc$ci[3], 3),
+        ')'
+        
+      )
+      
+    ),
+    
+    size = 4
+    
+  )
+
+
+```
+
+
+# LASSO penalty in logistic regression (without interaction terms)
+
+```{r lasso_no_interaction}
+
+rfs = c('pos_chromosomal', 'pos_read', 'REF', 'ALT', 'sequences')
+
+
+df1 = df %>%
+  
+  select(Found, all_of(rfs)) %>%
+  
+  na.omit() %>%
+  
+  mutate(
+    
+    pos_chromosomal = scale(pos_chromosomal),
+    pos_read = scale(pos_read)
+    
+    )
+
+
+set.seed(123)
+
+training.samples <- df1$Found %>% 
+  createDataPartition(p = 0.8, list = FALSE)
+
+train.data  <- df1[training.samples, ]
+
+test.data <- df1[-training.samples, ]
+
+# Dummy code categorical predictor variables
+x <- model.matrix(
+  
+  Found~ pos_chromosomal + REF + ALT + pos_read + sequences,
+  train.data)[,-1]
+
+# Convert the outcome (class) to a numerical variable
+y <- train.data$Found
+
+# Find the best lambda using cross-validation
+set.seed(123) 
+
+cv.lasso <- cv.glmnet(x, y, alpha = 1, family = "binomial")
+
+# Fit the final model on the training data
+model <- glmnet(x, y, alpha = 1, family = "binomial",
+                lambda = cv.lasso$lambda.min)
+
+# Display regression coefficients
+tmp2 = exp(coef(model))
+
+tmp2 = data.frame(
+  
+  rownames(tmp2),
+  round(as.vector(tmp2),2)
+  
+)
+
+colnames(tmp2) = c('Riskfactor', 'OR')
+
+tmp2 = tmp2 %>%
+  
+  filter(Riskfactor != '(Intercept)')
+
+knitr::kable(tmp2)
+
+
+# Make predictions on the test data
+x.test <- model.matrix(Found ~ pos_chromosomal + REF + ALT + 
+                    
+                    pos_read + sequences, test.data)[,-1]
+
+probabilities <- model %>%
+  
+  predict(newx = x.test)
+
+myroc = pROC::roc(
+  
+  test.data$Found,
+  probabilities,
+  plot      = F,
+  print.auc = T,
+  ci        = T
+  
+)
+
+
+ggroc(
+  
+  myroc,
+  colour      = 'steelblue',
+  size        = 1,
+  legacy.axes = T
+  
+) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 1),
+    
+    linetype = 'dashed',
+    
+    colour   = 'darkgrey'
+  ) +
+  
+  theme_minimal() +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 1, xend = 1, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 0, yend = 1),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 1, y = 1, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_segment(
+    
+    aes(x = 0, y = 0, xend = 1, yend = 0),
+    
+    linetype = 'dashed'
+    
+  ) +
+  
+  geom_text(
+    
+    aes(
+      
+      x     = 0.75,
+      y     = 0.45,
+      label = paste0(
+        
+        'AUC = ',
+        round(myroc$ci[2], 3),
+        ' (',
+        round(myroc$ci[1], 3),
+        '-',
+        round(myroc$ci[3], 3),
+        ')'
+        
+      )
+      
+    ),
+    
+    size = 4
+    
+  )
+
+
+```
