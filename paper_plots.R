@@ -5,6 +5,7 @@
 #'
 #'Output: Paper Multipanel Figure
 #'
+#'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
 rm(list = ls())
 gc()

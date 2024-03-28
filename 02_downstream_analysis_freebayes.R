@@ -6,7 +6,8 @@
 #'
 #'Output: tsv file with the comparison
 #'
-
+#'Authors: Stella Fragkouli(github:sfragkoul), Nikos Pechlivanis(github:npechl) 
+#'
 rm(list = ls())
 gc()
 

@@ -1,7 +1,10 @@
-
-
-#function to locate variants of 100% AF in the individual files and
-#search their POS in the Merged bam file
+#'
+#'
+#'function to locate variants of 100% AF in the individual files and
+#'search their POS of interest in the Merged bam file
+#'
+#'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
+#'
 gt_analysis <- function(runs, folder) {
     
     nt_runs = list()
