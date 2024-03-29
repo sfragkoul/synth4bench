@@ -66,7 +66,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 
 - Input:  annotated tsv file, ground truth vcf, a selected caller vcf
 							 
-- Output: final Figure for the Benchmarking of a selected caller </div>
+- Output: final Figure for the Benchmarking of a selected caller 
 
 `helpers_*.R` - This R script incudes all necessary functions for `02_patchwork_*.R` and  `03_patchwork_*.R` scripts.
 
@@ -120,6 +120,8 @@ For the case of VarScan an extra step was required to convert its output to the 
 - Input:  A folder with the files containing all the datasets and the 5.3_ROC_Curves.R" file.
 							 
 - Output: A figure with the ROC curves for each caller.
+
+  </div>
 
 ## Contribute
 
