@@ -1,6 +1,4 @@
-
-
-
+source("libraries.R")
 
 read_vcf <- function(path, caller, gt) {
   
@@ -29,7 +27,7 @@ read_vcf <- function(path, caller, gt) {
   
 }
 
-
+source("helpers_freebayes.R")
 read_vcf_freebays <- function(path, gt) {
   
   vcf <- read.vcfR( path, verbose = FALSE )
@@ -42,6 +40,7 @@ read_vcf_freebays <- function(path, gt) {
     
 }
 
+source("helpers_gatk.R")
 read_vcf_mutect2 <- function(path, gt) {
   
   vcf <- read.vcfR( path, verbose = FALSE )
@@ -54,6 +53,7 @@ read_vcf_mutect2 <- function(path, gt) {
   
 }
 
+source("helpers_LoFreq.R")
 read_vcf_LoFreq <- function(path, gt) {
     
     vcf <- read.vcfR( path, verbose = FALSE )
@@ -66,6 +66,7 @@ read_vcf_LoFreq <- function(path, gt) {
     
 }
 
+source("helpers_VarDict.R")
 read_vcf_VarDict <- function(path, gt) {
     
     vcf <- read.vcfR( path, verbose = FALSE )
@@ -78,6 +79,7 @@ read_vcf_VarDict <- function(path, gt) {
     
 }
 
+source("helpers_VarScan.R")
 read_vcf_VarScan <- function(path, gt) {
     
     vcf <- read.vcfR( path, verbose = FALSE )
