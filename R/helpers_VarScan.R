@@ -7,6 +7,20 @@
 #'
 
 #function to search the POS of interest from the caller's vcf file
+
+read_vcf_VarScan <- function(path, gt) {
+  
+  vcf <- read.vcfR( path, verbose = FALSE )
+  
+  vcf_df = vcf |>
+    merge_VarScan(gt) |>
+    clean_VarScan()
+  
+  return(vcf_df)
+  
+}
+
+
 merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     
     VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()

@@ -7,6 +7,19 @@
 #'
 #'
 
+
+read_vcf_freebays <- function(path, gt) {
+  
+  vcf <- read.vcfR( path, verbose = FALSE )
+  
+  vcf_df <- gt |>
+    merge_freebayes(gt) |>
+    clean_freebayes()
+  
+  return(vcf_df)
+  
+}
+
 #function to search the POS of interest from the caller's vcf file
 merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     

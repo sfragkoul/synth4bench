@@ -7,6 +7,20 @@
 #'
 
 #function to search the POS of interest from the caller's vcf file
+
+read_vcf_LoFreq <- function(path, gt) {
+  
+  vcf <- read.vcfR( path, verbose = FALSE )
+  
+  vcf_df = vcf |>
+    merge_LoFreq(gt) |>
+    clean_LoFreq()
+  
+  return(vcf_df)
+  
+}
+
+
 merge_LoFreq <- function(LoFreq_somatic_vcf, merged_gt) {
     LoFreq_s0  = LoFreq_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()

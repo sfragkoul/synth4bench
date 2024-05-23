@@ -7,6 +7,21 @@
 #'
 
 #function to search the POS of interest from the caller's vcf file
+
+
+read_vcf_VarDict <- function(path, gt) {
+  
+  vcf <- read.vcfR( path, verbose = FALSE )
+  
+  vcf_df = vcf |>
+    merge_VarDict(gt) |>
+    clean_VarDict()
+  
+  return(vcf_df)
+  
+}
+
+
 merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
     
     VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
