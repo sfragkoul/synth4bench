@@ -5,9 +5,9 @@ library(optparse)
 
 #Parse arguments from command line
 options <- list(
-  make_option(c("-m", "--gt_comparison"), action = "store", type = "character", help="VCF files directory path."),
-  make_option(c("-v", "--vcf_path"), action = "store", type = "character", help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)"),
-  make_option(c("-g", "--gt_path"), action = "store", type = "character", help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)"),
+  make_option(c("-m", "--gt_comparison"), action = "store", type = "character", help="Ground Truth vs Caller file"),
+  make_option(c("-v", "--vcf_path"), action = "store", type = "character", help="Path to caller vcf"),
+  make_option(c("-g", "--gt_path"), action = "store", type = "character", help="Path to ground truth vcf"),
   make_option(c("-c", "--caller"), action = "store", type = "character", help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)"),
   make_option(c("-w", "--working_directory"), action = "store", type = "character", help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)")
   
