@@ -22,6 +22,44 @@ read_vcf_VarDict <- function(path, gt) {
 }
 
 
+plot_synth4bench_VarDict(df, vcf_GT, vcf_caller){
+    
+    out1 = bar_plots_VarDict(df)
+    out2 = density_plot_VarDict(df)
+    out3 = bubble_plots_VarDict(df)
+    out4 = venn_plot_VarDict(vcf_read_GT, vcf_read_VarDict)
+    
+    library(patchwork)
+    
+    multi2 = out2$groundtruth / out2$VarDict &
+        
+        theme(
+            plot.margin = margin(10, 10, 10, 10)
+        )
+
+    ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
+        (out1$allele + theme(plot.margin = margin(r = 50))) + 
+        multi2 +
+        
+        plot_layout(
+            widths = c(1, 1, 3)
+        )
+    
+    ann2 = out3 + out4 +
+        
+        plot_layout(
+            widths = c(2, 1)
+        )
+
+    multi = ann1 / ann2 +
+        
+        plot_layout(heights = c(1.5, 1)) + 
+        plot_annotation(title = folder)
+    
+    
+    return(list(multi, out4))
+}
+
 merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
     
     VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()

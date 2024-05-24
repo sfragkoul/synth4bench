@@ -21,6 +21,47 @@ read_vcf_LoFreq <- function(path, gt) {
 }
 
 
+
+plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller){
+    
+    out1 = bar_plots_LoFreq(df)
+    out2 = density_plot_LoFreq(df)
+    out3 = bubble_plots_LoFreq(df)
+    out4 = venn_plot_LoFreq(vcf_read_GT, vcf_read_LoFreq)
+    
+    library(patchwork)
+    
+    multi2 = out2$groundtruth / out2$LoFreq &
+        
+        theme(
+            plot.margin = margin(10, 10, 10, 10)
+        )
+    
+    
+    ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
+        (out1$allele + theme(plot.margin = margin(r = 50))) + 
+        multi2 +
+        
+        plot_layout(
+            widths = c(1, 1, 3)
+        )
+    
+    
+    ann2 = out3 + out4 +
+        
+        plot_layout(
+            widths = c(2, 1)
+        )
+    
+    multi = ann1 / ann2 +
+        
+        plot_layout(heights = c(1.5, 1)) + 
+        plot_annotation(title = folder)
+    
+    
+    return(list(multi, out4))
+}
+
 merge_LoFreq <- function(LoFreq_somatic_vcf, merged_gt) {
     LoFreq_s0  = LoFreq_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()

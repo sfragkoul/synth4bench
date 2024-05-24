@@ -47,7 +47,7 @@ plot_synth4bench <- function(gt_comparison, vcf_path, gt_path, caller) {
   
   if(caller == "freebayes") {
     
-    
+     plots <- plot_synth4bench_freebayes(df, vcf_GT, vcf_caller)
     
   } else if (caller == "mutect2") {
     
@@ -55,15 +55,15 @@ plot_synth4bench <- function(gt_comparison, vcf_path, gt_path, caller) {
     
   } else if (caller == "LoFreq") {
     
-    
+    plots <- plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller)
     
   } else if (caller == "VarDict") {
     
-    
+    plots <- plot_synth4bench_VarDict(df, vcf_GT, vcf_caller)
     
   } else if (caller == "VarScan") {
     
-    
+    plots <- plot_synth4bench_VarScan(df, vcf_GT, vcf_caller)
     
   }
   

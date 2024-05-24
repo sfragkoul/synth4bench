@@ -35,9 +35,6 @@ plot_synth4bench_gatk(df, vcf_GT, vcf_caller) {
       plot.margin = margin(10, 10, 10, 10)
     )
   
-  
-  
-  
   ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
     (out1$allele + theme(plot.margin = margin(r = 50))) + 
     multi2 +
@@ -46,14 +43,11 @@ plot_synth4bench_gatk(df, vcf_GT, vcf_caller) {
       widths = c(1, 1, 3)
     )
   
-  
-  
   ann2 = out3 + out4 +
     
     plot_layout(
       widths = c(2, 1)
     )
-  
   
   multi = ann1 / ann2 +
     

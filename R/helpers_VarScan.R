@@ -21,6 +21,45 @@ read_vcf_VarScan <- function(path, gt) {
 }
 
 
+plot_synth4bench_VarScan(df, vcf_GT, vcf_caller){
+    
+    out1 = bar_plots_VarScan(df)
+    out2 = density_plot_VarScan(df)
+    out3 = bubble_plots_VarScan(df)
+    out4 = venn_plot_VarScan(vcf_read_GT, vcf_read_VarScan)
+    
+    library(patchwork)
+    
+    multi2 = out2$groundtruth / out2$VarScan &
+        
+        theme(
+            plot.margin = margin(10, 10, 10, 10)
+        )
+
+    
+    ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
+        (out1$allele + theme(plot.margin = margin(r = 50))) + 
+        multi2 +
+        
+        plot_layout(
+            widths = c(1, 1, 3)
+        )
+    
+    ann2 = out3 + out4 +
+        
+        plot_layout(
+            widths = c(2, 1)
+        )
+    
+    multi = ann1 / ann2 +
+        
+        plot_layout(heights = c(1.5, 1)) + 
+        plot_annotation(title = folder)
+    
+    return(list(multi, out4))
+}
+
+
 merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     
     VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
