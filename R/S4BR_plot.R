@@ -1,7 +1,15 @@
 
 
 #!/usr/bin/env Rscript
-library(optparse)
+source("R/libraries.R")
+
+source("R/common_helpers.R")
+
+source("R/helpers_freebayes.R")
+source("R/helpers_gatk.R")
+source("R/helpers_LoFreq.R")
+source("R/helpers_VarDict.R")
+source("R/helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
@@ -13,12 +21,9 @@ options <- list(
   
 )
 
-
 arguments <- parse_args(OptionParser(option_list = options))
 
 print(arguments)
-
-source("R/2_downstream_analysis.R")
 
 plots <- plot_synth4bench(arguments$gt_comparison, arguments$vcf_path, arguments$gt_path, arguments$caller)
 

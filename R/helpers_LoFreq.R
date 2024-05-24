@@ -29,8 +29,6 @@ plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller){
     out3 = bubble_plots_LoFreq(df)
     out4 = venn_plot_LoFreq(vcf_read_GT, vcf_read_LoFreq)
     
-    library(patchwork)
-    
     multi2 = out2$groundtruth / out2$LoFreq &
         
         theme(

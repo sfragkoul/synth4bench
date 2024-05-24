@@ -28,8 +28,6 @@ plot_synth4bench_VarScan(df, vcf_GT, vcf_caller){
     out3 = bubble_plots_VarScan(df)
     out4 = venn_plot_VarScan(vcf_read_GT, vcf_read_VarScan)
     
-    library(patchwork)
-    
     multi2 = out2$groundtruth / out2$VarScan &
         
         theme(

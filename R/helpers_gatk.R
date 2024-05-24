@@ -27,8 +27,6 @@ plot_synth4bench_gatk(df, vcf_GT, vcf_caller) {
   out3 = bubble_plots_gatk(df)
   out4 = venn_plot_gatk(vcf_GT, vcf_caller)
   
-  library(patchwork)
-  
   multi2 = out2$groundtruth / out2$mutect2 &
     
     theme(
