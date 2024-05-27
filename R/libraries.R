@@ -11,4 +11,9 @@ library(patchwork)
 
 library(optparse)
 
+library(GenomicAlignments)
+library(Rsamtools)
+library(seqinr)
+
+
 # library(GenomicRanges)
