@@ -1,0 +1,22 @@
+
+## synth data generation definitions
+
+#fffff
+working_directory: .
+folder: results
+path_to_neat: neat_path
+path_to_bam_readcount: bam_readcount_path
+
+runs: 5
+rng: 213,214,215,217,218
+mutation_rate: 0.1
+read_length: 100
+coverage: 100
+fragment_stats: 
+ 1: 300
+ 2: 30
+path_to_reference: TP53.fasta
+output_bam_merged: Merged
+
+## variant calling definitions
+caller: Mutect2
