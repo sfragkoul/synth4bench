@@ -19,4 +19,6 @@ path_to_reference: TP53.fasta
 output_bam_merged: Merged
 
 ## variant calling definitions
-caller: Mutect2
+caller: lofreq
+varscan_scripts_path: path_to_Varscan2VCF
+vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080

@@ -80,113 +80,28 @@ printf "\n"
 
 printf "echo Variant Calling \n"
 
-#if ${caller}== GATK-Mutect2
+if [ "${caller}" == "Mutect2" ]; then
 
-printf "gatk Mutect2 --reference "
-printf "${path_to_reference} --input "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam --tumor-sample "
-printf "${output_bam_merged} --output "
-printf "${working_directory}/${folder}/${output_bam_merged}_GATK.vcf > "
-printf "${working_directory}/${folder}/${output_bam_merged}.Mutect.out 2>&1"
-printf "\n"
-printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_GATK.vcf --output "
-printf "${working_directory}/${folder}/${output_bam_merged}_GATK_norm.vcf --output-type "
-printf "v -m \"-\""
-printf "rm ${working_directory}/${folder}/${output_bam_merged}_GATK.vcf"
-printf "\n \n"
+	bash mutect2_template.sh
+	
+elif [ "${caller}" == "freebayes" ]; then
 
-#if ${caller}== freebayes
+	bash freebayes_template.sh
+	
+elif [ "${caller}" == "lofreq" ]; then
 
-printf "freebayes --fasta-reference "
-printf "${path_to_reference} --bam "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam > "
-printf "${working_directory}/${folder}/freebayes.vcf"
-printf "\n"
-printf "bcftools reheader --fai "
-printf "${path_to_reference}.fai -o "
-printf "${working_directory}/${folder}/${output_bam_merged}_freebayes.vcf "
-printf "${working_directory}/${folder}/freebayes.vcf"
-printf "\n"
-printf "rm ${working_directory}/${folder}/freebayes.vcf"
-printf "\n"
-printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_freebayes.vcf --output "
-printf "${working_directory}/${folder}/${output_bam_merged}_freebayes_norm.vcf --output-type "
-printf "v -m \"-\""
-printf "\n"
-printf "rm ${working_directory}/${folder}/${output_bam_merged}_freebayes.vcf"
-printf "\n \n"
+	bash lofreq_template.sh
+	
+elif [ "${caller}" == "varscan" ]; then
 
+	bash varscan_template.sh
+	
+elif [ "${caller}" == "vardict" ]; then
 
-#if ${caller}== lofreq
+	bash vardict_template.sh
+	
+else
 
-printf "lofreq indelqual --dindel -f "
-printf "${path_to_reference} -o "
-printf "${working_directory}/${folder}/${output_bam_merged}_indels.sorted.uniq.rg.bam "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam "
-printf "\n"
-printf "lofreq call -f "
-printf "${path_to_reference} --call-indels -o "
-printf "${working_directory}/${folder}/Lofreq.vcf "
-printf "${working_directory}/${folder}/${output_bam_merged}_indels.sorted.uniq.rg.bam "
-printf "\n"
-printf "bcftools reheader --fai "
-printf "${path_to_reference}.fai -o "
-printf "${working_directory}/${folder}/${output_bam_merged}_Lofreq_norm.vcf "
-printf "${working_directory}/${folder}/Lofreq.vcf"
-printf "\n"
-printf "rm ${working_directory}/${folder}/Lofreq.vcf"
-printf "\n \n"
-
-
-#if ${caller}== varcan
-#we need Varscan2VCF path
-
-printf "samtools mpileup -f "
-printf "${path_to_reference} "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam -a -o "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.mpileup"
-printf "\n"
-printf "varscan pileup2cns "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.mpileup > "
-printf "${working_directory}/${folder}/VarScan.tsv"
-printf "\n"
-printf "python path/to/Varscan2VCF/vscan_pileup2cns2vcf.py "
-printf "${working_directory}/${folder}/VarScan.tsv > ${working_directory}/${folder}/${output_bam_merged}_VarScan.vcf"
-printf "\n"
-printf "rm ${working_directory}/${folder}/VarScan.tsv"
-printf "\n"
-printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_VarScan.vcf --output "
-printf "${working_directory}/${folder}/${output_bam_merged}_VarScan_norm.vcf --output-type "
-printf "v -m \"-\""
-printf "\n"
-printf "rm ${working_directory}/${folder}/${output_bam_merged}_VarScan.vcf"
-printf "\n \n"
-
-#if ${caller}== vardict
-#need to read this -R hg38_knownGene_ENST00000610292.4:0-19080
-
-printf "vardict-java -G "
-printf "${path_to_reference} -f 0.0001 -N ${output_bam_merged} -b "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam -R "
-printf "hg38_knownGene_ENST00000610292.4:0-19080 > ${working_directory}/${folder}/${output_bam_merged}_VarDict.txt"
-printf "\n"
-printf "var2vcf_valid.pl -A "
-printf "${working_directory}/${folder}/${output_bam_merged}_VarDict.txt >  "
-printf "${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf"
-printf "\n"
-printf "rm ${working_directory}/${folder}/${output_bam_merged}_VarDict.txt"
-printf "\n"
-printf "bcftools reheader --fai "
-printf "${path_to_reference}.fai -o "
-printf "${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf "
-printf "${working_directory}/${folder}/VarDict.vcf"
-printf "\n"
-printf "rm ${working_directory}/${folder}/VarDict.vcf"
-printf "\n"
-printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf --output "
-printf "${working_directory}/${folder}/${output_bam_merged}_VarDict_norm.vcf --output-type "
-printf "v -m \"-\""
-printf "\n"
-printf "rm ${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf"
-printf "\n \n"
-
+	echo "Invalid caller option. Please provide one of the following: Mutect2, freebayes, lofreq, varscan, vardict"
+	
+fi
