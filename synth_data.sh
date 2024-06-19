@@ -31,3 +31,4 @@ bcftools index ./results/4/4_golden.vcf.gz
 bcftools index ./results/5/5_golden.vcf.gz 
 bcftools merge ./results/1/1_golden.vcf.gz ./results/2/2_golden.vcf.gz ./results/3/3_golden.vcf.gz ./results/4/4_golden.vcf.gz ./results/5/5_golden.vcf.gz > ./results/Merged_auto_ground_truth.vcf
 bcftools norm ./results/Merged_auto_ground_truth.vcf --output ./results/Merged_auto_ground_truth_norm.vcf --output-type v -m "-"
+rm ./results/Merged_auto_ground_truth.vcf
