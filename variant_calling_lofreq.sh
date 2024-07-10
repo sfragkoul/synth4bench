@@ -3,7 +3,7 @@ echo Common Pre-process Steps
 samtools sort -o ./results/Merged_auto.sorted.bam ./results/Merged_auto.bam
 samtools view -h -F 0x904 -b ./results/Merged_auto.sorted.bam > ./results/Merged_auto.sorted.uniq.bam
 samtools flagstat ./results/Merged_auto.sorted.uniq.bam > ./results/Merged_auto.align.stats.txt
-samtools addreplacerg -r '@RG\tID:results/Merged_auto\tSM:results/Merged_auto' ./results/Merged_auto.sorted.uniq.bam -o ./results/Merged_auto.sorted.uniq.rg.bam 
+samtools addreplacerg -r '@RG\tID:Merged_auto\tSM:Merged_auto' ./results/Merged_auto.sorted.uniq.bam -o ./results/Merged_auto.sorted.uniq.rg.bam 
 samtools depth ./results/Merged_auto.sorted.uniq.rg.bam -o ./results/Merged_auto.depth.txt 
 samtools index ./results/Merged_auto.sorted.uniq.rg.bam
 samtools index ./results/1/1_golden.bam 
@@ -22,9 +22,8 @@ echo bam-readcount reporting
 /home/sfragkoul/bam-readcount/build/bin/bam-readcount -w 0 -f /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta ./results/5/5_golden.bam > ./results/5/5_report.tsv
 
 echo Variant Calling 
-#Printing lofreq commands
-lofreq indelqual --dindel -f /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta -o ./results/Merged_auto_indels.sorted.uniq.rg.bam ./results/Merged_auto.sorted.uniq.rg.bam 
-lofreq call -f /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta --call-indels -o ./results/Lofreq.vcf ./results/Merged_auto_indels.sorted.uniq.rg.bam 
-bcftools reheader --fai /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta.fai -o ./results/Merged_auto_Lofreq_norm.vcf ./results/Lofreq.vcf
-rm ./results/Lofreq.vcf
+#Printing Mutect2 commands
+gatk Mutect2 --reference /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta --input ./results/Merged_auto.sorted.uniq.rg.bam --tumor-sample Merged_auto --output ./results/Merged_auto_GATK.vcf > ./results/Merged_auto.Mutect.out 2>&1
+bcftools norm ./results/Merged_auto_GATK.vcf --output ./results/Merged_auto_GATK_norm.vcf --output-type v -m "-"
+rm ./results/Merged_auto_GATK.vcf
  

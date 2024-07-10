@@ -17,7 +17,7 @@ function parse_yaml {
 
 eval $(parse_yaml parameters.yaml)
 
-printf "Printing Mutect2 commands"
+printf "#Printing Mutect2 commands"
 printf "\n"
 
 printf "gatk Mutect2"

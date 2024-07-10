@@ -22,23 +22,23 @@ printf "\n"
 
 printf "freebayes"
 printf " --fasta-reference ${path_to_reference}"
-printf " --bam ${working_directory}/${output_bam_merged}.sorted.uniq.rg.bam"
+printf " --bam ${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam"
 printf " > ${working_directory}/${folder}/freebayes.vcf"
 printf "\n"
 
 printf "bcftools reheader --fai ${path_to_reference}.fai"
-printf " -o ${working_directory}/${output_bam_merged}_freebayes.vcf "
+printf " -o ${working_directory}/${folder}/${output_bam_merged}_freebayes.vcf "
 printf "${working_directory}/${folder}/freebayes.vcf"
 printf "\n"
 
 printf "rm ${working_directory}/${folder}/freebayes.vcf"
 printf "\n"
 
-printf "bcftools norm ${working_directory}/${output_bam_merged}_freebayes.vcf"
-printf " --output ${working_directory}/${output_bam_merged}_freebayes_norm.vcf"
+printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_freebayes.vcf"
+printf " --output ${working_directory}/${folder}/${output_bam_merged}_freebayes_norm.vcf"
 printf " --output-type v"
 printf " -m \"-\""
 printf "\n"
 
-printf "rm ${working_directory}/${output_bam_merged}_freebayes.vcf"
+printf "rm ${working_directory}/${folder}/${output_bam_merged}_freebayes.vcf"
 printf "\n \n"

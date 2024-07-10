@@ -23,15 +23,16 @@ fragment_stats:
  2: 30
 #path to reference file
 path_to_reference: /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta
-#path to final merged bam file
-output_bam_merged: results/Merged_auto
+#name of final merged bam file
+output_bam_merged: Merged_auto
+
 
 ### variant_calling_template.sh parameters ###
 
 #path to bam readcount scripts
 path_to_bam_readcount: /home/sfragkoul
 #somatic variant caller name
-caller: freebayes
+caller: Mutect2
 #path to varscan_scripts_path extra scripts
 varscan_scripts_path: path_to_Varscan2VCF
 #genomic region of interest as taken from VarScan
