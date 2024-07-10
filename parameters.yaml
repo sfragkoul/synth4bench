@@ -6,7 +6,7 @@ working_directory: .
 #folder for results
 folder: results
 #path to NEAT scripts
-path_to_neat: /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT
+path_to_neat: /NEAT
 #number of individual synth batches 
 runs: 5
 #seeds for each individual synth batch
@@ -22,7 +22,7 @@ fragment_stats:
  1: 300
  2: 30
 #path to reference file
-path_to_reference: /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta
+path_to_reference: /reference/TP53.fasta
 #name of final merged bam file
 output_bam_merged: Merged_auto
 
@@ -30,10 +30,10 @@ output_bam_merged: Merged_auto
 ### variant_calling_template.sh parameters ###
 
 #path to bam readcount scripts
-path_to_bam_readcount: /home/sfragkoul
+path_to_bam_readcount: /home
 #somatic variant caller name
 caller: varscan
 #path to varscan_scripts_path extra scripts
-varscan_scripts_path: /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/Varscan2VCF
+varscan_scripts_path: /Varscan2VCF
 #genomic region of interest as taken from VarScan
 vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080
