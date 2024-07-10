@@ -17,7 +17,7 @@ function parse_yaml {
 
 eval $(parse_yaml parameters.yaml)
 
-printf "Printing VarScan commands"
+printf "#Printing VarScan commands"
 printf "\n"
 
 
