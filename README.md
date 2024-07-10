@@ -50,31 +50,39 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 <div align='justify'> Here follows the list of all scripts and their description:
 
 ### Main scripts
-`synth_generation_template.sh` - This bash script is the basis of synth4bench workflow. It calls NEATv3.3 in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/` with desired paths in all commands.
 
-- Input: fasta reference file
+<p align="center"> 
+<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 300px; width: 500px;"/>
+</p>
+
+
+`parameters.yaml` - File in which the user sets all the parameters of the workflow.
+
+`synth_generation_template.sh` - This bash script prints the commands of the workflow for the synthetic data generation with parameters spesified by the user.
+
+- Input files: fasta reference file
 							 
-- Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file, Merged bam file, processed bam files and vcf file with all variants that were detected, tsv file with the genomic content
+- Output files: fastq files with pair end reads, ground truth "golden" bam file and bai index file, ground truth "golden" vcf file, Merged bam and vcf files for the ground truth.
 
-`variant_calling_template.sh` - This R script compares the variants that a selected caller reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
+`variant_calling_template.sh` - This bash script prints the commands of the workflow for the variant calling process with parameters spesified by the user. 
 
-- Input:  bam-readcount tsv reports, vcf file from a selected caller
+- Input files:  ground truth Merged bam file
   			 
-- Output: tsv file containing information regarding the ground truth variants
+- Output files: vcf files from variant callers, bam-readcount tsv reports, files with stats for the ground truth Merged bam file
 
-`S4BR.R` - This R script produces the final Figure of the Benchmarking of a selected caller.
+`S4BR.R` - 
 
-- Input:  annotated tsv file, ground truth vcf, a selected caller vcf
+- Input files:  
 							 
-- Output: final Figure for the Benchmarking of a selected caller 
+- Output files: 
 
-`S4BR_plot.R` - This R script incudes all necessary functions for `02_patchwork_*.R` and  `03_patchwork_*.R` scripts.
+`S4BR_plot.R` - 
 
-`paper_plots.R` - This R script produces the final Multipanel Figure for the paper.
+`paper_plots.R` - 
 
-- Input: comparison tsv file, ground truth vcf, caller's vcf
+- Input files: 
 
-- Output: Paper Multipanel Figure
+- Output files: 
 
 ### Extra scripts
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script `vscan_pileup2cns2vcf.py` can be found [here](https://github.com/sfragkoul/Varscan2VCF).
@@ -83,39 +91,39 @@ For the case of VarScan an extra step was required to convert its output to the 
 
 `S4BR_read_pos.R` - A script to report all ground truth variants in each chromosomal position.
 
-- Input:  individual "golden" bam files produced by NEAT
+- Input files:  individual "golden" bam files produced by NEAT
 							 
-- Output: reports in tsv format with the variants in each chromosomal position for each individual "golden" bam file
+- Output files: reports in tsv format with the variants in each chromosomal position for each individual "golden" bam file
 
 `S4BR_read_pos.R` - A script to report variants that were either  detected or not detected by each caller. The read positions were divided in bins to study possible correlated trends.
 
-- Input:  tsv file with reported variants from caller, reports in tsv format with the variants in each chromosomal position for each individual "golden" bam file 
+- Input files:  tsv file with reported variants from caller, reports in tsv format with the variants in each chromosomal position for each individual "golden" bam file 
 							 
-- Output: reports with variants that were either detected or not detected by each caller. The read positions were divided in bins.
+- Output files: reports with variants that were either detected or not detected by each caller. The read positions were divided in bins.
 
 `stats_1_Prediction_Coverage_Length.R` - This script calculates the Kandall's tau coefficient of the Coverage and Read length with the modified Accuracy (mAC), False negative (FN) and False positive (FP) rates.
 
-- Input:  an xlsx file with a column containing the callers (named Caller), a column specifying the AC, FN, FP rate (named Variants), and a column for each coverage (in a Sheet named Coverage) or read length (in a Sheet named Read_length) with the respective rates. 
+- Input files:  an xlsx file with a column containing the callers (named Caller), a column specifying the AC, FN, FP rate (named Variants), and a column for each coverage (in a Sheet named Coverage) or read length (in a Sheet named Read_length) with the respective rates. 
 							 
-- Output: A xlsx file with the results in two sheets: Coverage and Read_length
+- Output files: A xlsx file with the results in two sheets: Coverage and Read_length
 
 `stats_2_Statistical_Analysis.Rmd` - This script runs the statistical analysis for a given dataset.
 
-- Input:  A csv file with variants that were either detected or not detected by each caller.
+- Input files:  A csv file with variants that were either detected or not detected by each caller.
 							 
-- Output: A word document with the results of the fatalistically analyses.
+- Output files: A word document with the results of the fatalistically analyses.
 
 `stats_3_ROC_Curves.R` - This script produces a ROC curve for a given dataset.
 
-- Input:  A csv file with variants that were either detected or not detected by each caller.
+- Input files:  A csv file with variants that were either detected or not detected by each caller.
 							 
-- Output: A ROC curve.
+- Output files: A ROC curve.
 
 `stats_4_ROC_Curves_Merged.R` - This script produces a merged figure with the ROC curves for a given caller, each curve corresponding to a specific Coverage and Read length.
 
-- Input:  A folder with the files containing all the datasets and the 5.3_ROC_Curves.R" file.
+- Input files:  A folder with the files containing all the datasets and the 5.3_ROC_Curves.R" file.
 							 
-- Output: A figure with the ROC curves for each caller.
+- Output files: A figure with the ROC curves for each caller.
 
   </div>
 
