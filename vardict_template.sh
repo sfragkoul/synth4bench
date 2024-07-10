@@ -17,7 +17,7 @@ function parse_yaml {
 
 eval $(parse_yaml parameters.yaml)
 
-printf "Printing vardict commands"
+printf "#Printing vardict commands"
 printf "\n"
 
 printf "vardict-java"
@@ -31,7 +31,7 @@ printf "\n"
 
 printf "var2vcf_valid.pl"
 printf " -A ${working_directory}/${folder}/${output_bam_merged}_VarDict.txt"
-printf " >  ${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf"
+printf " >  ${working_directory}/${folder}/${output_bam_merged}_VarDict_tmp.vcf"
 printf "\n"
 
 printf "rm ${working_directory}/${folder}/${output_bam_merged}_VarDict.txt"
@@ -40,10 +40,10 @@ printf "\n"
 printf "bcftools reheader"
 printf " --fai ${path_to_reference}.fai"
 printf " -o ${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf "
-printf "${working_directory}/${folder}/VarDict.vcf"
+printf "${working_directory}/${folder}/${output_bam_merged}_VarDict_tmp.vcf"
 printf "\n"
 
-printf "rm ${working_directory}/${folder}/VarDict.vcf"
+printf "rm ${working_directory}/${folder}/${output_bam_merged}_VarDict_tmp.vcf"
 printf "\n"
 
 printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_VarDict.vcf"
