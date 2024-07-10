@@ -52,7 +52,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 ### Main scripts
 
 <p align="center"> 
-<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 200px; width: 500px;"/>
+<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 300px; width: 600px;"/>
 </p>
 
 
