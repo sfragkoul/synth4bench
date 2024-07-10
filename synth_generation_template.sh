@@ -50,7 +50,7 @@ done
 printf "echo Merging bam files\n"
 
 printf "samtools merge"
-printf " ${working_directory}/${output_bam_merged}.bam"
+printf " ${working_directory}/${folder}/${output_bam_merged}.bam"
 
 for i in $( seq 1 1 $runs ); do
 	
@@ -74,13 +74,13 @@ for i in $( seq 1 1 $runs ); do
 	printf " ${working_directory}/${folder}/${i}/${i}_golden.vcf.gz"
 done
 
-printf " > ${working_directory}/${output_bam_merged}_ground_truth.vcf\n"	
+printf " > ${working_directory}/${folder}/${output_bam_merged}_ground_truth.vcf\n"	
 	
 	
 printf "bcftools norm"
-printf " ${working_directory}/${output_bam_merged}_ground_truth.vcf"
-printf " --output ${working_directory}/${output_bam_merged}_ground_truth_norm.vcf"	
+printf " ${working_directory}/${folder}/${output_bam_merged}_ground_truth.vcf"
+printf " --output ${working_directory}/${folder}/${output_bam_merged}_ground_truth_norm.vcf"	
 printf " --output-type v -m \"-\""
 printf "\n"
-printf "rm ${working_directory}/${output_bam_merged}_ground_truth.vcf"
+printf "rm ${working_directory}/${folder}/${output_bam_merged}_ground_truth.vcf"
 printf "\n"
