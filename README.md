@@ -50,29 +50,25 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 <div align='justify'> Here follows the list of all scripts and their description:
 
 ### Main scripts
-`1_synth4bench.sh` - This bash script is the basis of synth4bench workflow. It calls NEATv3.3 in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/` with desired paths in all commands.
+`synth_generation_template.sh` - This bash script is the basis of synth4bench workflow. It calls NEATv3.3 in order to generate 10 individual synthetic data datasets, create one Merged bam file, performs some preprocess steps before implementing somatic variant calling using GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq and produces bam report files with the genomic content at certain chromosomal positionsusing bam-readcount. Please replace all `path/to/` with desired paths in all commands.
 
 - Input: fasta reference file
 							 
 - Output: fastq files with pair end reads, "golden" bam file and bai index file, "golden" vcf file, Merged bam file, processed bam files and vcf file with all variants that were detected, tsv file with the genomic content
 
-`2_downstream_analysis_*.R` - This R script compares the variants that a selected caller reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
+`variant_calling_template.sh` - This R script compares the variants that a selected caller reported against the ground truth. Firsty it identifies the variants with 100% Allele Frequency(AF) in the individual bam files and then caclulates their AF in the final Merged bam file.
 
 - Input:  bam-readcount tsv reports, vcf file from a selected caller
   			 
 - Output: tsv file containing information regarding the ground truth variants
 
-`3_plot_patchwork_*.R` - This R script produces the final Figure of the Benchmarking of a selected caller.
+`S4BR.R` - This R script produces the final Figure of the Benchmarking of a selected caller.
 
 - Input:  annotated tsv file, ground truth vcf, a selected caller vcf
 							 
 - Output: final Figure for the Benchmarking of a selected caller 
 
-`helpers_*.R` - This R script incudes all necessary functions for `02_patchwork_*.R` and  `03_patchwork_*.R` scripts.
-
-`libraries.R` - This R script incudes all necessary libraries for `02_patchwork_*.R` and `03_patchwork_*.R` scripts.
-
-*Note that * is one of the following = (Mutect2, Freebayes, VarDict, VarScan, LoFreq).*
+`S4BR_plot.R` - This R script incudes all necessary functions for `02_patchwork_*.R` and  `03_patchwork_*.R` scripts.
 
 `paper_plots.R` - This R script produces the final Multipanel Figure for the paper.
 
@@ -85,37 +81,37 @@ For the case of VarScan an extra step was required to convert its output to the 
 
 ### Statistical Analysis scripts
 
-`4.1_report_varbp.R` - A script to report all ground truth variants in each chromosomal position.
+`S4BR_read_pos.R` - A script to report all ground truth variants in each chromosomal position.
 
 - Input:  individual "golden" bam files produced by NEAT
 							 
 - Output: reports in tsv format with the variants in each chromosomal position for each individual "golden" bam file
 
-`4.2_explore_mut_pos.R` - A script to report variants that were either  detected or not detected by each caller. The read positions were divided in bins to study possible correlated trends.
+`S4BR_read_pos.R` - A script to report variants that were either  detected or not detected by each caller. The read positions were divided in bins to study possible correlated trends.
 
 - Input:  tsv file with reported variants from caller, reports in tsv format with the variants in each chromosomal position for each individual "golden" bam file 
 							 
 - Output: reports with variants that were either detected or not detected by each caller. The read positions were divided in bins.
 
-`5.1_Prediction_Coverage_Length.R` - This script calculates the Kandall's tau coefficient of the Coverage and Read length with the modified Accuracy (mAC), False negative (FN) and False positive (FP) rates.
+`stats_1_Prediction_Coverage_Length.R` - This script calculates the Kandall's tau coefficient of the Coverage and Read length with the modified Accuracy (mAC), False negative (FN) and False positive (FP) rates.
 
 - Input:  an xlsx file with a column containing the callers (named Caller), a column specifying the AC, FN, FP rate (named Variants), and a column for each coverage (in a Sheet named Coverage) or read length (in a Sheet named Read_length) with the respective rates. 
 							 
 - Output: A xlsx file with the results in two sheets: Coverage and Read_length
 
-`5.2_Statistical_Analysis.Rmd` - This script runs the statistical analysis for a given dataset.
+`stats_2_Statistical_Analysis.Rmd` - This script runs the statistical analysis for a given dataset.
 
 - Input:  A csv file with variants that were either detected or not detected by each caller.
 							 
 - Output: A word document with the results of the fatalistically analyses.
 
-`5.3_ROC_Curves.R` - This script produces a ROC curve for a given dataset.
+`stats_3_ROC_Curves.R` - This script produces a ROC curve for a given dataset.
 
 - Input:  A csv file with variants that were either detected or not detected by each caller.
 							 
 - Output: A ROC curve.
 
-`5.4_ROC_Curves_Merged.R` - This script produces a merged figure with the ROC curves for a given caller, each curve corresponding to a specific Coverage and Read length.
+`stats_4_ROC_Curves_Merged.R` - This script produces a merged figure with the ROC curves for a given caller, each curve corresponding to a specific Coverage and Read length.
 
 - Input:  A folder with the files containing all the datasets and the 5.3_ROC_Curves.R" file.
 							 
