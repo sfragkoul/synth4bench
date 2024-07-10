@@ -23,37 +23,37 @@ printf "\n"
 # part 1 -------------------------------
 printf "echo Common Pre-process Steps \n"
 printf "samtools sort -o "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.bam "
-printf "${working_directory}/${folder}/${output_bam_merged}.bam"
+printf "${working_directory}/${output_bam_merged}.sorted.bam "
+printf "${working_directory}/${output_bam_merged}.bam"
 printf "\n"
 
 printf "samtools view -h -F 0x904 -b "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.bam > "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.bam"
+printf "${working_directory}/${output_bam_merged}.sorted.bam > "
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.bam"
 printf "\n"
 
 printf "samtools flagstat "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.bam > "
-printf "${working_directory}/${folder}/${output_bam_merged}.align.stats.txt"
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.bam > "
+printf "${working_directory}/${output_bam_merged}.align.stats.txt"
 printf "\n"
 
 printf "samtools addreplacerg -r '@RG\x$(printf %x 92)tID:${output_bam_merged}\x$(printf %x 92)tSM:${output_bam_merged}' "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.bam -o "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam "
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.bam -o "
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.rg.bam "
 printf "\n"
 
 printf "samtools depth "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam -o "
-printf "${working_directory}/${folder}/${output_bam_merged}.depth.txt "
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.rg.bam -o "
+printf "${working_directory}/${output_bam_merged}.depth.txt "
 printf "\n"
 
 printf "samtools index "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam"
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.rg.bam"
 printf "\n"
 
 for i in $( seq 1 1 $runs ); do
 	printf "samtools index "
-	printf "${working_directory}/${folder}/${i}/${i}_golden.bam"
+	printf "${working_directory}/${folder}/${i}/${i}_golden.bam \n"
 done
 printf "\n \n"
 
@@ -62,8 +62,8 @@ printf "\n \n"
 printf "echo bam-readcount reporting \n"
 printf "${path_to_bam_readcount}/bam-readcount/build/bin/bam-readcount -w 0 -f "
 printf "${path_to_reference} "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam > "
-printf "${working_directory}/${folder}/${output_bam_merged}_report.tsv"
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.rg.bam > "
+printf "${working_directory}/${output_bam_merged}_report.tsv"
 printf "\n"
 
 for i in $( seq 1 1 $runs ); do

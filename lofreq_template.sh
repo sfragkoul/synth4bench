@@ -17,25 +17,25 @@ function parse_yaml {
 
 eval $(parse_yaml parameters.yaml)
 
-printf "Printing lofreq commands"
+printf "#Printing lofreq commands"
 printf "\n"
 
 printf "lofreq indelqual"
 printf " --dindel -f ${path_to_reference}"
-printf " -o ${working_directory}/${folder}/${output_bam_merged}_indels.sorted.uniq.rg.bam "
-printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam "
+printf " -o ${working_directory}/${output_bam_merged}_indels.sorted.uniq.rg.bam "
+printf "${working_directory}/${output_bam_merged}.sorted.uniq.rg.bam "
 printf "\n"
 
 printf "lofreq call"
 printf " -f ${path_to_reference}"
 printf " --call-indels"
 printf " -o ${working_directory}/${folder}/Lofreq.vcf "
-printf "${working_directory}/${folder}/${output_bam_merged}_indels.sorted.uniq.rg.bam "
+printf "${working_directory}/${output_bam_merged}_indels.sorted.uniq.rg.bam "
 printf "\n"
 
 printf "bcftools reheader"
 printf " --fai ${path_to_reference}.fai"
-printf " -o ${working_directory}/${folder}/${output_bam_merged}_Lofreq_norm.vcf "
+printf " -o ${working_directory}/${output_bam_merged}_Lofreq_norm.vcf "
 printf "${working_directory}/${folder}/Lofreq.vcf"
 printf "\n"
 

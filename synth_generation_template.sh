@@ -60,6 +60,8 @@ done
 
 printf "\n"
 
+printf "echo Merging vcf files\n"
+
 for i in $( seq 1 1 $runs ); do
 	printf "bcftools index"
 	printf " ${working_directory}/${folder}/${i}/${i}_golden.vcf.gz \n"
