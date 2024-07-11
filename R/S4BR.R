@@ -26,7 +26,7 @@ options <- list(
   make_option(c("-r", "--runs"), 
               action = "store", 
               type = "integer", 
-              help="Number of individual runs to produce synthetic data which will then be combined to form the final Meerged ground truth file."),
+              help="Number of individual runs to produce synthetic data which will then be combined to form the final Merged ground truth file."),
   
   make_option(c("-w", "--working_directory"), 
               action = "store", 
