@@ -90,9 +90,11 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 - Output files: 
 
 ### Extra scripts
+
+#### VarScan scripts
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script `vscan_pileup2cns2vcf.py` can be found [here](https://github.com/sfragkoul/Varscan2VCF).
 
-### Statistical Analysis scripts
+#### Statistical Analysis scripts
 
 `S4BR_read_pos.R` - A script to report all ground truth variants in each chromosomal position.
 
