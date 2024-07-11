@@ -1,4 +1,4 @@
-name: synth_data2
+name: synth4bench
 channels:
   - conda-forge
   - bioconda
@@ -282,4 +282,3 @@ dependencies:
       - pytz==2022.7
       - scipy==1.9.3
       - six==1.16.0
-prefix: /home/sfragkoul/miniconda3/envs/synth_data2
