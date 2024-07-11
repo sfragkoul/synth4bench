@@ -21,7 +21,7 @@ read_vcf_VarScan <- function(path, gt) {
 }
 
 
-plot_synth4bench_VarScan(df, vcf_GT, vcf_caller){
+plot_synth4bench_VarScan <- function(df, vcf_GT, vcf_caller){
     
     out1 = bar_plots_VarScan(df)
     out2 = density_plot_VarScan(df)

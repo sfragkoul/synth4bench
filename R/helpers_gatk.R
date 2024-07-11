@@ -20,7 +20,7 @@ read_vcf_mutect2 <- function(path, gt) {
   
 }
 
-plot_synth4bench_gatk(df, vcf_GT, vcf_caller) {
+plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller) {
   
   out1 = bar_plots_gatk(df)
   out2 = density_plot_gatk(df)

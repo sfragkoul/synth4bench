@@ -22,7 +22,7 @@ read_vcf_LoFreq <- function(path, gt) {
 
 
 
-plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller){
+plot_synth4bench_LoFreq <- function(df, vcf_GT, vcf_caller){
     
     out1 = bar_plots_LoFreq(df)
     out2 = density_plot_LoFreq(df)

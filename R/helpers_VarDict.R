@@ -22,7 +22,7 @@ read_vcf_VarDict <- function(path, gt) {
 }
 
 
-plot_synth4bench_VarDict(df, vcf_GT, vcf_caller){
+plot_synth4bench_VarDict <- function(df, vcf_GT, vcf_caller){
     
     out1 = bar_plots_VarDict(df)
     out2 = density_plot_VarDict(df)

@@ -20,7 +20,7 @@ read_vcf_freebays <- function(path, gt) {
   
 }
 
-plot_synth4bench_freebayes(df, vcf_GT, vcf_caller){
+plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller) {
     
     out1 = bar_plots_freebayes(df)
     out2 = density_plot_freebayes(df)

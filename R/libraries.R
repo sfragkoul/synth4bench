@@ -13,7 +13,7 @@ library(optparse)
 
 library(GenomicAlignments)
 library(Rsamtools)
-library(seqinr)
+# library(seqinr)
 
 
 # library(GenomicRanges)

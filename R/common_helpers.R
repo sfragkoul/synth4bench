@@ -426,9 +426,7 @@ explore_mut_pos <- function(runs, folder, caller) {
         
         #FOUND---------------------------------------------------------------------
         
-        index = qv_filtered[[ paste0(caller, " AF") ]] |>
-            !is.na() |>
-            which()
+        index =  which(!is.na(qv_filtered[[ paste0(caller, " AF") ]]))
         
         q1 = qv_filtered[index]
         q2 = gb_filtered[which(key %in% q1$key)] 
