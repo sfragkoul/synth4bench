@@ -1,15 +1,15 @@
 
 
 #!/usr/bin/env Rscript
-source("R/libraries.R")
+source("libraries.R")
 
-source("R/common_helpers.R")
+source("common_helpers.R")
 
-source("R/helpers_freebayes.R")
-source("R/helpers_gatk.R")
-source("R/helpers_LoFreq.R")
-source("R/helpers_VarDict.R")
-source("R/helpers_VarScan.R")
+source("helpers_freebayes.R")
+source("helpers_gatk.R")
+#source("helpers_LoFreq.R")
+#source("helpers_VarDict.R")
+#source("helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
@@ -21,7 +21,7 @@ options <- list(
   make_option(c("-c", "--caller"), 
               action = "store", 
               type = "character", 
-              help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)"),
+              help="Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)"),
   
   make_option(c("-r", "--runs"), 
               action = "store", 
@@ -31,7 +31,12 @@ options <- list(
   make_option(c("-w", "--working_directory"), 
               action = "store", 
               type = "character", 
-              help="Path of working directory.")
+              help="Path of working directory."),
+  
+  make_option(c("-m", "--merged_file"), 
+              action = "store", 
+              type = "character", 
+              help="Indicate the name given to the final merged ground truth file.")
   
 )
 
@@ -41,14 +46,14 @@ print(arguments)
 
 # PART 1 ----------------
 
-gt <- gt_analysis(arguments$runs, arguments$working_directory)
+gt <- gt_analysis(arguments$runs, arguments$working_directory, arguments$merged_file)
 
 # PART 2 ---------------------con-
 
-out_df <- read_vcf(arguments$vcf_path, arguments$caller, gt)
+out_df <- read_vcf(arguments$vcf_path, arguments$caller, gt, arguments$merged_file)
 
 fwrite(
-  out_df, paste0(arguments$working_directory, "/Ground_truth_vs_", arguments$caller, ".clean_norm.tsv"),
+  out_df, paste0(arguments$working_directory, "/", arguments$merged_file, "_Ground_truth_vs_", arguments$caller, ".clean_norm.tsv"),
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
 

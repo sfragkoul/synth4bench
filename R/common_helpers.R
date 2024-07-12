@@ -1,6 +1,6 @@
 
 
-gt_analysis <- function(runs, folder) {
+gt_analysis <- function(runs, folder, merged_file) {
   
   nt_runs = list()
   
@@ -51,7 +51,7 @@ gt_analysis <- function(runs, folder) {
   
   gt_runs = nt_runs[which(POS %in% pos_of_interest)]
   
-  a <- paste0(folder, "/Merged_report.tsv") |> 
+  a <- paste0(folder, "/", merged_file , "_report.tsv") |> 
     readLines() |>
     str_split(pattern = "\t", simplify = TRUE) |> 
     as.data.frame() |> 
@@ -104,11 +104,11 @@ gt_analysis <- function(runs, folder) {
   
 }
 
-read_vcf <- function(path, caller, gt) {
+read_vcf <- function(path, caller, gt, merged_file) {
     
     if(caller == "freebayes") {
         
-        vcf_df <- read_vcf_freebays(path, gt)
+        vcf_df <- read_vcf_freebayes(path, gt, merged_file)
         
     } else if (caller == "mutect2") {
         

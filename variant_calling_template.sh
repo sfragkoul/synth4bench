@@ -84,24 +84,24 @@ if [ "${caller}" == "Mutect2" ]; then
 
 	bash mutect2_template.sh
 	
-elif [ "${caller}" == "freebayes" ]; then
+elif [ "${caller}" == "Freebayes" ]; then
 
 	bash freebayes_template.sh
 	
-elif [ "${caller}" == "lofreq" ]; then
+elif [ "${caller}" == "LoFreq" ]; then
 
 	bash lofreq_template.sh
 	
-elif [ "${caller}" == "varscan" ]; then
+elif [ "${caller}" == "VarScan" ]; then
 
 	bash varscan_template.sh
 	
-elif [ "${caller}" == "vardict" ]; then
+elif [ "${caller}" == "VarDict" ]; then
 
 	bash vardict_template.sh
 	
 else
 
-	echo "Invalid caller option. Please provide one of the following: Mutect2, freebayes, lofreq, varscan, vardict"
+	echo "Invalid caller option. Please provide one of the following: Mutect2, Freebayes, LoFreq, VarScan, VarDict"
 	
 fi

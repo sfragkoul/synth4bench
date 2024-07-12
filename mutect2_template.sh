@@ -24,15 +24,15 @@ printf "gatk Mutect2"
 printf " --reference ${path_to_reference}"													# what is this parameter
 printf " --input ${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.bam"	# what is this parameter
 printf " --tumor-sample ${output_bam_merged}"
-printf " --output ${working_directory}/${folder}/${output_bam_merged}_GATK.vcf"
-printf " > ${working_directory}/${folder}/${output_bam_merged}.Mutect.out 2>&1"
+printf " --output ${working_directory}/${folder}/${output_bam_merged}_Mutect2.vcf"
+printf " > ${working_directory}/${folder}/${output_bam_merged}.Mutect2.out 2>&1"
 printf "\n"
 
-printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_GATK.vcf"
-printf " --output ${working_directory}/${folder}/${output_bam_merged}_GATK_norm.vcf"
+printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_Mutect2.vcf"
+printf " --output ${working_directory}/${folder}/${output_bam_merged}_Mutect2_norm.vcf"
 printf " --output-type v"
 printf " -m \"-\""
 printf "\n"
 
-printf "rm ${working_directory}/${folder}/${output_bam_merged}_GATK.vcf"
+printf "rm ${working_directory}/${folder}/${output_bam_merged}_Mutect2.vcf"
 printf "\n \n"

@@ -5,10 +5,9 @@
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
+#'
 
-#function to search the POS of interest from the caller's vcf file
-
-read_vcf_mutect2 <- function(path, gt) {
+read_vcf_mutect2 <- function(path, gt, merged_file) {
   
   vcf <- read.vcfR( path, verbose = FALSE )
   
