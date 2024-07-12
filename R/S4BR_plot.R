@@ -1,23 +1,47 @@
 
 
 #!/usr/bin/env Rscript
-source("R/libraries.R")
-
-source("R/common_helpers.R")
-
-source("R/helpers_freebayes.R")
-source("R/helpers_gatk.R")
-source("R/helpers_LoFreq.R")
-source("R/helpers_VarDict.R")
-source("R/helpers_VarScan.R")
+source("libraries.R")
+source("common_helpers.R")
+source("helpers_freebayes.R")
+#source("helpers_gatk.R")
+#source("helpers_LoFreq.R")
+#source("helpers_VarDict.R")
+#source("helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
-  make_option(c("-m", "--gt_comparison"), action = "store", type = "character", help="Ground Truth vs Caller file"),
-  make_option(c("-v", "--vcf_path"), action = "store", type = "character", help="Path to caller vcf"),
-  make_option(c("-g", "--gt_path"), action = "store", type = "character", help="Path to ground truth vcf"),
-  make_option(c("-c", "--caller"), action = "store", type = "character", help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)"),
-  make_option(c("-w", "--working_directory"), action = "store", type = "character", help="Choose caller name (freebayes, gatk, LoFreq, VarDict, VarScan)")
+  make_option(c("-t", "--gt_comparison"), 
+              action = "store", 
+              type = "character", 
+              help="Directory path where Ground Truth vs Caller file tsv file is located."),
+  
+  make_option(c("-v", "--vcf_path"), 
+              action = "store", 
+              type = "character", 
+              help="Directory path where VCF files are located."),
+  
+  make_option(c("-g", "--gt_path"), 
+              action = "store", 
+              type = "character", 
+              help="Directory path where ground truth vcf file is located."),
+  
+  make_option(c("-c", "--caller"), 
+              action = "store", 
+              type = "character", 
+              help="Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)"),
+  
+  make_option(c("-w", "--working_directory"), 
+              action = "store", 
+              type = "character", 
+              help="Path of working directory."),
+  
+  make_option(c("-m", "--merged_file"), 
+              action = "store", 
+              type = "character", 
+              help="Indicate the name given to the final merged ground truth file.")
+  
+  
   
 )
 
@@ -25,7 +49,7 @@ arguments <- parse_args(OptionParser(option_list = options))
 
 print(arguments)
 
-plots <- plot_synth4bench(arguments$gt_comparison, arguments$vcf_path, arguments$gt_path, arguments$caller)
+plots <- plot_synth4bench(arguments$gt_comparison, arguments$vcf_path, arguments$gt_path, arguments$caller, arguments$merged_file)
 
 dir.create(paste0(arguments$working_directory, "/Plots"))
 

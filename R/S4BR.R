@@ -11,7 +11,7 @@ source("helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
-  make_option(c("-p", "--vcf_path"), 
+  make_option(c("-v", "--vcf_path"), 
               action = "store", 
               type = "character", 
               help="Directory path where VCF files are located."),

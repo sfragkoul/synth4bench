@@ -1,7 +1,7 @@
 #'
 #'
-#'function to locate variants of 100% AF in the individual files and
-#'search their POS of interest in the Merged bam file
+#'
+#'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
@@ -19,12 +19,12 @@ read_vcf_freebayes <- function(path, gt, merged_file) {
   
 }
 
-plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller) {
+plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
     
     out1 = bar_plots_freebayes(df)
     out2 = density_plot_freebayes(df)
     out3 = bubble_plots_freebayes(df)
-    out4 = venn_plot_freebayes(vcf_read_GT, vcf_read_freebayes)
+    out4 = venn_plot_freebayes(vcf_GT, vcf_caller)
     
     multi2 = out2$groundtruth / out2$Freebayes &
         
@@ -52,7 +52,7 @@ plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller) {
     multi = ann1 / ann2 +
         
         plot_layout(heights = c(1.5, 1)) + 
-        plot_annotation(title = folder)
+        plot_annotation(title = merged_file)
     
     
     return(list(multi, out4))

@@ -131,35 +131,34 @@ read_vcf <- function(path, caller, gt, merged_file) {
     return(vcf_df)
 }
 
-plot_synth4bench <- function(gt_comparison, vcf_path, gt_path, caller) {
+plot_synth4bench <- function(gt_comparison, vcf_path, gt_path, caller, merged_file) {
     
+    df = fread(paste0(gt_comparison, "/", merged_file, "_Ground_truth_vs_", caller, ".clean_norm.tsv"))
     
-    df = fread( gt_comparison )
+    vcf_GT <- read.vcfR(paste0(gt_path, "/", merged_file, "_ground_truth_norm.vcf"), verbose = FALSE )
     
-    vcf_GT <- read.vcfR(gt_path, verbose = FALSE )
+    vcf_caller <- read.vcfR(paste0(vcf_path, "/", merged_file, "_", caller, "_norm.vcf"), verbose = FALSE )
     
-    vcf_caller <- read.vcfR(vcf_path, verbose = FALSE )
-    
-    if(caller == "freebayes") {
-        
-        plots <- plot_synth4bench_freebayes(df, vcf_GT, vcf_caller)
-        
-    } else if (caller == "mutect2") {
-        
-        plots <- plot_synth4bench_gatk(df, vcf_GT, vcf_caller)
-        
+    if(caller == "Freebayes") {
+
+        plots <- plot_synth4bench_freebayes(df, vcf_GT, vcf_caller, merged_file)
+
+    } else if (caller == "Mutect2") {
+
+        plots <- plot_synth4bench_gatk(df, vcf_GT, vcf_caller, merged_file)
+
     } else if (caller == "LoFreq") {
-        
-        plots <- plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller)
-        
+
+        plots <- plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller, merged_file)
+
     } else if (caller == "VarDict") {
-        
-        plots <- plot_synth4bench_VarDict(df, vcf_GT, vcf_caller)
-        
+
+        plots <- plot_synth4bench_VarDict(df, vcf_GT, vcf_caller, merged_file)
+
     } else if (caller == "VarScan") {
-        
-        plots <- plot_synth4bench_VarScan(df, vcf_GT, vcf_caller)
-        
+
+        plots <- plot_synth4bench_VarScan(df, vcf_GT, vcf_caller, merged_file)
+
     }
     
     
