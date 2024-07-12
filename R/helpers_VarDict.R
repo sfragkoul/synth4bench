@@ -1,7 +1,7 @@
 #'
 #'
-#'function to locate variants of 100% AF in the individual files and
-#'search their POS of interest in the Merged bam file
+#'
+#'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
