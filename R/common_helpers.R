@@ -166,7 +166,6 @@ plot_synth4bench <- function(gt_comparison, vcf_path, gt_path, caller, merged_fi
     
 }
 
-
 report_varbp <- function(runs, folder, reference) {
     
     out = list()
@@ -353,7 +352,6 @@ report_varbp <- function(runs, folder, reference) {
     return(out)
     
 }
-
 
 explore_mut_pos <- function(runs, folder, caller) {
     

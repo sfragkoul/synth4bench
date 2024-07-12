@@ -1,7 +1,7 @@
 #'
 #'
-#'function to locate variants of 100% AF in the individual files and
-#'search their POS of interest in the Merged bam file
+#'
+#'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
@@ -19,7 +19,7 @@ read_vcf_mutect2 <- function(path, gt, merged_file) {
   
 }
 
-plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller) {
+plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
   
   out1 = bar_plots_gatk(df)
   out2 = density_plot_gatk(df)
@@ -49,7 +49,7 @@ plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller) {
   multi = ann1 / ann2 +
     
     plot_layout(heights = c(1.5, 1)) + 
-    plot_annotation(title = folder)
+    plot_annotation(title = merged_file)
   
   return(list(multi, out4))
   
