@@ -299,7 +299,7 @@ bar_plots_VarScan <- function(q) {
 #function to produce AF density plots
 density_plot_VarScan <- function(q) {
     
-    q[which(df$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
     df = q[, c(
         "POS", 

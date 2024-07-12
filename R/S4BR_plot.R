@@ -4,10 +4,10 @@
 source("libraries.R")
 source("common_helpers.R")
 source("helpers_freebayes.R")
-#source("helpers_gatk.R")
-#source("helpers_LoFreq.R")
-#source("helpers_VarDict.R")
-#source("helpers_VarScan.R")
+source("helpers_gatk.R")
+source("helpers_LoFreq.R")
+source("helpers_VarDict.R")
+source("helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
@@ -54,11 +54,11 @@ plots <- plot_synth4bench(arguments$gt_comparison, arguments$vcf_path, arguments
 dir.create(paste0(arguments$working_directory, "/Plots"))
 
 ggsave(
-  plot = multi, filename = paste0(arguments$working_directory, "/Plots/Poster_", arguments$caller, ".png"),
+  plot = plots[[1]], filename = paste0(arguments$working_directory, "/Plots/Poster_", arguments$caller, ".png"),
   width = 16, height = 12, units = "in", dpi = 600
 )
 
 ggsave(
-  plot = out4, filename = paste0(arguments$working_directory, "/Plots/Venn_", arguments$caller, ".png"),
+  plot = plots[[2]], filename = paste0(arguments$working_directory, "/Plots/Venn_", arguments$caller, ".png"),
   width = 8, height = 8, units = "in", dpi = 600
 )

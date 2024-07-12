@@ -301,7 +301,7 @@ bar_plots_gatk <- function(q) {
 #function to produce AF density plots
 density_plot_gatk <- function(q) {
     
-    q[which(df$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
+    q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
     
     df = q[, c(
         "POS", 

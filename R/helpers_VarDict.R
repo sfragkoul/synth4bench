@@ -295,7 +295,7 @@ bar_plots_VarDict <- function(q) {
 #function to produce AF density plots
 density_plot_VarDict <- function(q) {
     
-    q[which(df$`VarDict ALT` == "")]$`VarDict ALT` = NA
+    q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
     
     df = q[, c(
         "POS", 

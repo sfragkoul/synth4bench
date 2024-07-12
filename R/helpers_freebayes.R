@@ -302,7 +302,7 @@ bar_plots_freebayes <- function(q) {
 #function to produce AF density plots
 density_plot_freebayes <- function(q) {
     
-    q[which(df$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
+    q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
     df = q[, c(
         "POS", 

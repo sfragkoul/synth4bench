@@ -300,7 +300,7 @@ bar_plots_LoFreq <- function(q) {
 #function to produce AF density plots
 density_plot_LoFreq <- function(q) {
     
-    q[which(df$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
+    q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
     
     df = q[, c(
         "POS", 
