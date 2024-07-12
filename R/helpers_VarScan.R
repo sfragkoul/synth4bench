@@ -5,12 +5,11 @@
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
+#'
 
-#function to search the POS of interest from the caller's vcf file
-
-read_vcf_VarScan <- function(path, gt) {
+read_vcf_VarScan <- function(path, gt, merged_file) {
   
-  vcf <- read.vcfR( path, verbose = FALSE )
+  vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarScan_norm.vcf"), verbose = FALSE )
   
   vcf_df = vcf |>
     merge_VarScan(gt) |>

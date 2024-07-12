@@ -2,14 +2,12 @@
 
 #!/usr/bin/env Rscript
 source("libraries.R")
-
 source("common_helpers.R")
-
 source("helpers_freebayes.R")
 source("helpers_gatk.R")
-#source("helpers_LoFreq.R")
-#source("helpers_VarDict.R")
-#source("helpers_VarScan.R")
+source("helpers_LoFreq.R")
+source("helpers_VarDict.R")
+source("helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(

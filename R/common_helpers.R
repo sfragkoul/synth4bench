@@ -106,25 +106,25 @@ gt_analysis <- function(runs, folder, merged_file) {
 
 read_vcf <- function(path, caller, gt, merged_file) {
     
-    if(caller == "freebayes") {
+    if(caller == "Freebayes") {
         
         vcf_df <- read_vcf_freebayes(path, gt, merged_file)
         
-    } else if (caller == "mutect2") {
+    } else if (caller == "Mutect2") {
         
-        vcf_df <- read_vcf_mutect2(path, gt)
+        vcf_df <- read_vcf_mutect2(path, gt, merged_file)
         
     } else if (caller == "LoFreq") {
         
-        vcf_df <- read_vcf_LoFreq(path, gt)
+        vcf_df <- read_vcf_LoFreq(path, gt, merged_file)
         
     } else if (caller == "VarDict") {
         
-        vcf_df <- read_vcf_VarDict(path, gt)
+        vcf_df <- read_vcf_VarDict(path, gt, merged_file)
         
     } else if (caller == "VarScan") {
         
-        vcf_df <- read_vcf_VarScan(path, gt)
+        vcf_df <- read_vcf_VarScan(path, gt, merged_file)
         
     }
     

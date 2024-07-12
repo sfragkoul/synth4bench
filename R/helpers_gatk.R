@@ -9,7 +9,7 @@
 
 read_vcf_mutect2 <- function(path, gt, merged_file) {
   
-  vcf <- read.vcfR( path, verbose = FALSE )
+  vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )
   
   vcf_df = vcf |>
     merge_gatk(gt) |>

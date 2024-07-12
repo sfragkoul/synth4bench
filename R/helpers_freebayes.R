@@ -9,7 +9,7 @@
 
 read_vcf_freebayes <- function(path, gt, merged_file) {
   
-  vcf <- read.vcfR( paste0(path, "/", merged_file, "_freebayes_norm.vcf"), verbose = FALSE )
+  vcf <- read.vcfR( paste0(path, "/", merged_file, "_Freebayes_norm.vcf"), verbose = FALSE )
   
   vcf_df <- vcf |>
     merge_freebayes(gt) |>
