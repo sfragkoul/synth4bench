@@ -52,7 +52,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 ### Main scripts
 
 <p align="center"> 
-<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 260px; width: 650px;"/>
+<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 210px; width: 540px;"/>
 </p>
 
 
@@ -137,7 +137,7 @@ We welcome and greatly appreciate any sort of feedback and/or contribution!
 If you have any questions, please either open an issue or write us at `sfragkoul@certh.gr` or `inab.bioinformatics@lists.certh.gr`.
 
 ## Citation
-Our work has been submitted to the *bioRxiv* preprint repository . Please, use the citation as follows:
+Our work has been submitted to the *bioRxiv* preprint repository . If you use our work please cite as follows:
 
 S.-C. Fragkouli, N. Pechlivanis, A. Anastasiadou, G. Karakatsoulis, A. Orfanou, P. Kollia, A. Agathangelidis, and F. E. Psomopoulos, *“Synth4bench: a framework for generating synthetic genomics data for the evaluation of tumor-only somatic variant calling algorithms.”* 2024, doi:[10.1101/2024.03.07.582313](https://www.biorxiv.org/content/10.1101/2024.03.07.582313v1).
 
@@ -151,11 +151,6 @@ S.-C. Fragkouli, N. Pechlivanis, A. Anastasiadou, G. Karakatsoulis, A. Orfanou, 
   
 - <div align='justify'>  S.-C. Fragkouli, N. Pechlivanis, A. Agathangelidis and F. Psomopoulos, <em>Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms</em>, <b>31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23)</b>, Jul 2023, Lyon, France doi:<a href="https://doi.org/10.7490/f1000research.1119575.1">10.7490/f1000research.1119575.1</a> </div>
 
-<p align="center"> 
-<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ELIXIR_AHM24.png" alt="ELIXIR AHM24 Poster" style="height: 400px; width:300px;"/>
-</p>
-
-
-<p align="center"> 
-<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" style="height: 400px; width:300px;"/>
-</p>
+<div align='center'>
+<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ELIXIR_AHM24.png" alt="ELIXIR AHM24 Poster" style="height: 600px; width:440px;"/>   <img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" style="height: 600px; width:440px;"/>
+</div>
