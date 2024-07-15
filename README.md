@@ -152,5 +152,5 @@ S.-C. Fragkouli, N. Pechlivanis, A. Anastasiadou, G. Karakatsoulis, A. Orfanou, 
 - <div align='justify'>  S.-C. Fragkouli, N. Pechlivanis, A. Agathangelidis and F. Psomopoulos, <em>Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms</em>, <b>31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23)</b>, Jul 2023, Lyon, France doi:<a href="https://doi.org/10.7490/f1000research.1119575.1">10.7490/f1000research.1119575.1</a> </div>
 
 <div align='center'>
-<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ELIXIR_AHM24.png" alt="ELIXIR AHM24 Poster" style="height: 600px; width:440px;"/>   <img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" style="height: 600px; width:440px;"/>
+<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ELIXIR_AHM24.png" alt="ELIXIR AHM24 Poster" style="height: 480px; width:340px;"/>   <img src="https://github.com/sfragkoul/synth4bench/blob/main/images/ISMBECCB2023_1226_Fragkouli_poster.png" alt="ISΜB-ECCB23 Poster" style="height: 480px; width:340px;"/>
 </div>
