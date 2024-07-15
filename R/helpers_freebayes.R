@@ -1,133 +1,77 @@
 #'
 #'
-#'function to locate variants of 100% AF in the individual files and
-#'search their POS of interest in the Merged bam file
+#'
+#'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
-gt_analysis <- function(runs, folder) {
+#'
+
+read_vcf_freebayes <- function(path, gt, merged_file) {
+  
+  vcf <- read.vcfR( paste0(path, "/", merged_file, "_Freebayes_norm.vcf"), verbose = FALSE )
+  
+  vcf_df <- vcf |>
+    merge_freebayes(gt) |>
+    clean_freebayes()
+  
+  return(vcf_df)
+  
+}
+
+plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
     
-    nt_runs = list()
+    out1 = bar_plots_freebayes(df)
+    out2 = density_plot_freebayes(df)
+    out3 = bubble_plots_freebayes(df)
+    out4 = venn_plot_freebayes(vcf_GT, vcf_caller)
     
-    for(r in runs) {
+    multi2 = out2$groundtruth / out2$Freebayes &
         
-        a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
-            readLines() |>
-            str_split(pattern = "\t", simplify = TRUE) |>
-            as.data.frame() |> 
-            setDT()
-        
-        a$V1 = NULL
-        # a$V3 = NULL
-        a$V5 = NULL
-        
-        colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
-        
-        a = melt(
-            a, id.vars = c("POS", "REF", "DP"),
-            variable.factor = FALSE, value.factor = FALSE,
-            variable.name = "Nt", value.name = "Count"
+        theme(
+            plot.margin = margin(10, 10, 10, 10)
         )
+    
+    
+    ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
+        (out1$allele + theme(plot.margin = margin(r = 50))) + 
+        multi2 +
         
-        a = a[which(Count != "")]
+        plot_layout(
+            widths = c(1, 1, 3)
+        )
+    
+    
+    ann2 = out3 + out4 +
         
-        a$POS = as.numeric(a$POS)
-        a$DP = as.numeric(a$DP)
+        plot_layout(
+            widths = c(2, 1)
+        )
+    
+    
+    multi = ann1 / ann2 +
         
-        a$Nt = str_split_i(a$Count, "\\:", 1)
-        
-        a$Count = str_split_i(a$Count, "\\:", 2) |>
-            as.numeric()
-        
-        a$Freq = round(100 * a$Count / a$DP, digits = 6)
-        
-        a = a[order(POS, -Count)]
-        
-        a = a[which(REF != a$Nt & Count != 0)]
-        
-        b = a[which(Nt %in% c("A", "C", "G", "T")), ]
-        
-        nt_runs[[ as.character(r) ]] = b
-    }
-    
-    nt_runs = rbindlist(nt_runs, idcol = "Run")
-    
-    pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
-    
-    gt_runs = nt_runs[which(POS %in% pos_of_interest)]
-    
-    a <- paste0(folder, "/Merged_report.tsv") |> 
-        readLines() |>
-        str_split(pattern = "\t", simplify = TRUE) |> 
-        as.data.frame() |> 
-        setDT()
-    
-    a$V1 = NULL
-    # a$V3 = NULL
-    a$V5 = NULL
-    
-    colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
-    
-    a = melt(
-        a, id.vars = c("POS", "REF", "DP"),
-        variable.factor = FALSE, value.factor = FALSE,
-        variable.name = "Nt", value.name = "Count"
-    )
-    
-    a = a[which(Count != "")]
-    
-    a$POS = as.numeric(a$POS)
-    a$DP = as.numeric(a$DP)
-    
-    a$Nt = str_split_i(a$Count, "\\:", 1)
-    
-    a$Count = str_split_i(a$Count, "\\:", 2) |>
-        as.numeric()
-    
-    a$Freq = round(100 * a$Count / a$DP, digits = 6)
-    
-    a = a[order(POS, -Count)]
-    
-    a = a[which(REF != a$Nt & Count != 0)]
-    
-    b = a[which(Nt %in% c("A", "C", "G", "T")), ]
+        plot_layout(heights = c(1.5, 1)) + 
+        plot_annotation(title = merged_file)
     
     
-    merged_gt = b[which(POS %in% gt_runs$POS)]
-    merged_gt = merged_gt[order(POS)]
-    
-    merged_gt$Freq = merged_gt$Freq / 100
-    
-    merged_gt = merged_gt[, by = .(POS, REF, DP), .(
-        Nt = paste(Nt, collapse = ","),
-        Count = paste(Count, collapse = ","),
-        Freq = paste(round(Freq, digits = 3), collapse = ",")
-    )]
-    
-    
-    return(merged_gt)
-    
+    return(list(multi, out4))
 }
 
 #function to search the POS of interest from the caller's vcf file
-merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
+merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     
-    VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
-    VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarScan_s2 = VarScan_s2[,c( "DP", "Pvalue", "AF" )]
+    freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    freebayes_s1  = freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
+    freebayesgatk_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
     
-    VarScan_s0 = VarScan_s0[which(VarScan_s2$AF>0.0)]
-    VarScan_s2 = VarScan_s2[which(VarScan_s2$AF>0.0)]
-    
-    
-    VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
+    freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
     
     
     #Merge everything into a common file-------------------------------------------
     merged_gt$POS = as.character(merged_gt$POS)
     
-    merged_bnch = merge(merged_gt, VarScan_somatic,  by = "POS", all.x = TRUE)
+    merged_bnch = merge(merged_gt, freebayes_somatic,  by = "POS", all.x = TRUE)
     
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     
@@ -136,8 +80,11 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth DP",
         "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID", "VarScan REF",	
-        "VarScan ALT", "VarScan QUAL",	"VarScan FILTER", "VarScan DP", "Pvalue","VarScan AF"
+        "Ground Truth AF", "Freebayes CHROM", "Freebayes ID",
+        "Freebayes REF", "Freebayes ALT", "Freebayes QUAL", "Freebayes FILTER",
+        "Freebayes key", "Freebayes Indiv", "Freebayes GT", "Freebayes GQ",
+        "Freebayes GL", "Freebayes DP", "Freebayes RO", "Freebayes QR", 
+        "Freebayes AO", "Freebayes QA", "Freebayes alleles"
     )
     
     return(merged_bnch)
@@ -145,7 +92,7 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
 }
 
 #function to produce the caller's reported variants in the desired format 
-clean_VarScan <- function(df) {
+clean_freebayes <- function(df) {
     
     df2 = df[, c(
         "POS",
@@ -155,10 +102,10 @@ clean_VarScan <- function(df) {
         "Ground Truth DP",
         "Ground Truth AF",
         
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
+        "Freebayes REF", 
+        "Freebayes ALT", 
+        "Freebayes DP",
+        "Freebayes AO"
     ), with = FALSE]
     
     
@@ -167,10 +114,10 @@ clean_VarScan <- function(df) {
         "POS",
         "Ground Truth REF",
         "Ground Truth DP",
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
+        "Freebayes REF", 
+        "Freebayes ALT", 
+        "Freebayes DP",
+        "Freebayes AO"
         
     ), .(
         "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
@@ -179,8 +126,8 @@ clean_VarScan <- function(df) {
 
 
 
-    VarScan_alt = str_split(df2$`VarScan ALT`, ",")
-    VarScan_af = str_split(df2$`VarScan AF`, ",")
+    freebayes_alt = str_split(df2$`Freebayes ALT`, ",")
+    freebayes_ao = str_split(df2$`Freebayes AO`, ",")
 
 
     cln = mapply(
@@ -194,15 +141,15 @@ clean_VarScan <- function(df) {
 
         },
 
-        df2$`Ground Truth ALT`, VarScan_alt, VarScan_af
+        df2$`Ground Truth ALT`, freebayes_alt, freebayes_ao
     )
 
 
-    df2$`VarScan ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`VarScan AF`  = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
+    df2$`Freebayes ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
+    df2$`Freebayes AO`  = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
     
-    df2[which(is.na(`VarScan AF`))]$`VarScan DP` = NA
-    df2[which(is.na(`VarScan AF`))]$`VarScan REF` = NA
+    df2[which(is.na(`Freebayes AO`))]$`Freebayes DP` = NA
+    df2[which(is.na(`Freebayes AO`))]$`Freebayes REF` = NA
     
     df2 = df2[, c(
         "POS", 
@@ -210,27 +157,30 @@ clean_VarScan <- function(df) {
         "Ground Truth ALT",
         "Ground Truth DP",
         "Ground Truth AF",
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
+        "Freebayes REF", 
+        "Freebayes ALT", 
+        "Freebayes DP",
+        "Freebayes AO"
     ), with = FALSE]
-
+    
+    #AF = AO/DP
+    df2$"Freebayes AF" =  as.numeric(format(round(as.numeric(df2$"Freebayes AO")/ as.numeric(df2$"Freebayes DP"), 3)))
+    
     return(df2)
     
 }
 
 #function to produce variants' barplots for coverage and AF
-bar_plots_VarScan <- function(q) {
+bar_plots_freebayes <- function(q) {
     
-    q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
     # plot 1 ------------------------
     
     df = q[, c(
         "POS", 
         "Ground Truth DP",
-        "VarScan DP"
+        "Freebayes DP"
     ), with = FALSE] |>
         unique() |>
         
@@ -248,13 +198,13 @@ bar_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth DP" = "#43ae8d",
-                "VarScan DP"      = "#439aae"
+                "Freebayes DP"      = "#ae8d43"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth DP", "VarScan DP"),
-            labels = c("Ground Truth", "VarScan")
+            breaks = c("Ground Truth DP", "Freebayes DP"),
+            labels = c("Ground Truth", "Freebayes")
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -287,7 +237,7 @@ bar_plots_VarScan <- function(q) {
     df = q[, c(
         "POS",
         "Ground Truth AF",
-        "VarScan AF"
+        "Freebayes AF"
     ), with = FALSE] |>
         unique() |>
         
@@ -305,13 +255,13 @@ bar_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth AF" = "#43ae8d",
-                "VarScan AF"      = "#439aae"
+                "Freebayes AF"      = "#ae8d43"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth AF", "VarScan AF"),
-            labels = c("Ground Truth", "VarScan")
+            breaks = c("Ground Truth AF", "Freebayes AF"),
+            labels = c("Ground Truth", "Freebayes")
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
@@ -350,16 +300,16 @@ bar_plots_VarScan <- function(q) {
 }
 
 #function to produce AF density plots
-density_plot_VarScan <- function(q) {
+density_plot_freebayes <- function(q) {
     
-    q[which(df$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
     df = q[, c(
         "POS", 
         "Ground Truth AF",
         "Ground Truth ALT",
-        "VarScan ALT",
-        "VarScan AF"
+        "Freebayes ALT",
+        "Freebayes AF"
     ), with = FALSE] |>
         unique()
     
@@ -398,9 +348,9 @@ density_plot_VarScan <- function(q) {
     
     # plot 2 ----------------------
     
-    o2 = ggplot(data = df[which(!is.na(`VarScan ALT`)), c(1, 4, 5)], aes(x = `VarScan AF`)) +
+    o2 = ggplot(data = df[which(!is.na(`Freebayes ALT`)), c(1, 4, 5)], aes(x = `Freebayes AF`)) +
         
-        geom_density(aes(color = `VarScan ALT`, fill = `VarScan ALT`),
+        geom_density(aes(color = `Freebayes ALT`, fill = `Freebayes ALT`),
                      alpha = .5) +
         
         scale_x_continuous(expand = c(0, 0), breaks = c(.25, .5, .75, 1), limits = c(0, 1), labels = scales::percent) +
@@ -409,7 +359,7 @@ density_plot_VarScan <- function(q) {
         scale_fill_npg() +
         scale_color_npg() +
         
-        facet_wrap(vars(`VarScan ALT`), nrow = 1) +
+        facet_wrap(vars(`Freebayes ALT`), nrow = 1) +
         
         theme_minimal() +
         
@@ -428,7 +378,7 @@ density_plot_VarScan <- function(q) {
         
         labs(
             x = "Allele Frequency",
-            y = "VarScan (density)"
+            y = "Freebayes (density)"
         )
     
     
@@ -437,19 +387,19 @@ density_plot_VarScan <- function(q) {
     return(
         list(
             "groundtruth" = o1,
-            "VarScan" = o2
+            "Freebayes" = o2
         )
     )
     
 }
 
 #function to produce SNVs bubble plot
-bubble_plots_VarScan <- function(q) {
+bubble_plots_freebayes <- function(q) {
     
-    # q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    # q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
     
-    q1 = q[which(q$`VarScan ALT` != "")]
+    q1 = q[which(q$`Freebayes ALT` != "")]
     
     
     o = ggplot() +
@@ -462,7 +412,7 @@ bubble_plots_VarScan <- function(q) {
         
         geom_point(
             data = q1,
-            aes(x = POS, y = `VarScan ALT`, size = `VarScan AF`, fill = "VarScan"),
+            aes(x = POS, y = `Freebayes ALT`, size = `Freebayes AF`, fill = "Freebayes"),
             position = position_nudge(y = -.15), shape = 21, stroke = .25
         ) +
         
@@ -480,7 +430,7 @@ bubble_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth" = "#43ae8d",
-                "VarScan"      = "#439aae"
+                "Freebayes"      = "#ae8d43"
             ),
             
             guide = guide_legend(
@@ -526,15 +476,15 @@ bubble_plots_VarScan <- function(q) {
 }
 
 #function to produce Venn plot for each caller
-venn_plot_VarScan <- function(q, p) {
+venn_plot_freebayes <- function(q, p) {
     
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     
-    vcf_VarScan = vcfR::getFIX(p) |> as.data.frame() |> setDT()
-    vcf_VarScan$scenario = "VarScan"
+    vcf_freebayes = vcfR::getFIX(p) |> as.data.frame() |> setDT()
+    vcf_freebayes$scenario = "Freebayes"
     
-    x = rbind(vcf_GT, vcf_VarScan)
+    x = rbind(vcf_GT, vcf_freebayes)
     y = x[, c("CHROM", "POS", "REF", "ALT", "scenario"), with = FALSE]
     
     y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
@@ -543,10 +493,10 @@ venn_plot_VarScan <- function(q, p) {
     
     y = list(
         'Ground Truth' = y$GT$mut,
-        'VarScan'         = y$VarScan$mut
+        'Freebayes'         = y$Freebayes$mut
     )
     
-    gr = ggvenn(y, fill_color = c("#43ae8d", "#439aae")) +
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae8d43")) +
         
         coord_equal(clip = "off")
     

@@ -1,128 +1,80 @@
 #'
 #'
-#'function to locate variants of 100% AF in the individual files and
-#'search their POS of interest in the Merged bam file
+#'
+#'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
-gt_analysis <- function(runs, folder) {
-    
-    nt_runs = list()
-    
-    for(r in runs) {
-        
-        a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
-            readLines() |>
-            str_split(pattern = "\t", simplify = TRUE) |>
-            as.data.frame() |> 
-            setDT()
-        
-        a$V1 = NULL
-        # a$V3 = NULL
-        a$V5 = NULL
-        
-        colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
-        
-        a = melt(
-            a, id.vars = c("POS", "REF", "DP"),
-            variable.factor = FALSE, value.factor = FALSE,
-            variable.name = "Nt", value.name = "Count"
-        )
-        
-        a = a[which(Count != "")]
-        
-        a$POS = as.numeric(a$POS)
-        a$DP = as.numeric(a$DP)
-        
-        a$Nt = str_split_i(a$Count, "\\:", 1)
-        
-        a$Count = str_split_i(a$Count, "\\:", 2) |>
-            as.numeric()
-        
-        a$Freq = round(100 * a$Count / a$DP, digits = 6)
-        
-        a = a[order(POS, -Count)]
-        
-        a = a[which(REF != a$Nt & Count != 0)]
-        
-        b = a[which(Nt %in% c("A", "C", "G", "T")), ]
-        
-        nt_runs[[ as.character(r) ]] = b
-    }
-    
-    nt_runs = rbindlist(nt_runs, idcol = "Run")
-    
-    pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
-    
-    gt_runs = nt_runs[which(POS %in% pos_of_interest)]
-    
-    a <- paste0(folder, "/Merged_report.tsv") |> 
-        readLines() |>
-        str_split(pattern = "\t", simplify = TRUE) |> 
-        as.data.frame() |> 
-        setDT()
-    
-    a$V1 = NULL
-    # a$V3 = NULL
-    a$V5 = NULL
-    
-    colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
-    
-    a = melt(
-        a, id.vars = c("POS", "REF", "DP"),
-        variable.factor = FALSE, value.factor = FALSE,
-        variable.name = "Nt", value.name = "Count"
-    )
-    
-    a = a[which(Count != "")]
-    
-    a$POS = as.numeric(a$POS)
-    a$DP = as.numeric(a$DP)
-    
-    a$Nt = str_split_i(a$Count, "\\:", 1)
-    
-    a$Count = str_split_i(a$Count, "\\:", 2) |>
-        as.numeric()
-    
-    a$Freq = round(100 * a$Count / a$DP, digits = 6)
-    
-    a = a[order(POS, -Count)]
-    
-    a = a[which(REF != a$Nt & Count != 0)]
-    
-    b = a[which(Nt %in% c("A", "C", "G", "T")), ]
-    
-    
-    merged_gt = b[which(POS %in% gt_runs$POS)]
-    merged_gt = merged_gt[order(POS)]
-    
-    merged_gt$Freq = merged_gt$Freq / 100
-    
-    merged_gt = merged_gt[, by = .(POS, REF, DP), .(
-        Nt = paste(Nt, collapse = ","),
-        Count = paste(Count, collapse = ","),
-        Freq = paste(round(Freq, digits = 3), collapse = ",")
-    )]
-    
-    
-    return(merged_gt)
-    
+#'
+
+read_vcf_VarScan <- function(path, gt, merged_file) {
+  
+  vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarScan_norm.vcf"), verbose = FALSE )
+  
+  vcf_df = vcf |>
+    merge_VarScan(gt) |>
+    clean_VarScan()
+  
+  return(vcf_df)
+  
 }
 
-#function to search the POS of interest from the caller's vcf file
-merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
+
+plot_synth4bench_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
     
-    gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
-    gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
+    out1 = bar_plots_VarScan(df)
+    out2 = density_plot_VarScan(df)
+    out3 = bubble_plots_VarScan(df)
+    out4 = venn_plot_VarScan(vcf_GT, vcf_caller)
     
-    gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+    multi2 = out2$groundtruth / out2$VarScan &
+        
+        theme(
+            plot.margin = margin(10, 10, 10, 10)
+        )
+
+    
+    ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
+        (out1$allele + theme(plot.margin = margin(r = 50))) + 
+        multi2 +
+        
+        plot_layout(
+            widths = c(1, 1, 3)
+        )
+    
+    ann2 = out3 + out4 +
+        
+        plot_layout(
+            widths = c(2, 1)
+        )
+    
+    multi = ann1 / ann2 +
+        
+        plot_layout(heights = c(1.5, 1)) + 
+        plot_annotation(title = merged_file)
+    
+    return(list(multi, out4))
+}
+
+
+merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
+    
+    VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
+    VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
+    VarScan_s2 = VarScan_s2[,c( "DP", "Pvalue", "AF" )]
+    
+    VarScan_s0 = VarScan_s0[which(VarScan_s2$AF>0.0)]
+    VarScan_s2 = VarScan_s2[which(VarScan_s2$AF>0.0)]
+    
+    
+    VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
     
     
     #Merge everything into a common file-------------------------------------------
     merged_gt$POS = as.character(merged_gt$POS)
     
-    merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
+    merged_bnch = merge(merged_gt, VarScan_somatic,  by = "POS", all.x = TRUE)
     
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     
@@ -131,12 +83,8 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth DP",
         "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID",	"Mutect2 REF",	
-        "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-        "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-        "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-        "gt_PS",	"gt_SB",	"gt_GT_alleles"
+        "Ground Truth AF", "CHROM", "ID", "VarScan REF",	
+        "VarScan ALT", "VarScan QUAL",	"VarScan FILTER", "VarScan DP", "Pvalue","VarScan AF"
     )
     
     return(merged_bnch)
@@ -144,7 +92,7 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
 }
 
 #function to produce the caller's reported variants in the desired format 
-clean_gatk <- function(df) {
+clean_VarScan <- function(df) {
     
     df2 = df[, c(
         "POS",
@@ -154,10 +102,10 @@ clean_gatk <- function(df) {
         "Ground Truth DP",
         "Ground Truth AF",
         
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
+        "VarScan REF", 
+        "VarScan ALT", 
+        "VarScan DP",
+        "VarScan AF"
     ), with = FALSE]
     
     
@@ -166,24 +114,20 @@ clean_gatk <- function(df) {
         "POS",
         "Ground Truth REF",
         "Ground Truth DP",
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
-
+        "VarScan REF", 
+        "VarScan ALT", 
+        "VarScan DP",
+        "VarScan AF"
+        
     ), .(
         "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
         "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-        # "Mutect2 REF" = `Mutect2 REF` |> tstrsplit(",") |> unlist(),
-        # "Mutect2 ALT" = `Mutect2 ALT` |> tstrsplit(",") |> unlist(),
-        # "Mutect2 DP"  = `Mutect2 DP` |> tstrsplit(",") |> unlist() |> as.integer(),
-        # "Mutect2 AF"  = `Mutect2 AF` |> tstrsplit(",") |> unlist() |> as.numeric()
     )]
 
 
 
-    mutect2_alt = str_split(df2$`Mutect2 ALT`, ",")
-    mutect2_af = str_split(df2$`Mutect2 AF`, ",")
+    VarScan_alt = str_split(df2$`VarScan ALT`, ",")
+    VarScan_af = str_split(df2$`VarScan AF`, ",")
 
 
     cln = mapply(
@@ -197,43 +141,43 @@ clean_gatk <- function(df) {
 
         },
 
-        df2$`Ground Truth ALT`, mutect2_alt, mutect2_af
+        df2$`Ground Truth ALT`, VarScan_alt, VarScan_af
     )
 
 
-    df2$`Mutect2 ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`Mutect2 AF` = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
-
-    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 DP` = NA
-    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 REF` = NA
-
+    df2$`VarScan ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
+    df2$`VarScan AF`  = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
+    
+    df2[which(is.na(`VarScan AF`))]$`VarScan DP` = NA
+    df2[which(is.na(`VarScan AF`))]$`VarScan REF` = NA
+    
     df2 = df2[, c(
-        "POS",
+        "POS", 
         "Ground Truth REF",
         "Ground Truth ALT",
         "Ground Truth DP",
         "Ground Truth AF",
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
+        "VarScan REF", 
+        "VarScan ALT", 
+        "VarScan DP",
+        "VarScan AF"
     ), with = FALSE]
-    
+
     return(df2)
     
 }
 
 #function to produce variants' barplots for coverage and AF
-bar_plots_gatk <- function(q) {
+bar_plots_VarScan <- function(q) {
     
-    q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
+    q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
     # plot 1 ------------------------
     
     df = q[, c(
         "POS", 
         "Ground Truth DP",
-        "Mutect2 DP"
+        "VarScan DP"
     ), with = FALSE] |>
         unique() |>
         
@@ -251,13 +195,13 @@ bar_plots_gatk <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth DP" = "#43ae8d",
-                "Mutect2 DP"      = "#ae4364"
+                "VarScan DP"      = "#439aae"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth DP", "Mutect2 DP"),
-            labels = c("Ground Truth", "Mutect2")
+            breaks = c("Ground Truth DP", "VarScan DP"),
+            labels = c("Ground Truth", "VarScan")
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -290,7 +234,7 @@ bar_plots_gatk <- function(q) {
     df = q[, c(
         "POS",
         "Ground Truth AF",
-        "Mutect2 AF"
+        "VarScan AF"
     ), with = FALSE] |>
         unique() |>
         
@@ -308,13 +252,13 @@ bar_plots_gatk <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth AF" = "#43ae8d",
-                "Mutect2 AF"      = "#ae4364"
+                "VarScan AF"      = "#439aae"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth AF", "Mutect2 AF"),
-            labels = c("Ground Truth", "Mutect2")
+            breaks = c("Ground Truth AF", "VarScan AF"),
+            labels = c("Ground Truth", "VarScan")
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
@@ -353,16 +297,16 @@ bar_plots_gatk <- function(q) {
 }
 
 #function to produce AF density plots
-density_plot_gatk <- function(q) {
+density_plot_VarScan <- function(q) {
     
-    q[which(df$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
+    q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
     df = q[, c(
         "POS", 
         "Ground Truth AF",
         "Ground Truth ALT",
-        "Mutect2 ALT",
-        "Mutect2 AF"
+        "VarScan ALT",
+        "VarScan AF"
     ), with = FALSE] |>
         unique()
     
@@ -401,9 +345,9 @@ density_plot_gatk <- function(q) {
     
     # plot 2 ----------------------
     
-    o2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutect2 AF`)) +
+    o2 = ggplot(data = df[which(!is.na(`VarScan ALT`)), c(1, 4, 5)], aes(x = `VarScan AF`)) +
         
-        geom_density(aes(color = `Mutect2 ALT`, fill = `Mutect2 ALT`),
+        geom_density(aes(color = `VarScan ALT`, fill = `VarScan ALT`),
                      alpha = .5) +
         
         scale_x_continuous(expand = c(0, 0), breaks = c(.25, .5, .75, 1), limits = c(0, 1), labels = scales::percent) +
@@ -412,7 +356,7 @@ density_plot_gatk <- function(q) {
         scale_fill_npg() +
         scale_color_npg() +
         
-        facet_wrap(vars(`Mutect2 ALT`), nrow = 1) +
+        facet_wrap(vars(`VarScan ALT`), nrow = 1) +
         
         theme_minimal() +
         
@@ -431,7 +375,7 @@ density_plot_gatk <- function(q) {
         
         labs(
             x = "Allele Frequency",
-            y = "Mutect2 (density)"
+            y = "VarScan (density)"
         )
     
     
@@ -440,19 +384,19 @@ density_plot_gatk <- function(q) {
     return(
         list(
             "groundtruth" = o1,
-            "mutect2" = o2
+            "VarScan" = o2
         )
     )
     
 }
 
 #function to produce SNVs bubble plot
-bubble_plots_gatk <- function(q) {
+bubble_plots_VarScan <- function(q) {
     
-    # q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
+    # q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
     
-    q1 = q[which(q$`Mutect2 ALT` != "")]
+    q1 = q[which(q$`VarScan ALT` != "")]
     
     
     o = ggplot() +
@@ -465,7 +409,7 @@ bubble_plots_gatk <- function(q) {
         
         geom_point(
             data = q1,
-            aes(x = POS, y = `Mutect2 ALT`, size = `Mutect2 AF`, fill = "Mutect2"),
+            aes(x = POS, y = `VarScan ALT`, size = `VarScan AF`, fill = "VarScan"),
             position = position_nudge(y = -.15), shape = 21, stroke = .25
         ) +
         
@@ -483,7 +427,7 @@ bubble_plots_gatk <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth" = "#43ae8d",
-                "Mutect2"      = "#ae4364"
+                "VarScan"      = "#439aae"
             ),
             
             guide = guide_legend(
@@ -529,15 +473,15 @@ bubble_plots_gatk <- function(q) {
 }
 
 #function to produce Venn plot for each caller
-venn_plot_gatk <- function(q, p) {
+venn_plot_VarScan <- function(q, p) {
     
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     
-    vcf_gatk = vcfR::getFIX(p) |> as.data.frame() |> setDT()
-    vcf_gatk$scenario = "GATK"
+    vcf_VarScan = vcfR::getFIX(p) |> as.data.frame() |> setDT()
+    vcf_VarScan$scenario = "VarScan"
     
-    x = rbind(vcf_GT, vcf_gatk)
+    x = rbind(vcf_GT, vcf_VarScan)
     y = x[, c("CHROM", "POS", "REF", "ALT", "scenario"), with = FALSE]
     
     y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
@@ -546,10 +490,10 @@ venn_plot_gatk <- function(q, p) {
     
     y = list(
         'Ground Truth' = y$GT$mut,
-        'GATK'         = y$GATK$mut
+        'VarScan'         = y$VarScan$mut
     )
     
-    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#439aae")) +
         
         coord_equal(clip = "off")
     
