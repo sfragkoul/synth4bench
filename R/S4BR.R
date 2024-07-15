@@ -1,3 +1,13 @@
+#'A script, written in R, that calls the appropriate functions 
+#'to perform the comparison between the ground truth and the caller.
+#'
+#' Input files: ground truth files, caller vcf file
+#'
+#' Output files: a tsv file with the comparison between the ground truth 
+#' and the caller.
+#'
+#' Authors: Nikos Pechlivanis(github:npechl),Stella Fragkouli(github:sfragkoul)
+#' 
 
 
 #!/usr/bin/env Rscript
