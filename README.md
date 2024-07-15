@@ -70,24 +70,20 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
   			 
 - Output files: vcf files from variant callers, bam-readcount tsv reports, files with stats for the ground truth Merged bam file
 
-`S4BR.R` - 
+`S4BR.R` - A script, written in R, that calls the appropriate functions to perform the comparison between the ground truth and the caller.
 
-- Input files:  
+- Input files:  ground truth files, caller vcf file
 							 
-- Output files: 
+- Output files: a tsv file with the comparison between the ground truth and the caller.
 
-`S4BR_plot.R` -
+`S4BR_plot.R` - A script, written in R, that calls the appropriate functions to make visualizations to illustrate the comparison between the ground truth and the caller.
 
-- Input files:  
+- Input files:  a tsv file with the comparison between the ground truth and the caller, ground truth vcf file, caller vcf file
 							 
-- Output files: 
+- Output files: multi planel figure and a Venn plot
  
 
-`paper_plots.R` - 
-
-- Input files: 
-
-- Output files: 
+`paper_plots.R` -  A script, written in R, that outputs the figures for the manuscript.
 
 ### Extra scripts
 
