@@ -1,6 +1,5 @@
-#'
-#'
-#'
+#'A script, written in R, where all the appropriate functions for 
+#'the analysis of Freebayes are located.
 #'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
