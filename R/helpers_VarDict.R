@@ -1,115 +1,61 @@
 #'
 #'
-#'function to locate variants of 100% AF in the individual files and
-#'search their POS of interest in the Merged bam file
+#'
+#'
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
-gt_analysis <- function(runs, folder) {
-    
-    nt_runs = list()
-    
-    for(r in runs) {
-        
-        a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
-            readLines() |>
-            str_split(pattern = "\t", simplify = TRUE) |>
-            as.data.frame() |> 
-            setDT()
-        
-        a$V1 = NULL
-        # a$V3 = NULL
-        a$V5 = NULL
-        
-        colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
-        
-        a = melt(
-            a, id.vars = c("POS", "REF", "DP"),
-            variable.factor = FALSE, value.factor = FALSE,
-            variable.name = "Nt", value.name = "Count"
-        )
-        
-        a = a[which(Count != "")]
-        
-        a$POS = as.numeric(a$POS)
-        a$DP = as.numeric(a$DP)
-        
-        a$Nt = str_split_i(a$Count, "\\:", 1)
-        
-        a$Count = str_split_i(a$Count, "\\:", 2) |>
-            as.numeric()
-        
-        a$Freq = round(100 * a$Count / a$DP, digits = 6)
-        
-        a = a[order(POS, -Count)]
-        
-        a = a[which(REF != a$Nt & Count != 0)]
-        
-        b = a[which(Nt %in% c("A", "C", "G", "T")), ]
-        
-        nt_runs[[ as.character(r) ]] = b
-    }
-    
-    nt_runs = rbindlist(nt_runs, idcol = "Run")
-    
-    pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
-    
-    gt_runs = nt_runs[which(POS %in% pos_of_interest)]
-    
-    a <- paste0(folder, "/Merged_report.tsv") |> 
-        readLines() |>
-        str_split(pattern = "\t", simplify = TRUE) |> 
-        as.data.frame() |> 
-        setDT()
-    
-    a$V1 = NULL
-    # a$V3 = NULL
-    a$V5 = NULL
-    
-    colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
-    
-    a = melt(
-        a, id.vars = c("POS", "REF", "DP"),
-        variable.factor = FALSE, value.factor = FALSE,
-        variable.name = "Nt", value.name = "Count"
-    )
-    
-    a = a[which(Count != "")]
-    
-    a$POS = as.numeric(a$POS)
-    a$DP = as.numeric(a$DP)
-    
-    a$Nt = str_split_i(a$Count, "\\:", 1)
-    
-    a$Count = str_split_i(a$Count, "\\:", 2) |>
-        as.numeric()
-    
-    a$Freq = round(100 * a$Count / a$DP, digits = 6)
-    
-    a = a[order(POS, -Count)]
-    
-    a = a[which(REF != a$Nt & Count != 0)]
-    
-    b = a[which(Nt %in% c("A", "C", "G", "T")), ]
-    
-    
-    merged_gt = b[which(POS %in% gt_runs$POS)]
-    merged_gt = merged_gt[order(POS)]
-    
-    merged_gt$Freq = merged_gt$Freq / 100
-    
-    merged_gt = merged_gt[, by = .(POS, REF, DP), .(
-        Nt = paste(Nt, collapse = ","),
-        Count = paste(Count, collapse = ","),
-        Freq = paste(round(Freq, digits = 3), collapse = ",")
-    )]
-    
-    
-    return(merged_gt)
-    
+#'
+
+read_vcf_VarDict <- function(path, gt, merged_file) {
+  
+  vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarDict_norm.vcf"), verbose = FALSE )
+  
+  vcf_df = vcf |>
+    merge_VarDict(gt) |>
+    clean_VarDict()
+  
+  return(vcf_df)
+  
 }
 
-#function to search the POS of interest from the caller's vcf file
+
+plot_synth4bench_VarDict <- function(df, vcf_GT, vcf_caller, merged_file){
+    
+    out1 = bar_plots_VarDict(df)
+    out2 = density_plot_VarDict(df)
+    out3 = bubble_plots_VarDict(df)
+    out4 = venn_plot_VarDict(vcf_GT, vcf_caller)
+    
+    multi2 = out2$groundtruth / out2$VarDict &
+        
+        theme(
+            plot.margin = margin(10, 10, 10, 10)
+        )
+
+    ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
+        (out1$allele + theme(plot.margin = margin(r = 50))) + 
+        multi2 +
+        
+        plot_layout(
+            widths = c(1, 1, 3)
+        )
+    
+    ann2 = out3 + out4 +
+        
+        plot_layout(
+            widths = c(2, 1)
+        )
+
+    multi = ann1 / ann2 +
+        
+        plot_layout(heights = c(1.5, 1)) + 
+        plot_annotation(title = merged_file)
+    
+    
+    return(list(multi, out4))
+}
+
 merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
     
     VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -349,7 +295,7 @@ bar_plots_VarDict <- function(q) {
 #function to produce AF density plots
 density_plot_VarDict <- function(q) {
     
-    q[which(df$`VarDict ALT` == "")]$`VarDict ALT` = NA
+    q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
     
     df = q[, c(
         "POS", 

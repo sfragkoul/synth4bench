@@ -1,0 +1,39 @@
+
+### synth_generation_template.sh parameters ###
+
+#path to working directory
+working_directory: .
+#folder for results
+folder: results
+#path to NEAT scripts
+path_to_neat: /NEAT
+#number of individual synth batches 
+runs: 5
+#seeds for each individual synth batch
+rng: 213,214,215,217,218
+#mutation rate parameter as taken from NEAT
+mutation_rate: 0.1
+#read length parameter as taken from NEAT
+read_length: 100
+#coverage parameter as taken from NEAT
+coverage: 100
+#fragment parameters as taken from NEAT
+fragment_stats: 
+ 1: 300
+ 2: 30
+#path to reference file
+path_to_reference: /reference/TP53.fasta
+#name of final merged bam file
+output_bam_merged: Merged_auto
+
+
+### variant_calling_template.sh parameters ###
+
+#path to bam readcount scripts
+path_to_bam_readcount: /home
+#somatic variant caller name
+caller: varscan
+#path to varscan_scripts_path extra scripts
+varscan_scripts_path: /Varscan2VCF
+#genomic region of interest as taken from VarScan
+vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080
