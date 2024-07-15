@@ -2,7 +2,6 @@
 
 #!/usr/bin/env Rscript
 source("R/libraries.R")
-
 source("R/common_helpers.R")
 
 #Parse arguments from command line

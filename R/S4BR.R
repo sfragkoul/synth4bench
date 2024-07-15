@@ -1,13 +1,13 @@
 
 
 #!/usr/bin/env Rscript
-source("libraries.R")
-source("common_helpers.R")
-source("helpers_freebayes.R")
-source("helpers_gatk.R")
-source("helpers_LoFreq.R")
-source("helpers_VarDict.R")
-source("helpers_VarScan.R")
+source("R/libraries.R")
+source("R/common_helpers.R")
+source("R/helpers_freebayes.R")
+source("R/helpers_gatk.R")
+source("R/helpers_LoFreq.R")
+source("R/helpers_VarDict.R")
+source("R/helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
@@ -44,7 +44,7 @@ print(arguments)
 
 # PART 1 ----------------
 
-gt <- gt_analysis(arguments$runs, arguments$working_directory, arguments$merged_file)
+gt <- gt_analysis(seq_len(arguments$runs), arguments$working_directory, arguments$merged_file)
 
 # PART 2 ---------------------con-
 

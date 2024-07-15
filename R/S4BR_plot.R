@@ -1,13 +1,13 @@
 
 
 #!/usr/bin/env Rscript
-source("libraries.R")
-source("common_helpers.R")
-source("helpers_freebayes.R")
-source("helpers_gatk.R")
-source("helpers_LoFreq.R")
-source("helpers_VarDict.R")
-source("helpers_VarScan.R")
+source("R/libraries.R")
+source("R/common_helpers.R")
+source("R/helpers_freebayes.R")
+source("R/helpers_gatk.R")
+source("R/helpers_LoFreq.R")
+source("R/helpers_VarDict.R")
+source("R/helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
@@ -47,7 +47,7 @@ options <- list(
 
 arguments <- parse_args(OptionParser(option_list = options))
 
-print(arguments)
+#print(arguments)
 
 plots <- plot_synth4bench(arguments$gt_comparison, arguments$vcf_path, arguments$gt_path, arguments$caller, arguments$merged_file)
 
