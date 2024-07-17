@@ -83,7 +83,14 @@ venn_plot_freebayes <- function(q, p) {
     
     y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
     
+    z = y[, by = mut, .(
+        scenarios = paste(scenario, collapse = "+")
+    )]
+    
+    z = z[order(z$scenarios), ]
+    
     y = split(y, y$scenario)
+    
     
     y = list(
         'Ground Truth' = y$GT$mut,
