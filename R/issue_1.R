@@ -68,7 +68,38 @@ new = new[which(ALT %in% c("A", "C", "G", "T")), ]
 fp_var = freebayes_somatic[which(freebayes_somatic$POS %ni% nt_runs$POS)]
 
 fn_var = freebayes_somatic[which(nt_runs$POS %ni% freebayes_somatic$POS)]
+#------------------------------------------------------------------------------
+
+venn_plot_freebayes <- function(q, p) {
+    
+    vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
+    vcf_GT$scenario = "GT"
+    
+    vcf_freebayes = vcfR::getFIX(p) |> as.data.frame() |> setDT()
+    vcf_freebayes$scenario = "Freebayes"
+    
+    x = rbind(vcf_GT, vcf_freebayes)
+    y = x[, c("CHROM", "POS", "REF", "ALT", "scenario"), with = FALSE]
+    
+    y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
+    
+    y = split(y, y$scenario)
+    
+    y = list(
+        'Ground Truth' = y$GT$mut,
+        'Freebayes'         = y$Freebayes$mut
+    )
+    
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae8d43")) +
+        
+        coord_equal(clip = "off")
+    
+    return(gr)
+}
+
+q = read.vcfR( paste0("results/","Merged_auto_ground_truth_norm.vcf"),verbose = FALSE )
+p = read.vcfR( paste0("results/","Merged_auto_freebayes_norm.vcf"),verbose = FALSE )
 
 
-#Compare-----------------------------------------------------------------------
-
+venn = venn_plot_freebayes(q,p)
+venn
