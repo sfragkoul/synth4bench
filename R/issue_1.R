@@ -46,7 +46,7 @@ pos_of_interest =  unique(nt_runs$POS)
 #Load Caller vcf---------------------------------------------------------------   
 #read_vcf_freebayes() function
 
-freebayes_somatic_vcf <- read.vcfR( paste0("results/", "Merged_auto_Mutect2_norm.vcf"), 
+freebayes_somatic_vcf <- read.vcfR( paste0("results/", "Merged_auto_freebayes_norm.vcf"), 
                   verbose = FALSE )
 
 freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
