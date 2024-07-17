@@ -47,7 +47,20 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 
 
 ## Execution
-<div align='justify'> Here follows the list of all scripts and their description:
+<div align='justify'> 
+	
+To run the bash scripts, fill in the parameters in the `parameters.yaml` file and then run:
+
+- `bash synth_generation_template.sh > desired_name.sh` and
+- `bash variant_calling_template.sh > desired_name.sh`
+
+Run the following commands to check the paramaters of each R script:
+
+- `Rscript R/S4BR.R --help`
+- `Rscript R/S4BR_plot.R --help`
+
+
+Here follows the list of all scripts and their description.
 
 ### Main scripts
 
