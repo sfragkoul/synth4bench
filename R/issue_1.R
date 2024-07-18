@@ -49,7 +49,7 @@ nt_runs = a[which(Nt %in% c("A", "C", "G", "T")), ]
 #read_vcf_freebayes() function
 
 freebayes_somatic_vcf <- read.vcfR( paste0("results/", 
-                                           "Merged_auto_freebayes_norm.vcf"), 
+                                           "Merged_auto_Mutect2_norm.vcf"), 
                                             verbose = FALSE )
 
 freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -61,18 +61,17 @@ remove(freebayes_somatic_vcf,freebayes_s0, freebayes_s1, freebayesgatk_s21)
 #new = freebayes_somatic[which(REF %in% c("A", "C", "G", "T")), ]
 #new = new[which(ALT %in% c("A", "C", "G", "T")), ]
 
-#FP Variants -----------------------------------------------------------------
+#function "not in" def --------------------------------------------------------
 `%ni%` <- Negate(`%in%`)
-
+#Mini example----------------------------------------------------------------
 ground <- c(1,2,3,4)
 call <- c(3,4,5,6)
 
 fn1 <- ground[which(ground %ni% call)]
 fp2 <- call[which(call %ni% ground)]
-
+#FP and FN Variants -----------------------------------------------------------
 fp_var = freebayes_somatic[which(freebayes_somatic$POS %ni% nt_runs$POS)]
 fn_var = nt_runs[which(nt_runs$POS %ni% freebayes_somatic$POS)]
-
 #------------------------------------------------------------------------------
 
 venn_plot_freebayes <- function(q, p) {
