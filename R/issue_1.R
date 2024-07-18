@@ -4,8 +4,6 @@ library(vcfR)
 library(ggplot2)
 library(ggvenn)
 
-
-
 #Find ALT in Ground Truth------------------------------------------------------    
 a <- paste0("results/", "Merged_auto_report.tsv") |>
   readLines() |>
@@ -46,19 +44,19 @@ nt_runs = a[which(Nt %in% c("A", "C", "G", "T")), ]
 
 
 #Load Caller vcf---------------------------------------------------------------   
-#read_vcf_freebayes() function
+#read_vcf_Mutect2() function
 
-freebayes_somatic_vcf <- read.vcfR( paste0("results/", 
+Mutect2_somatic_vcf <- read.vcfR( paste0("results/", 
                                            "Merged_auto_Mutect2_norm.vcf"), 
                                             verbose = FALSE )
 
-freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-freebayes_s1  = freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
-freebayesgatk_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
-freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
-remove(freebayes_somatic_vcf,freebayes_s0, freebayes_s1, freebayesgatk_s21)
+Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+Mutect2_s1  = Mutect2_somatic_vcf |> extract_gt_tidy() |> setDT()
+Mutect2gatk_s21 = Mutect2_somatic_vcf |> extract_info_tidy() |> setDT()
+Mutect2_somatic = cbind(Mutect2_s0[Mutect2_s1$Key, ], Mutect2_s1)
+remove(Mutect2_somatic_vcf,Mutect2_s0, Mutect2_s1, Mutect2gatk_s21)
 
-#new = freebayes_somatic[which(REF %in% c("A", "C", "G", "T")), ]
+#new = Mutect2_somatic[which(REF %in% c("A", "C", "G", "T")), ]
 #new = new[which(ALT %in% c("A", "C", "G", "T")), ]
 
 #function "not in" def --------------------------------------------------------
@@ -70,19 +68,19 @@ call <- c(3,4,5,6)
 fn1 <- ground[which(ground %ni% call)]
 fp2 <- call[which(call %ni% ground)]
 #FP and FN Variants -----------------------------------------------------------
-fp_var = freebayes_somatic[which(freebayes_somatic$POS %ni% nt_runs$POS)]
-fn_var = nt_runs[which(nt_runs$POS %ni% freebayes_somatic$POS)]
+fp_var = Mutect2_somatic[which(Mutect2_somatic$POS %ni% nt_runs$POS)]
+fn_var = nt_runs[which(nt_runs$POS %ni% Mutect2_somatic$POS)]
 #------------------------------------------------------------------------------
 
-venn_plot_freebayes <- function(q, p) {
+venn_plot_Mutect2 <- function(q, p) {
     
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     
-    vcf_freebayes = vcfR::getFIX(p) |> as.data.frame() |> setDT()
-    vcf_freebayes$scenario = "Freebayes"
+    vcf_Mutect2 = vcfR::getFIX(p) |> as.data.frame() |> setDT()
+    vcf_Mutect2$scenario = "Mutect2"
     
-    x = rbind(vcf_GT, vcf_freebayes)
+    x = rbind(vcf_GT, vcf_Mutect2)
     y = x[, c("CHROM", "POS", "REF", "ALT", "scenario"), with = FALSE]
     
     y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
@@ -98,10 +96,10 @@ venn_plot_freebayes <- function(q, p) {
     
     y = list(
         'Ground Truth' = y$GT$mut,
-        'Freebayes'         = y$Freebayes$mut
+        'Mutect2'         = y$Mutect2$mut
     )
     
-    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae8d43")) +
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
         
         coord_equal(clip = "off")
     
@@ -109,8 +107,8 @@ venn_plot_freebayes <- function(q, p) {
 }
 
 q = read.vcfR( paste0("results/","Merged_auto_ground_truth_norm.vcf"),verbose = FALSE )
-p = read.vcfR( paste0("results/","Merged_auto_freebayes_norm.vcf"),verbose = FALSE )
+p = read.vcfR( paste0("results/","Merged_auto_Mutect2_norm.vcf"),verbose = FALSE )
 
 
-venn = venn_plot_freebayes(q,p)
+venn = venn_plot_Mutect2(q,p)
 venn
