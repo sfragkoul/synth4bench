@@ -2,10 +2,9 @@ library(data.table)
 library(stringr)
 library(vcfR)
 library(ggplot2)
-library(ggforce)
-library(ggsci)
 library(ggvenn)
-library(patchwork)
+
+
 
 #Find ALT in Ground Truth------------------------------------------------------    
 a <- paste0("results/", "Merged_auto_report.tsv") |>
@@ -59,15 +58,21 @@ freebayesgatk_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
 freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
 remove(freebayes_somatic_vcf,freebayes_s0, freebayes_s1, freebayesgatk_s21)
 
-new = freebayes_somatic[which(REF %in% c("A", "C", "G", "T")), ]
-new = new[which(ALT %in% c("A", "C", "G", "T")), ]
+#new = freebayes_somatic[which(REF %in% c("A", "C", "G", "T")), ]
+#new = new[which(ALT %in% c("A", "C", "G", "T")), ]
 
 #FP Variants -----------------------------------------------------------------
 `%ni%` <- Negate(`%in%`)
 
-fp_var = freebayes_somatic[which(freebayes_somatic$POS %ni% nt_runs$POS)]
+ground <- c(1,2,3,4)
+call <- c(3,4,5,6)
 
-fn_var = freebayes_somatic[which(nt_runs$POS %ni% freebayes_somatic$POS)]
+fn1 <- ground[which(ground %ni% call)]
+fp2 <- call[which(call %ni% ground)]
+
+fp_var = freebayes_somatic[which(freebayes_somatic$POS %ni% nt_runs$POS)]
+fn_var = nt_runs[which(nt_runs$POS %ni% freebayes_somatic$POS)]
+
 #------------------------------------------------------------------------------
 
 venn_plot_freebayes <- function(q, p) {
