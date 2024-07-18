@@ -59,6 +59,7 @@ Run the following commands to check the paramaters of each R script:
 - `Rscript R/S4BR.R --help`
 - `Rscript R/S4BR_plot.R --help`
 
+## Documentation
 
 Here follows the list of all scripts and their description.
 
