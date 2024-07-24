@@ -4,46 +4,53 @@ library(vcfR)
 library(ggplot2)
 library(ggvenn)
 
-#Find ALT in Ground Truth------------------------------------------------------    
-a <- paste0("results/", "Merged_auto_report.tsv") |>
-  readLines() |>
-  str_split(pattern = "\t", simplify = TRUE) |>
-  as.data.frame() |> 
-  setDT()
+#function to load Ground Truth bam-report  
+load_gt_report <- function(path, merged_file) {
 
-a$V1 = NULL
-# a$V3 = NULL
-a$V5 = NULL
+    a <- paste0(path, merged_file, "_report.tsv") |>
+      readLines() |>
+      str_split(pattern = "\t", simplify = TRUE) |>
+      as.data.frame() |> 
+      setDT()
+    
+    a$V1 = NULL
+    a$V5 = NULL
+    
+    colnames(a) = c("POS", "REF", "DP", paste0("ALT_", 1:(ncol(a) - 3)))
+    
+    a = melt(
+      a, id.vars = c("POS", "REF", "DP"),
+      variable.factor = FALSE, value.factor = FALSE,
+      variable.name = "ALT", value.name = "Count"
+    )
+    
+    a = a[which(Count != "")]
+    
+    a$POS = as.numeric(a$POS)
+    a$DP = as.numeric(a$DP)
+    
+    a$ALT = str_split_i(a$Count, "\\:", 1)
+    
+    a$Count = str_split_i(a$Count, "\\:", 2) |>
+      as.numeric()
+    
+    a$Freq = round(100 * a$Count / a$DP, digits = 6)
+    
+    a = a[order(POS, -Count)]
+    
+    a = a[which(REF != a$ALT & Count != 0)]
+    
+    # select SNVs
+    nt_runs = a[which(ALT %in% c("A", "C", "G", "T")), ]
+    #filter DEPTH>2
+    nt_runs = nt_runs[which(nt_runs$Count >2), ]
 
-colnames(a) = c("POS", "REF", "DP", paste0("ALT_", 1:(ncol(a) - 3)))
+    return(nt_runs)
+}
 
-a = melt(
-  a, id.vars = c("POS", "REF", "DP"),
-  variable.factor = FALSE, value.factor = FALSE,
-  variable.name = "ALT", value.name = "Count"
-)
+nt_runs = load_gt_report("results/", "Merged_auto")
 
-a = a[which(Count != "")]
 
-a$POS = as.numeric(a$POS)
-a$DP = as.numeric(a$DP)
-
-a$ALT = str_split_i(a$Count, "\\:", 1)
-
-a$Count = str_split_i(a$Count, "\\:", 2) |>
-  as.numeric()
-
-a$Freq = round(100 * a$Count / a$DP, digits = 6)
-
-a = a[order(POS, -Count)]
-
-a = a[which(REF != a$ALT & Count != 0)]
-
-# select SNVs
-nt_runs = a[which(ALT %in% c("A", "C", "G", "T")), ]
-#filter DEPTH>2
-nt_runs = nt_runs[which(nt_runs$Count >2), ]
-remove(a)
 #Load GT vcf---------------------------------------------------------------   
 ground_truth_vcf <- read.vcfR( paste0("results/",
                                       "Merged_auto_ground_truth_norm.vcf"),
@@ -119,5 +126,11 @@ y = list(
 
 ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
 
-coord_equal(clip = "off")
+coord_equal(clip = "off") +
+
+ggtitle("SNVs Venn Diagram \n")  +
+    
+theme(
+    plot.title = element_text(size = 18, hjust = 0.5) # Adjust size and center title
+)      
 
