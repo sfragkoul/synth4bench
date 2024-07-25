@@ -109,8 +109,9 @@ nt_runs = load_gt_report("results/", "Merged_auto")
 nt_runs = nt_runs[which(ALT %in% c("A", "C", "G", "T")), ]
 #filter DEPTH>2
 nt_runs = nt_runs[which(nt_runs$Count >2), ]
-
 pick_gt = load_gt_vcf("results/", "Merged_auto")
+
+#GATK--------------------------------------------------------------------------
 Mutect2_somatic <- load_gatk_vcf("results/", "Merged_auto")
 Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
 
@@ -176,7 +177,6 @@ fp_dp_barplot <- function(q ){
   return(o1)
 
 }
-
 fp_af_barplot <- function(q){
   #FP AF plot
   df = q[, c(
@@ -233,23 +233,6 @@ fp_af_barplot <- function(q){
   return(o2)
   
 }
-
-fp_plot1 <- fp_dp_barplot(fp_var)
-fp_plot2 <- fp_af_barplot(fp_var)
-
-multi = fp_plot1 + fp_plot2 +
-  
-  plot_layout(
-    widths = c(1, 1)
-  )
-
-# ggsave(
-#   plot = multi, filename = paste0("results/Plots/", "Merged_auto", "Mutect2_FP.png"),
-#   width = 16, height = 12, units = "in", dpi = 600
-# )
-
-
-
 fn_dp_barplot <- function(q){
   #FP DP plot
   df = q[, c(
@@ -305,8 +288,6 @@ fn_dp_barplot <- function(q){
   return(o3)
   
 }
-
-
 fn_af_barplot <- function(q){
   #FP AF plot
   df = q[, c(
@@ -363,36 +344,31 @@ fn_af_barplot <- function(q){
   
 }
 
+gatk_fp_plot1 <- fp_dp_barplot(fp_var)
+gatk_fp_plot2 <- fp_af_barplot(fp_var)
+gatk_fn_plot1 <- fn_dp_barplot(fn_var)
+gatk_fn_plot2 <- fn_af_barplot(fn_var)
 
-fn_plot1 <- fn_dp_barplot(fn_var)
-fn_plot2 <- fn_af_barplot(fn_var)
-
-
-multi1 = fn_plot1 + fn_plot2 +
+gatk_multi1 = gatk_fp_plot1 + gatk_fp_plot2 +
   
   plot_layout(
     widths = c(1, 1)
   )
 
-# ggsave(
-#   plot = multi1, filename = paste0("results/Plots/", "Merged_auto", "Mutect2_FN.png"),
-#   width = 16, height = 12, units = "in", dpi = 600
-# )
+gatk_multi2 = gatk_fn_plot1 + gatk_fn_plot2 +
+  
+  plot_layout(
+    widths = c(1, 1)
+  )
 
-
-
-
-multi3 = multi / multi1 &
+gatk_multi3 = gatk_multi1 / gatk_multi2 &
 
 theme(
   plot.margin = margin(10, 10, 10, 10)
 )
 
-
-
-
 ggsave(
-  plot = multi3, filename = paste0("results/Plots/", "Merged_auto", "Mutect2_FN_FP.png"),
+  plot = gatk_multi3, filename = paste0("results/Plots/", "Merged_auto", "Mutect2_FN_FP.png"),
   width = 16, height = 12, units = "in", dpi = 600
 )
 
@@ -412,43 +388,13 @@ ggsave(
 
 
 
-# Venn Plot--------------------------------------------------------------------------
-# vcf_GT = pick_gt
-# vcf_GT$scenario = "GT"
-# vcf_GT = vcf_GT[, c("POS", "REF", "ALT", "scenario")]
-# 
-# 
-# vcf_Mutect2 = Mutect2_somatic_snvs
-# vcf_Mutect2$scenario = "Mutect2"
-# vcf_Mutect2 = vcf_Mutect2[, c("POS", "REF", "ALT", "scenario")]
-# 
-# 
-# x = rbind(vcf_GT, vcf_Mutect2)
-# y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
-# 
-# y$mut = paste(y$POS, y$REF, y$ALT, sep = ":")
-# 
-# z = y[, by = mut, .(
-#     scenarios = paste(scenario, collapse = "+")
-# )]
-# 
-# z = z[order(z$scenarios), ]
-# 
-# y = split(y, y$scenario)
-# 
-# 
-# y = list(
-#     'Ground Truth' = y$GT$mut,
-#     'Mutect2'         = y$Mutect2$mut
-# )
-# 
-# ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
-# 
-# coord_equal(clip = "off") +
-# 
-# ggtitle("SNVs Venn Diagram \n")  +
-#     
-# theme(
-#     plot.title = element_text(size = 18, hjust = 0.5) # Adjust size and center title
-# )      
 
+
+
+#LoFreq------------------------------------------------------------------------
+
+#VarDict-----------------------------------------------------------------------
+
+#VarScan-----------------------------------------------------------------------
+
+#Freebayes---------------------------------------------------------------------
