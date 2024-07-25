@@ -3,6 +3,8 @@ library(stringr)
 library(vcfR)
 library(ggplot2)
 library(ggvenn)
+library(ggforce)
+library(patchwork)
 
 #function "not in" def
 `%ni%` <- Negate(`%in%`) 
@@ -113,19 +115,137 @@ Mutect2_somatic <- load_gatk_vcf("results/", "Merged_auto")
 Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
 
 fp_var = define_fp(Mutect2_somatic_snvs, pick_gt)
+fp_var$gt_AF = as.numeric(fp_var$gt_AF)
 fn_var = define_fn(Mutect2_somatic_snvs, pick_gt)
 tp_var = define_tp(Mutect2_somatic_snvs, pick_gt)
 
+fp_dp_barplot <- function(q ){
+  #FP DP plot
+  df = q[, c(
+    "POS", 
+    "gt_DP"
+  ), with = FALSE] |>
+    unique() |>
+    melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+  
+  o1=ggplot(data = df) +
+    
+    geom_point(aes(x = variable, y = value, fill = variable),
+               position = position_jitternormal(sd_x = .01, sd_y = 0),
+               shape = 21, stroke = .1, size = 2.5) +
+    
+    geom_boxplot(aes(x = variable, y = value, fill = variable),
+                 width = .25, alpha = .5, outlier.shape = NA) +
+    
+    scale_fill_manual(
+      values = c(
+       # "Ground Truth DP" = "#43ae8d",
+        "gt_DP"      = "#ae4364"
+      )
+    ) +
+    
+    scale_x_discrete(
+      labels = c("Mutect2 FP Variants")
+    ) +
+    
+    scale_y_continuous(labels = scales::comma) +
+    
+    theme_minimal() +
+    
+    theme(
+      legend.position = "none",
+      
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(face = "bold", size = 13),
+      
+      axis.text.x = element_text(face = "bold", size = 13),
+      axis.text.y = element_text(face = "bold", size = 13),
+      
+      axis.line = element_line(),
+      axis.ticks = element_line(),
+      
+      panel.grid = element_blank(),
+      
+      plot.margin = margin(20, 20, 20, 20)
+    ) +
+    
+    labs(
+      y = "Coverage (No. of reads)"
+    )
+  return(o1)
 
+}
 
+fp_af_barplot <- function(q){
+  #FP AF plot
+  df = q[, c(
+    "POS",
+    "gt_AF"
+  ), with = FALSE] |>
+    unique() |>
+    
+    melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+  
+  o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
+    
+    geom_point(aes(x = variable, y = value, fill = variable),
+               position = position_jitternormal(sd_x = .01, sd_y = 0),
+               shape = 21, stroke = .1, size = 2.5) +
+    
+    geom_boxplot(aes(x = variable, y = value, fill = variable),
+                 width = .25, alpha = .5, outlier.shape = NA) +
+    
+    scale_fill_manual(
+      values = c(
+        #"Ground Truth AF" = "#43ae8d",
+        "gt_AF"      = "#ae4364"
+      )
+    ) +
+    
+    scale_x_discrete(
+      labels = c("Mutect2 FP Variants")
+    ) +
+    
+    scale_y_continuous(labels = scales::percent, trans = "log10") +
+    
+    theme_minimal() +
+    
+    theme(
+      legend.position = "none",
+      
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(face = "bold", size = 13),
+      axis.text.x = element_text(face = "bold", size = 13),
+      axis.text.y = element_text(face = "bold", size = 13),
+      
+      axis.line = element_line(),
+      axis.ticks = element_line(),
+      
+      panel.grid = element_blank(),
+      
+      plot.margin = margin(20, 20, 20, 20)
+    ) +
+    
+    labs(
+      y = "Allele Frequency"
+    )
+  return(o2)
+  
+}
 
+fp_plot1 <- fp_dp_barplot(fp_var)
+fp_plot2 <- fp_af_barplot(fp_var)
 
+multi = fp_plot1 + fp_plot2 +
+  
+  plot_layout(
+    widths = c(1, 1)
+  )
 
-
-
-
-
-
+ggsave(
+  plot = multi, filename = paste0("results/Plots/", "Merged_auto", "Mutect2_FP.png"),
+  width = 16, height = 12, units = "in", dpi = 600
+)
 
 
 # Venn Plot--------------------------------------------------------------------------
