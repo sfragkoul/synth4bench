@@ -7,7 +7,7 @@
 #'
 
 read_vcf_mutect2 <- function(path, gt, merged_file) {
-  
+  #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )
   
   vcf_df = vcf |>
@@ -19,7 +19,7 @@ read_vcf_mutect2 <- function(path, gt, merged_file) {
 }
 
 plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
-  
+  #plotting function
   out1 = bar_plots_gatk(df)
   out2 = density_plot_gatk(df)
   out3 = bubble_plots_gatk(df)
@@ -56,23 +56,17 @@ plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
 }
 
 merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
-    
+    #return cleaned vcf
     gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
     gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
-    
     gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
     
-    
-    #Merge everything into a common file-------------------------------------------
+    #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
-    
     merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
-    
     merged_bnch$POS = as.numeric(merged_bnch$POS)
-    
     merged_bnch = merged_bnch[order(POS)]
-    
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth DP",
         "Ground Truth ALT", "Ground Truth AD", 
@@ -88,9 +82,9 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     
 }
 
-#function to produce the caller's reported variants in the desired format 
+
 clean_gatk <- function(df) {
-    
+  #function to produce the caller's reported variants in the desired format 
     df2 = df[, c(
         "POS",
         
@@ -125,11 +119,8 @@ clean_gatk <- function(df) {
         # "Mutect2 AF"  = `Mutect2 AF` |> tstrsplit(",") |> unlist() |> as.numeric()
     )]
 
-
-
     mutect2_alt = str_split(df2$`Mutect2 ALT`, ",")
     mutect2_af = str_split(df2$`Mutect2 AF`, ",")
-
 
     cln = mapply(
         function(x, y, z) {
@@ -168,13 +159,12 @@ clean_gatk <- function(df) {
     
 }
 
-#function to produce variants' barplots for coverage and AF
+
 bar_plots_gatk <- function(q) {
-    
+    #function to produce variants' barplots for coverage and AF
     q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
     
-    # plot 1 ------------------------
-    
+    #DP plot
     df = q[, c(
         "POS", 
         "Ground Truth DP",
@@ -230,8 +220,7 @@ bar_plots_gatk <- function(q) {
         )
     
     
-    # plot 2 ---------------------
-    
+    #AF plot
     df = q[, c(
         "POS",
         "Ground Truth AF",
@@ -285,9 +274,7 @@ bar_plots_gatk <- function(q) {
         labs(
             y = "Allele Frequency"
         )
-    
-    # return -------------
-    
+
     return(
         list(
             "coverage" = o1,
@@ -297,9 +284,9 @@ bar_plots_gatk <- function(q) {
     
 }
 
-#function to produce AF density plots
+
 density_plot_gatk <- function(q) {
-    
+    #function to produce AF density plots
     q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
     
     df = q[, c(
@@ -311,8 +298,7 @@ density_plot_gatk <- function(q) {
     ), with = FALSE] |>
         unique()
     
-    # plot 1 ---------------------------
-    
+    #Ground Truth AF density plot
     o1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         
         geom_density(aes(color = `Ground Truth ALT`, fill = `Ground Truth ALT`),
@@ -344,8 +330,7 @@ density_plot_gatk <- function(q) {
         
         labs(y = "Ground Truth (density)")
     
-    # plot 2 ----------------------
-    
+    #MUtect2 AF density plot
     o2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutect2 AF`)) +
         
         geom_density(aes(color = `Mutect2 ALT`, fill = `Mutect2 ALT`),
@@ -379,9 +364,6 @@ density_plot_gatk <- function(q) {
             y = "Mutect2 (density)"
         )
     
-    
-    # return -----------------
-    
     return(
         list(
             "groundtruth" = o1,
@@ -391,14 +373,11 @@ density_plot_gatk <- function(q) {
     
 }
 
-#function to produce SNVs bubble plot
+
 bubble_plots_gatk <- function(q) {
     
-    # q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
-    
-    
+    #function to produce SNVs bubble plot
     q1 = q[which(q$`Mutect2 ALT` != "")]
-    
     
     o = ggplot() +
         
@@ -473,9 +452,9 @@ bubble_plots_gatk <- function(q) {
     
 }
 
-#function to produce Venn plot for each caller
+
 venn_plot_gatk <- function(q, p) {
-    
+    #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     

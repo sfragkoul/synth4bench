@@ -118,6 +118,16 @@ tp_var = define_tp(Mutect2_somatic_snvs, pick_gt)
 
 
 
+
+
+
+
+
+
+
+
+
+
 # Venn Plot--------------------------------------------------------------------------
 # vcf_GT = pick_gt
 # vcf_GT$scenario = "GT"
