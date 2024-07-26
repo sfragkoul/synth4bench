@@ -7,7 +7,7 @@
 #'
 
 read_vcf_LoFreq <- function(path, gt, merged_file) {
-  
+  #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_LoFreq_norm.vcf"), verbose = FALSE )
   
   vcf_df = vcf |>
@@ -19,7 +19,7 @@ read_vcf_LoFreq <- function(path, gt, merged_file) {
 }
 
 plot_synth4bench_LoFreq <- function(df, vcf_GT, vcf_caller, merged_file){
-    
+    #plotting function
     out1 = bar_plots_LoFreq(df)
     out2 = density_plot_LoFreq(df)
     out3 = bubble_plots_LoFreq(df)
@@ -57,6 +57,7 @@ plot_synth4bench_LoFreq <- function(df, vcf_GT, vcf_caller, merged_file){
 }
 
 merge_LoFreq <- function(LoFreq_somatic_vcf, merged_gt) {
+    #return cleaned vcf
     LoFreq_s0  = LoFreq_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()
     LoFreq_s2 = LoFreq_somatic_vcf |> extract_info_tidy() |> setDT()
@@ -64,7 +65,7 @@ merge_LoFreq <- function(LoFreq_somatic_vcf, merged_gt) {
     
     LoFreq_somatic = cbind(LoFreq_s0, LoFreq_s2)
     
-    #Merge everything into a common file-------------------------------------------
+    #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
     
     merged_bnch = merge(merged_gt, LoFreq_somatic,  by = "POS", all.x = TRUE)
@@ -85,9 +86,8 @@ merge_LoFreq <- function(LoFreq_somatic_vcf, merged_gt) {
     
 }
 
-#function to produce the caller's reported variants in the desired format 
 clean_LoFreq <- function(df) {
-    
+    #function to produce the caller's reported variants in the desired format 
     df2 = df[, c(
         "POS",
         
@@ -165,9 +165,8 @@ clean_LoFreq <- function(df) {
     
 }
 
-#function to produce variants' barplots for coverage and AF
 bar_plots_LoFreq <- function(q) {
-    
+    #function to produce variants' barplots for coverage and AF
     q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
     
     # plot 1 ------------------------
@@ -294,9 +293,8 @@ bar_plots_LoFreq <- function(q) {
     
 }
 
-#function to produce AF density plots
 density_plot_LoFreq <- function(q) {
-    
+    #function to produce AF density plots
     q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
     
     df = q[, c(
@@ -308,8 +306,7 @@ density_plot_LoFreq <- function(q) {
     ), with = FALSE] |>
         unique()
     
-    # plot 1 ---------------------------
-    
+    #Ground Truth AF density plot
     o1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         
         geom_density(aes(color = `Ground Truth ALT`, fill = `Ground Truth ALT`),
@@ -341,8 +338,7 @@ density_plot_LoFreq <- function(q) {
         
         labs(y = "Ground Truth (density)")
     
-    # plot 2 ----------------------
-    
+    #Caler AF density plot
     o2 = ggplot(data = df[which(!is.na(`LoFreq ALT`)), c(1, 4, 5)], aes(x = `LoFreq AF`)) +
         
         geom_density(aes(color = `LoFreq ALT`, fill = `LoFreq ALT`),
@@ -376,9 +372,6 @@ density_plot_LoFreq <- function(q) {
             y = "LoFreq (density)"
         )
     
-    
-    # return -----------------
-    
     return(
         list(
             "groundtruth" = o1,
@@ -388,12 +381,10 @@ density_plot_LoFreq <- function(q) {
     
 }
 
-#function to produce SNVs bubble plot
+
 bubble_plots_LoFreq <- function(q) {
-    
+    #function to produce SNVs bubble plot
     # q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
-    
-    
     q1 = q[which(q$`LoFreq ALT` != "")]
     
     
@@ -470,9 +461,8 @@ bubble_plots_LoFreq <- function(q) {
     
 }
 
-#function to produce Venn plot for each caller
 venn_plot_LoFreq <- function(q, p) {
-    
+    #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     

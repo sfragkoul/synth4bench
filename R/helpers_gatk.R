@@ -330,7 +330,7 @@ density_plot_gatk <- function(q) {
         
         labs(y = "Ground Truth (density)")
     
-    #MUtect2 AF density plot
+    #Caler AF density plot
     o2 = ggplot(data = df[which(!is.na(`Mutect2 ALT`)), c(1, 4, 5)], aes(x = `Mutect2 AF`)) +
         
         geom_density(aes(color = `Mutect2 ALT`, fill = `Mutect2 ALT`),
