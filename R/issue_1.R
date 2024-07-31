@@ -1,9 +1,9 @@
 source("R/libraries.R")
 source("R/common_helpers.R")
 
-gt_all = load_gt_report("results/", "Merged_auto")$all
-gt_snvs = load_gt_report("results/", "Merged_auto")$snvs
-pick_gt = load_gt_vcf("results/", "Merged_auto")
+# gt_all = load_gt_report("results/", "Merged_auto")$all
+# gt_snvs = load_gt_report("results/", "Merged_auto")$snvs
+# pick_gt = load_gt_vcf("results/", "Merged_auto")
 
 #GATK--------------------------------------------------------------------------
 
@@ -57,20 +57,7 @@ fwrite(
 )
 
 
-# Plot FP DP alluvial diagram
-# ggplot(data = fp_var,
-#        aes(axis1 = `Mutect2 DP`, axis2 = `Ground Truth DP`)) +
-#     geom_alluvium(aes(fill = `Mutect2 DP`), width = 0.1) +
-#     geom_stratum(width = 0.1, fill = "grey", color = "black") +
-#     geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
-#     scale_x_discrete(limits = c("Mutect2", "Ground Truth"), expand = c(0.15, 0.05)) +
-#     theme_minimal() +
-#     labs(title = "Alluvial Diagram",
-#          x = "Dimensions")
-
-
 #FN
-
 final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)

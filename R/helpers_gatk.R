@@ -530,7 +530,6 @@ final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
     return(fp_var)
 }
 
-
 final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
@@ -540,7 +539,125 @@ final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
     return(fp_var)
 }
 
+fp_violin_plots_gatk <- function(q) {
+    #function to produce variants' barplots for coverage and AF
+    #q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
+    q$POS = as.numeric(q$POS)
+    q$`Ground Truth DP` = as.numeric(q$`Ground Truth DP`)
+    q$`Mutect2 DP` = as.numeric(q$`Mutect2 DP`)
+    
+    #DP plot
+    df = q[, c(
+        "POS", 
+        "Ground Truth DP",
+        "Mutect2 DP"
+    ), with = FALSE] |>
+        unique() |>
+        
+        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+    
+    o1 = ggplot(data = df) +
+        
+        geom_point(aes(x = variable, y = value, fill = variable),
+                   position = position_jitternormal(sd_x = .01, sd_y = 0),
+                   shape = 21, stroke = .1, size = 2.5) +
+        
+        geom_violin(aes(x = variable, y = value, fill = variable),
+                    width = .25, alpha = .5, outlier.shape = NA) +
+        
+        scale_fill_manual(
+            values = c(
+                "Ground Truth DP" = "#43ae8d",
+                "Mutect2 DP"      = "#ae4364"
+            )
+        ) +
+        
+        scale_x_discrete(
+            breaks = c("Ground Truth DP", "Mutect2 DP"),
+            labels = c("Ground Truth", "Mutect2")
+        ) +
+        
+        scale_y_continuous(labels = scales::comma) +
+        
+        theme_minimal() +
+        
+        theme(
+            legend.position = "none",
+            
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "bold", size = 13),
+            axis.text.x = element_text(face = "bold", size = 13),
+            axis.text.y = element_text(face = "bold", size = 13),
+            
+            axis.line = element_line(),
+            axis.ticks = element_line(),
+            
+            panel.grid = element_blank(),
+            
+            plot.margin = margin(20, 20, 20, 20)
+        ) +
+        
+        labs(
+            y = "Coverage (No. of reads)"
+        )
+}
 
+fp_af_barplot <- function(q){
+    #FP AF plot
+    df = q[, c(
+        "POS",
+        "Mutect2 AF"
+    ), with = FALSE] |>
+        unique() |>
+        
+        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+    
+    o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
+        
+        geom_point(aes(x = variable, y = value, fill = variable),
+                   position = position_jitternormal(sd_x = .01, sd_y = 0),
+                   shape = 21, stroke = .1, size = 2.5) +
+        
+        geom_boxplot(aes(x = variable, y = value, fill = variable),
+                     width = .25, alpha = .5, outlier.shape = NA) +
+        
+        scale_fill_manual(
+            values = c(
+                #"Ground Truth AF" = "#43ae8d",
+                "Mutect2 AF"      = "#ae4364"
+            )
+        ) +
+        
+        scale_x_discrete(
+            labels = c("Mutect2 FP Variants")
+        ) +
+        
+        scale_y_continuous(labels = scales::percent, trans = "log10") +
+        
+        theme_minimal() +
+        
+        theme(
+            legend.position = "none",
+            
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "bold", size = 13),
+            axis.text.x = element_text(face = "bold", size = 13),
+            axis.text.y = element_text(face = "bold", size = 13),
+            
+            axis.line = element_line(),
+            axis.ticks = element_line(),
+            
+            panel.grid = element_blank(),
+            
+            plot.margin = margin(20, 20, 20, 20)
+        ) +
+        
+        labs(
+            y = "Allele Frequency"
+        )
+    return(o2)
+    
+}
 
 
 
