@@ -7,7 +7,7 @@
 #'
 
 read_vcf_freebayes <- function(path, gt, merged_file) {
-  
+  #takes two files and produce a caller vcf file in a certain format   
   vcf <- read.vcfR( paste0(path, "/", merged_file, "_Freebayes_norm.vcf"), verbose = FALSE )
   
   vcf_df <- vcf |>
@@ -19,7 +19,7 @@ read_vcf_freebayes <- function(path, gt, merged_file) {
 }
 
 plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
-    
+    #plotting function
     out1 = bar_plots_freebayes(df)
     out2 = density_plot_freebayes(df)
     out3 = bubble_plots_freebayes(df)
@@ -57,9 +57,9 @@ plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
     return(list(multi, out4))
 }
 
-#function to search the POS of interest from the caller's vcf file
+
 merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
-    
+    #return cleaned vcf
     freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     freebayes_s1  = freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
     freebayesgatk_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
@@ -67,7 +67,7 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
     
     
-    #Merge everything into a common file-------------------------------------------
+    #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
     
     merged_bnch = merge(merged_gt, freebayes_somatic,  by = "POS", all.x = TRUE)
@@ -90,9 +90,9 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     
 }
 
-#function to produce the caller's reported variants in the desired format 
+
 clean_freebayes <- function(df) {
-    
+    #function to produce the caller's reported variants in the desired format 
     df2 = df[, c(
         "POS",
         
@@ -169,13 +169,12 @@ clean_freebayes <- function(df) {
     
 }
 
-#function to produce variants' barplots for coverage and AF
+
 bar_plots_freebayes <- function(q) {
-    
+    #function to produce variants' barplots for coverage and AF
     q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
-    # plot 1 ------------------------
-    
+    #DP plot
     df = q[, c(
         "POS", 
         "Ground Truth DP",
@@ -231,8 +230,7 @@ bar_plots_freebayes <- function(q) {
         )
     
     
-    # plot 2 ---------------------
-    
+    #AF plot
     df = q[, c(
         "POS",
         "Ground Truth AF",
@@ -287,8 +285,6 @@ bar_plots_freebayes <- function(q) {
             y = "Allele Frequency"
         )
     
-    # return -------------
-    
     return(
         list(
             "coverage" = o1,
@@ -298,9 +294,9 @@ bar_plots_freebayes <- function(q) {
     
 }
 
-#function to produce AF density plots
+
 density_plot_freebayes <- function(q) {
-    
+    #function to produce AF density plots
     q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
     df = q[, c(
@@ -312,7 +308,7 @@ density_plot_freebayes <- function(q) {
     ), with = FALSE] |>
         unique()
     
-    # plot 1 ---------------------------
+    #Ground Truth AF density plot
     
     o1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         
@@ -345,7 +341,7 @@ density_plot_freebayes <- function(q) {
         
         labs(y = "Ground Truth (density)")
     
-    # plot 2 ----------------------
+    #Caller AF density plot
     
     o2 = ggplot(data = df[which(!is.na(`Freebayes ALT`)), c(1, 4, 5)], aes(x = `Freebayes AF`)) +
         
@@ -381,8 +377,6 @@ density_plot_freebayes <- function(q) {
         )
     
     
-    # return -----------------
-    
     return(
         list(
             "groundtruth" = o1,
@@ -392,9 +386,9 @@ density_plot_freebayes <- function(q) {
     
 }
 
-#function to produce SNVs bubble plot
+
 bubble_plots_freebayes <- function(q) {
-    
+    #function to produce SNVs bubble plot
     # q[which(q$`Freebayes ALT` == "")]$`Freebayes ALT` = NA
     
     
@@ -474,9 +468,9 @@ bubble_plots_freebayes <- function(q) {
     
 }
 
-#function to produce Venn plot for each caller
+
 venn_plot_freebayes <- function(q, p) {
-    
+    #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     

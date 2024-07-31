@@ -7,7 +7,7 @@
 #'
 
 read_vcf_VarScan <- function(path, gt, merged_file) {
-  
+  #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarScan_norm.vcf"), verbose = FALSE )
   
   vcf_df = vcf |>
@@ -20,7 +20,7 @@ read_vcf_VarScan <- function(path, gt, merged_file) {
 
 
 plot_synth4bench_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
-    
+    #plotting function
     out1 = bar_plots_VarScan(df)
     out2 = density_plot_VarScan(df)
     out3 = bubble_plots_VarScan(df)
@@ -57,7 +57,7 @@ plot_synth4bench_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
 
 
 merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
-    
+    #return cleaned vcf
     VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
     VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
@@ -70,7 +70,7 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
     
     
-    #Merge everything into a common file-------------------------------------------
+    #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
     
     merged_bnch = merge(merged_gt, VarScan_somatic,  by = "POS", all.x = TRUE)
@@ -90,9 +90,9 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     
 }
 
-#function to produce the caller's reported variants in the desired format 
+
 clean_VarScan <- function(df) {
-    
+    #function to produce the caller's reported variants in the desired format 
     df2 = df[, c(
         "POS",
         
@@ -166,13 +166,12 @@ clean_VarScan <- function(df) {
     
 }
 
-#function to produce variants' barplots for coverage and AF
+
 bar_plots_VarScan <- function(q) {
-    
+    #function to produce variants' barplots for coverage and AF
     q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
-    # plot 1 ------------------------
-    
+    #DP plot
     df = q[, c(
         "POS", 
         "Ground Truth DP",
@@ -228,8 +227,7 @@ bar_plots_VarScan <- function(q) {
         )
     
     
-    # plot 2 ---------------------
-    
+    #AF plot
     df = q[, c(
         "POS",
         "Ground Truth AF",
@@ -284,8 +282,6 @@ bar_plots_VarScan <- function(q) {
             y = "Allele Frequency"
         )
     
-    # return -------------
-    
     return(
         list(
             "coverage" = o1,
@@ -295,9 +291,9 @@ bar_plots_VarScan <- function(q) {
     
 }
 
-#function to produce AF density plots
+
 density_plot_VarScan <- function(q) {
-    
+    #function to produce AF density plots
     q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
     df = q[, c(
@@ -309,7 +305,7 @@ density_plot_VarScan <- function(q) {
     ), with = FALSE] |>
         unique()
     
-    # plot 1 ---------------------------
+    #Ground Truth AF density plot
     
     o1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         
@@ -342,7 +338,7 @@ density_plot_VarScan <- function(q) {
         
         labs(y = "Ground Truth (density)")
     
-    # plot 2 ----------------------
+    #Caller AF density plot
     
     o2 = ggplot(data = df[which(!is.na(`VarScan ALT`)), c(1, 4, 5)], aes(x = `VarScan AF`)) +
         
@@ -377,9 +373,6 @@ density_plot_VarScan <- function(q) {
             y = "VarScan (density)"
         )
     
-    
-    # return -----------------
-    
     return(
         list(
             "groundtruth" = o1,
@@ -389,9 +382,9 @@ density_plot_VarScan <- function(q) {
     
 }
 
-#function to produce SNVs bubble plot
+
 bubble_plots_VarScan <- function(q) {
-    
+    #function to produce SNVs bubble plot
     # q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
     
     
@@ -471,9 +464,9 @@ bubble_plots_VarScan <- function(q) {
     
 }
 
-#function to produce Venn plot for each caller
+
 venn_plot_VarScan <- function(q, p) {
-    
+    #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     
