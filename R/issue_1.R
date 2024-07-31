@@ -634,5 +634,208 @@ ggsave(
     width = 16, height = 12, units = "in", dpi = 600
 )
 #VarScan-----------------------------------------------------------------------
+load_VarScan_vcf <- function(path, merged_file){
+    #function to load caller vcf
+    VarScan_somatic_vcf <- read.vcfR( paste0(path, merged_file, 
+                                             "_VarScan_norm.vcf"), verbose = FALSE )
+    VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
+    VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
+    VarScan_s2 = VarScan_s2[,c( "DP", "AF" )]
+    VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
+    return(VarScan_somatic)
+}
 
+fp_snvs_VarScan <- function(VarScan_somatic_snvs, pick_gt, gt_all){
+    #find VarScan FP variants
+    fp_var = define_fp(VarScan_somatic_snvs, pick_gt)
+    fp_var$AF = as.numeric(fp_var$AF)
+    colnames(fp_var) = c("CHROM", "POS","ID", "VarScan REF",	
+                         "VarScan ALT", "VarScan QUAL",	"VarScan FILTER",
+                         "VarScan DP", "VarScan AF", "mut")
+    
+    #find DP of FP variants'  location in GT
+    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
+    tmp = tmp[nchar(tmp$REF) == nchar(tmp$ALT)]
+    a = unique(tmp, by = "POS")
+    #to include the presence multiple variants in a POS
+    index = match(fp_var$POS, a$POS)
+    fp_var$`Ground Truth DP` = a[index]$DP
+    fp_var$`DP Percentage` = fp_var$`VarScan DP`/fp_var$`Ground Truth DP`
+    fp_var$type = "FP"
+    return(fp_var)
+}
+
+fp_violin_plots_VarScan <- function(q) {
+    #function to produce variants' barplots for coverage and AF
+    #q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    q$POS = as.numeric(q$POS)
+    q$`Ground Truth DP` = as.numeric(q$`Ground Truth DP`)
+    q$`VarScan DP` = as.numeric(q$`VarScan DP`)
+    
+    #DP plot
+    df = q[, c(
+        "POS", 
+        "Ground Truth DP",
+        "VarScan DP"
+    ), with = FALSE] |>
+        unique() |>
+        
+        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+    
+    o1 = ggplot(data = df) +
+        
+        geom_point(aes(x = variable, y = value, fill = variable),
+                   position = position_jitternormal(sd_x = .01, sd_y = 0),
+                   shape = 21, stroke = .1, size = 2.5) +
+        
+        geom_violin(aes(x = variable, y = value, fill = variable),
+                    width = .25, alpha = .5, outlier.shape = NA) +
+        
+        scale_fill_manual(
+            values = c(
+                "Ground Truth DP" = "#43ae8d",
+                "VarScan DP"      = "#439aae"
+            )
+        ) +
+        
+        scale_x_discrete(
+            breaks = c("Ground Truth DP", "VarScan DP"),
+            labels = c("Ground Truth", "VarScan")
+        ) +
+        
+        scale_y_continuous(labels = scales::comma) +
+        
+        theme_minimal() +
+        
+        theme(
+            legend.position = "none",
+            
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "bold", size = 13),
+            axis.text.x = element_text(face = "bold", size = 13),
+            axis.text.y = element_text(face = "bold", size = 13),
+            
+            axis.line = element_line(),
+            axis.ticks = element_line(),
+            
+            panel.grid = element_blank(),
+            
+            plot.margin = margin(20, 20, 20, 20)
+        ) +
+        
+        labs(
+            y = "Coverage (No. of reads)"
+        )
+}
+
+fp_af_barplot <- function(q){
+    #FP AF plot
+    df = q[, c(
+        "POS",
+        "VarScan AF"
+    ), with = FALSE] |>
+        unique() |>
+        
+        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+    
+    o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
+        
+        geom_point(aes(x = variable, y = value, fill = variable),
+                   position = position_jitternormal(sd_x = .01, sd_y = 0),
+                   shape = 21, stroke = .1, size = 2.5) +
+        
+        geom_boxplot(aes(x = variable, y = value, fill = variable),
+                     width = .25, alpha = .5, outlier.shape = NA) +
+        
+        scale_fill_manual(
+            values = c(
+                #"Ground Truth AF" = "#43ae8d",
+                "VarScan AF"      = "#439aae"
+            )
+        ) +
+        
+        scale_x_discrete(
+            labels = c("VarScan FP Variants")
+        ) +
+        
+        scale_y_continuous(labels = scales::percent, trans = "log10") +
+        
+        theme_minimal() +
+        
+        theme(
+            legend.position = "none",
+            
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "bold", size = 13),
+            axis.text.x = element_text(face = "bold", size = 13),
+            axis.text.y = element_text(face = "bold", size = 13),
+            
+            axis.line = element_line(),
+            axis.ticks = element_line(),
+            
+            panel.grid = element_blank(),
+            
+            plot.margin = margin(20, 20, 20, 20)
+        ) +
+        
+        labs(
+            y = "Allele Frequency"
+        )
+    return(o2)
+    
+}
+
+
+VarScan_somatic <- load_VarScan_vcf("results/", "Merged_auto")
+VarScan_somatic_snvs <-select_snvs(VarScan_somatic)
+
+
+#FP
+VarScan_fp_var = fp_snvs_VarScan(VarScan_somatic_snvs, pick_gt, gt_all)
+
+fwrite(
+    VarScan_fp_var, paste0("results/", "Merged_auto_", "VarScan_", "snvs_FP.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+#FN
+VarScan_fn_var = define_fn(VarScan_somatic_snvs, pick_gt)
+colnames(VarScan_fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
+                             "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
+
+fwrite(
+    VarScan_fn_var, paste0("results/", "Merged_auto_", "VarScan_", "snvs_FN.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+#Plots
+
+VarScan_fp_plot1 <- fp_violin_plots_VarScan(VarScan_fp_var)
+VarScan_fp_plot2 <- fp_af_barplot(VarScan_fp_var)
+VarScan_fn_plot1 <- fn_dp_barplot(VarScan_fn_var, caller = "VarScan")
+VarScan_fn_plot2 <- fn_af_barplot(VarScan_fn_var, caller = "VarScan")
+
+VarScan_multi1 = VarScan_fp_plot1 + VarScan_fp_plot2 +
+    
+    plot_layout(
+        widths = c(1, 1)
+    )
+
+VarScan_multi2 = VarScan_fn_plot1 + VarScan_fn_plot2 +
+    
+    plot_layout(
+        widths = c(1, 1)
+    )
+
+VarScan_multi3 = VarScan_multi1 / VarScan_multi2 &
+    
+    theme(
+        plot.margin = margin(10, 10, 10, 10)
+    )
+
+ggsave(
+    plot = VarScan_multi3, filename = paste0("results/Plots/", "Merged_auto_", "VarScan_snvs_FN_FP.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
 #Freebayes---------------------------------------------------------------------
