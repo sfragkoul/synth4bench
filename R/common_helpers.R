@@ -541,6 +541,7 @@ select_snvs <- function(df){
     # select SNVs from caller based on length of REF and ALT
     snvs = df[nchar(df$REF) == nchar(df$ALT)]
     snvs = snvs[which(nchar(snvs$REF) <2), ]
+    snvs = snvs[which(nchar(snvs$ALT) <2), ]
     snvs$mut = paste(snvs$POS, snvs$REF, snvs$ALT, sep = ":")
     
     return(snvs)
