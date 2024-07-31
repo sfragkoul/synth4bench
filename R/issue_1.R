@@ -55,7 +55,7 @@ load_gt_vcf <- function(path, merged_file){
     
     ground_truth_vcf  = ground_truth_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     
-    pick_gt = nt_runs[which(nt_runs$POS %in% ground_truth_vcf$POS)]
+    pick_gt = gt_snvs[which(gt_snvs$POS %in% ground_truth_vcf$POS)]
     pick_gt$mut = paste(pick_gt$POS, 
                         pick_gt$REF, 
                         pick_gt$ALT, sep = ":")
@@ -92,11 +92,11 @@ define_tp <- function(caller, gt){
     return(tp_var)
 }
 
-gt_runs = load_gt_report("results/", "Merged_auto")
+gt_all = load_gt_report("results/", "Merged_auto")
 # select SNVs
-nt_runs = gt_runs[which(ALT %in% c("A", "C", "G", "T")), ]
+gt_snvs = gt_all[which(ALT %in% c("A", "C", "G", "T")), ]
 #filter DEPTH>2
-nt_runs = nt_runs[which(nt_runs$Count >2), ]
+gt_snvs = gt_snvs[which(gt_snvs$Count >2), ]
 pick_gt = load_gt_vcf("results/", "Merged_auto")
 
 
@@ -239,7 +239,7 @@ colnames(fp_var) = c("CHROM", "POS","ID", "Mutect2 REF",
                                    "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
                                    "gt_PS",	"gt_SB",	"gt_GT_alleles", "mut")
 
-teeeeest = gt_runs[which(POS %in% unique(fp_var$POS))]
+teeeeest = gt_all[which(POS %in% unique(fp_var$POS))]
 a = unique(teeeeest, by = "POS")
 fp_var$`Ground Truth DP` = a$DP
 fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
