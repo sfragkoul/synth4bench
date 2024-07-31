@@ -50,12 +50,63 @@ options <- list(
 
 arguments <- parse_args(OptionParser(option_list = options))
 
-# SNVS TP
-gt <- gt_analysis(seq_len(arguments$runs), arguments$working_directory, arguments$merged_file)
-out_df <- read_vcf(arguments$vcf_path, arguments$caller, gt, arguments$merged_file)
+#SNVS TP-----------------------------------------------------------------------
+gt <- gt_analysis(seq_len(arguments$runs), 
+                  arguments$working_directory, 
+                  arguments$merged_file)
+
+out_df_snvs_tp <- read_vcf_snvs_TP(arguments$vcf_path, 
+                                   arguments$caller, 
+                                   gt, 
+                                   arguments$merged_file)
 
 fwrite(
-  out_df, paste0(arguments$working_directory, "/", arguments$merged_file, "_Ground_truth_vs_", arguments$caller, ".clean_norm.tsv"),
+  out_df_snvs_tp, paste0(arguments$working_directory,
+                         "/",
+                         arguments$merged_file,
+                         "_",
+                         arguments$caller, "_snvs_TP.tsv"),
+  
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
+
+
+#SNVS FP & FN------------------------------------------------------------------
+#FP
+gt_all = load_gt_report(arguments$working_directory, "/", 
+                        arguments$merged_file)$all
+
+gt_snvs = load_gt_report(arguments$working_directory, "/", 
+                         arguments$merged_file)$snvs
+
+pick_gt = load_gt_vcf(arguments$working_directory, "/", 
+                      arguments$merged_file)
+
+out_df_snvs_fp <- read_vcf_snvs_FP(arguments$working_directory, 
+                                   arguments$caller,
+                                   arguments$merged_file,
+                                   pick_gt, 
+                                   gt_all)
+
+fwrite(
+    out_df_snvs_fp, paste0(arguments$working_directory, "/", 
+                           arguments$merged_file, "_", 
+                           arguments$caller, "_snvs_FP.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+
+#FN
+out_df_snvs_fn = read_vcf_snvs_FN(arguments$working_directory,
+                                  arguments$merged_file, 
+                                  pick_gt)
+
+fwrite(
+    out_df_snvs_fn, paste0(arguments$working_directory, "/", 
+                               arguments$merged_file, "_", 
+                               arguments$caller, "_snvs_FN.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+
 

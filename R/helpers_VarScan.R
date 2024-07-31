@@ -6,6 +6,7 @@
 #'
 #'
 
+#TP SNVS-----------------------------------------------------------------------
 read_vcf_VarScan <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarScan_norm.vcf"), verbose = FALSE )
@@ -491,3 +492,6 @@ venn_plot_VarScan <- function(q, p) {
     
     return(gr)
 }
+
+#FP & FN SNVS------------------------------------------------------------------
+

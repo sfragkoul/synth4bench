@@ -6,6 +6,7 @@
 #'
 #'
 
+#TP SNVS-----------------------------------------------------------------------
 read_vcf_mutect2 <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )
@@ -479,3 +480,86 @@ venn_plot_gatk <- function(q, p) {
     
     return(gr)
 }
+
+
+
+
+
+#FP & FN SNVS------------------------------------------------------------------
+
+load_gatk_vcf <- function(path, merged_file){
+    #function to load caller vcf
+    Mutect2_somatic_vcf <- read.vcfR( paste0(path, merged_file, 
+                                             "_Mutect2_norm.vcf"), verbose = FALSE )
+    
+    Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    Mutect2_s1  = Mutect2_somatic_vcf |> extract_gt_tidy() |> setDT()
+    Mutect2gatk_s21 = Mutect2_somatic_vcf |> extract_info_tidy() |> setDT()
+    Mutect2_somatic = cbind(Mutect2_s0[Mutect2_s1$Key, ], Mutect2_s1)
+    return(Mutect2_somatic)
+}
+
+fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){
+    #find MUtect2 FP variants
+    fp_var = define_fp(Mutect2_somatic_snvs, pick_gt)
+    fp_var$gt_AF = as.numeric(fp_var$gt_AF)
+    colnames(fp_var) = c("CHROM", "POS","ID", "Mutect2 REF",	
+                         "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
+                         "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
+                         "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
+                         "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
+                         "gt_PS",	"gt_SB",	"gt_GT_alleles", "mut")
+    
+    #find DP of FP variants'  location in GT
+    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
+    a = unique(tmp, by = "POS")
+    #to include the presence multiple variants in a POS
+    index = match(fp_var$POS, a$POS)
+    fp_var$`Ground Truth DP` = a[index]$DP
+    fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
+    fp_var$type = "FP"
+    return(fp_var)
+}
+
+final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
+    fp_var = fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
+    
+    return(fp_var)
+}
+
+
+final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
+    fn_var = define_fn(Mutect2_somatic_snvs, pick_gt)
+    
+    return(fp_var)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

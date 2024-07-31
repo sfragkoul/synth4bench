@@ -40,9 +40,16 @@ fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){
     return(fp_var)
 }
 
-Mutect2_somatic <- load_gatk_vcf("results/", "Merged_auto")
-Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-fp_var = fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
+final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
+    fp_var = fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
+    
+    return(fp_var)
+}
+
+fp_var = final_fp_snvs_gatk("results/", "Merged_auto", pick_gt, gt_all)
 
 fwrite(
     fp_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FP.tsv"),
@@ -63,7 +70,18 @@ fwrite(
 
 
 #FN
-fn_var = define_fn(Mutect2_somatic_snvs, pick_gt)
+
+final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
+    fn_var = define_fn(Mutect2_somatic_snvs, pick_gt)
+    
+    return(fp_var)
+}
+
+final_fn_snvs_gatk("results/", "Merged_auto", pick_gt)
+
 colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
                 "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
 

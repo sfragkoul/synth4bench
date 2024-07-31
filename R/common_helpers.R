@@ -1,6 +1,6 @@
 
 
-#TP SNVS
+#TP SNVS-----------------------------------------------------------------------
 gt_analysis <- function(runs, folder, merged_file) {
   
   nt_runs = list()
@@ -105,7 +105,7 @@ gt_analysis <- function(runs, folder, merged_file) {
   
 }
 
-read_vcf <- function(path, caller, gt, merged_file) {
+read_vcf_snvs_TP <- function(path, caller, gt, merged_file) {
     
     if(caller == "Freebayes") {
         
@@ -469,7 +469,7 @@ explore_mut_pos <- function(runs, folder, caller) {
     
 }
 
-#FP & FN SNVS
+#FP & FN SNVS------------------------------------------------------------------
 #function "not in" def
 `%ni%` <- Negate(`%in%`) 
 
@@ -678,4 +678,65 @@ fn_af_barplot <- function(q, caller){
         )
     return(o4)
     
+}
+
+
+read_vcf_snvs_FP <- function(path, caller, merged_file, pick_gt, gt_all) {
+    
+    if(caller == "Freebayes") {
+        
+        vcf_df <- read_vcf_freebayes(path, gt, merged_file)
+        
+    } else if (caller == "Mutect2") { #DONE
+        
+        fp_var <- final_fp_snvs_gatk(path, merged_file, pick_gt, gt_all)
+        
+    } else if (caller == "LoFreq") {
+        
+        vcf_df <- read_vcf_LoFreq(path, gt, merged_file)
+        
+    } else if (caller == "VarDict") {
+        
+        vcf_df <- read_vcf_VarDict(path, gt, merged_file)
+        
+    } else if (caller == "VarScan") {
+        
+        vcf_df <- read_vcf_VarScan(path, gt, merged_file)
+        
+    }
+    
+    return(fp_var)
+}
+
+
+
+
+read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
+    
+    if(caller == "Freebayes") {
+        
+        vcf_df <- read_vcf_freebayes(path, gt, merged_file)
+        
+    } else if (caller == "Mutect2") { #DONE
+        
+        fn_var <- final_fn_snvs_gatk(path, merged_file, pick_gt)
+        colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
+                             "Ground Truth ALT", "Count", "Ground Truth AF", 
+                             "mut", "type")
+        
+    } else if (caller == "LoFreq") {
+        
+        vcf_df <- read_vcf_LoFreq(path, gt, merged_file)
+        
+    } else if (caller == "VarDict") {
+        
+        vcf_df <- read_vcf_VarDict(path, gt, merged_file)
+        
+    } else if (caller == "VarScan") {
+        
+        vcf_df <- read_vcf_VarScan(path, gt, merged_file)
+        
+    }
+    
+    return(fn_var)
 }
