@@ -43,7 +43,7 @@ Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
 fp_var = fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
 
 fwrite(
-    fp_var, paste0("results/", "Merged_auto_", "Mutect2_", "FP.tsv"),
+    fp_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FP.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
@@ -66,7 +66,7 @@ colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP",
                 "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
 
 fwrite(
-    fn_var, paste0("results/", "Merged_auto_", "Mutect2_", "FN.tsv"),
+    fn_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FN.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
@@ -216,7 +216,7 @@ theme(
 )
 
 ggsave(
-  plot = gatk_multi3, filename = paste0("results/Plots/", "Merged_auto_", "Mutect2_FN_FP.png"),
+  plot = gatk_multi3, filename = paste0("results/Plots/", "Merged_auto_", "Mutect2_snvs_FN_FP.png"),
   width = 16, height = 12, units = "in", dpi = 600
 )
 
@@ -234,102 +234,193 @@ load_LoFreq_vcf <- function(path, merged_file){
   return(LoFreq_somatic)
 }
 
-LoFreq_somatic <- load_LoFreq_vcf("results/", "Merged_auto")
-LoFreq_somatic_snvs <-select_snvs(LoFreq_somatic)
-LoFreq_fp_var = define_fp(LoFreq_somatic_snvs, pick_gt)
-#LoFreq_fp_var$gt_AF = as.numeric(fp_var$gt_AF)
-LoFreq_fn_var = define_fn(LoFreq_somatic_snvs, pick_gt)
-LoFreq_tp_var = define_tp(LoFreq_somatic_snvs, pick_gt)
-
-
-lofreq_fp_af_barplot <- function(q){
-  #FP AF plot
-  df = q[, c(
-    "POS",
-    "AF"
-  ), with = FALSE] |>
-    unique() |>
+fp_snvs_LoFreq <- function(LoFreq_somatic_snvs, pick_gt, gt_all){
+    #find LoFreq FP variants
+    fp_var = define_fp(LoFreq_somatic_snvs, pick_gt)
+    fp_var$AF = as.numeric(fp_var$AF)
+    colnames(fp_var) = c("CHROM", "POS","ID", "LoFreq REF",	
+                         "LoFreq ALT", "LoFreq QUAL",	"LoFreq FILTER",
+                         "LoFreq DP", "LoFreq AF", "mut")
     
-    melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
-  
-  o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
-    
-    geom_point(aes(x = variable, y = value, fill = variable),
-               position = position_jitternormal(sd_x = .01, sd_y = 0),
-               shape = 21, stroke = .1, size = 2.5) +
-    
-    geom_boxplot(aes(x = variable, y = value, fill = variable),
-                 width = .25, alpha = .5, outlier.shape = NA) +
-    
-    scale_fill_manual(
-      values = c(
-        #"Ground Truth AF" = "#43ae8d",
-        "AF"      = "#c974ba"
-      )
-    ) +
-    
-    scale_x_discrete(
-      labels = c("LoFreq FP Variants")
-    ) +
-    
-    scale_y_continuous(labels = scales::percent, trans = "log10") +
-    
-    theme_minimal() +
-    
-    theme(
-      legend.position = "none",
-      
-      axis.title.x = element_blank(),
-      axis.title.y = element_text(face = "bold", size = 13),
-      axis.text.x = element_text(face = "bold", size = 13),
-      axis.text.y = element_text(face = "bold", size = 13),
-      
-      axis.line = element_line(),
-      axis.ticks = element_line(),
-      
-      panel.grid = element_blank(),
-      
-      plot.margin = margin(20, 20, 20, 20)
-    ) +
-    
-    labs(
-      y = "Allele Frequency"
-    )
-  return(o2)
-  
+    #find DP of FP variants'  location in GT
+    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
+    a = unique(tmp, by = "POS")
+    fp_var$`Ground Truth DP` = a$DP
+    fp_var$`DP Percentage` = fp_var$`LoFreq DP`/fp_var$`Ground Truth DP`
+    fp_var$type = "FP"
+    return(fp_var)
 }
 
-lofreq_fp_plot1 <- lofreq_fp_dp_barplot(LoFreq_fp_var)
-lofreq_fp_plot2 <- lofreq_fp_af_barplot(LoFreq_fp_var)
+fp_violin_plots_LoFreq <- function(q) {
+    #function to produce variants' barplots for coverage and AF
+    #q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
+    q$POS = as.numeric(q$POS)
+    q$`Ground Truth DP` = as.numeric(q$`Ground Truth DP`)
+    q$`LoFreq DP` = as.numeric(q$`LoFreq DP`)
+    
+    #DP plot
+    df = q[, c(
+        "POS", 
+        "Ground Truth DP",
+        "LoFreq DP"
+    ), with = FALSE] |>
+        unique() |>
+        
+        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+    
+    o1 = ggplot(data = df) +
+        
+        geom_point(aes(x = variable, y = value, fill = variable),
+                   position = position_jitternormal(sd_x = .01, sd_y = 0),
+                   shape = 21, stroke = .1, size = 2.5) +
+        
+        geom_violin(aes(x = variable, y = value, fill = variable),
+                    width = .25, alpha = .5, outlier.shape = NA) +
+        
+        scale_fill_manual(
+            values = c(
+                "Ground Truth DP" = "#43ae8d",
+                "LoFreq DP"      = "#c974ba"
+            )
+        ) +
+        
+        scale_x_discrete(
+            breaks = c("Ground Truth DP", "LoFreq DP"),
+            labels = c("Ground Truth", "LoFreq")
+        ) +
+        
+        scale_y_continuous(labels = scales::comma) +
+        
+        theme_minimal() +
+        
+        theme(
+            legend.position = "none",
+            
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "bold", size = 13),
+            axis.text.x = element_text(face = "bold", size = 13),
+            axis.text.y = element_text(face = "bold", size = 13),
+            
+            axis.line = element_line(),
+            axis.ticks = element_line(),
+            
+            panel.grid = element_blank(),
+            
+            plot.margin = margin(20, 20, 20, 20)
+        ) +
+        
+        labs(
+            y = "Coverage (No. of reads)"
+        )
+}
+
+fp_af_barplot <- function(q){
+    #FP AF plot
+    df = q[, c(
+        "POS",
+        "LoFreq AF"
+    ), with = FALSE] |>
+        unique() |>
+        
+        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+    
+    o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
+        
+        geom_point(aes(x = variable, y = value, fill = variable),
+                   position = position_jitternormal(sd_x = .01, sd_y = 0),
+                   shape = 21, stroke = .1, size = 2.5) +
+        
+        geom_boxplot(aes(x = variable, y = value, fill = variable),
+                     width = .25, alpha = .5, outlier.shape = NA) +
+        
+        scale_fill_manual(
+            values = c(
+                #"Ground Truth AF" = "#43ae8d",
+                "LoFreq AF"      = "#c974ba"
+            )
+        ) +
+        
+        scale_x_discrete(
+            labels = c("LoFreq FP Variants")
+        ) +
+        
+        scale_y_continuous(labels = scales::percent, trans = "log10") +
+        
+        theme_minimal() +
+        
+        theme(
+            legend.position = "none",
+            
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "bold", size = 13),
+            axis.text.x = element_text(face = "bold", size = 13),
+            axis.text.y = element_text(face = "bold", size = 13),
+            
+            axis.line = element_line(),
+            axis.ticks = element_line(),
+            
+            panel.grid = element_blank(),
+            
+            plot.margin = margin(20, 20, 20, 20)
+        ) +
+        
+        labs(
+            y = "Allele Frequency"
+        )
+    return(o2)
+    
+}
 
 
-lofreq_fn_plot1 <- fn_dp_barplot(LoFreq_fn_var, caller = "LoFreq")
-lofreq_fn_plot2 <- fn_af_barplot(LoFreq_fn_var, caller = "LoFreq")
+LoFreq_somatic <- load_LoFreq_vcf("results/", "Merged_auto")
+LoFreq_somatic_snvs <-select_snvs(LoFreq_somatic)
+#FP
+LoFreq_fp_var = fp_snvs_LoFreq(LoFreq_somatic_snvs, pick_gt, gt_all)
 
-lofreq_multi1 = lofreq_fp_plot1 + lofreq_fp_plot2 +
-  
-  plot_layout(
-    widths = c(1, 1)
-  )
-
-lofreq_multi2 = lofreq_fn_plot1 + lofreq_fn_plot2 +
-  
-  plot_layout(
-    widths = c(1, 1)
-  )
-
-lofreq_multi3 = lofreq_multi1 / lofreq_multi2 &
-  
-  theme(
-    plot.margin = margin(10, 10, 10, 10)
-  )
-
-ggsave(
-  plot = lofreq_multi3, filename = paste0("results/Plots/", "Merged_auto_", "LoFreq_FN_FP.png"),
-  width = 16, height = 12, units = "in", dpi = 600
+fwrite(
+    fp_var, paste0("results/", "Merged_auto_", "LoFreq_", "snvs_FP.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
+#FN
+LoFreq_fn_var = define_fn(LoFreq_somatic_snvs, pick_gt)
+colnames(LoFreq_fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
+                     "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
 
+fwrite(
+    LoFreq_fn_var, paste0("results/", "Merged_auto_", "LoFreq_", "snvs_FN.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+#Plots
+
+LoFreq_fp_plot1 <- fp_violin_plots_LoFreq(LoFreq_fp_var)
+LoFreq_fp_plot2 <- fp_af_barplot(LoFreq_fp_var)
+LoFreq_fn_plot1 <- fn_dp_barplot(LoFreq_fn_var, caller = "LoFreq")
+LoFreq_fn_plot2 <- fn_af_barplot(LoFreq_fn_var, caller = "LoFreq")
+
+LoFreq_multi1 = LoFreq_fp_plot1 + LoFreq_fp_plot2 +
+    
+    plot_layout(
+        widths = c(1, 1)
+    )
+
+LoFreq_multi2 = LoFreq_fn_plot1 + LoFreq_fn_plot2 +
+    
+    plot_layout(
+        widths = c(1, 1)
+    )
+
+LoFreq_multi3 = LoFreq_multi1 / LoFreq_multi2 &
+    
+    theme(
+        plot.margin = margin(10, 10, 10, 10)
+    )
+
+ggsave(
+    plot = LoFreq_multi3, filename = paste0("results/Plots/", "Merged_auto_", "LoFreq_snvs_FN_FP.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
 
 
 
