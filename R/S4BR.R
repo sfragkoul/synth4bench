@@ -50,14 +50,8 @@ options <- list(
 
 arguments <- parse_args(OptionParser(option_list = options))
 
-print(arguments)
-
-# PART 1 ----------------
-
+# SNVS TP
 gt <- gt_analysis(seq_len(arguments$runs), arguments$working_directory, arguments$merged_file)
-
-# PART 2 ---------------------con-
-
 out_df <- read_vcf(arguments$vcf_path, arguments$caller, gt, arguments$merged_file)
 
 fwrite(
