@@ -132,9 +132,9 @@ read_vcf_snvs_TP <- function(path, caller, gt, merged_file) {
     return(vcf_df)
 }
 
-plot_synth4bench <- function(gt_comparison, vcf_path, gt_path, caller, merged_file) {
+plot_snvs_TP <- function(gt_snv_tp_comparison, vcf_path, gt_path, caller, merged_file) {
     
-    df = fread(paste0(gt_comparison, "/", merged_file, "_Ground_truth_vs_", caller, ".clean_norm.tsv"))
+    df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_Ground_truth_vs_", caller, ".clean_norm.tsv"))
     
     vcf_GT <- read.vcfR(paste0(gt_path, "/", merged_file, "_ground_truth_norm.vcf"), verbose = FALSE )
     
@@ -737,3 +737,4 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     
     return(fn_var)
 }
+

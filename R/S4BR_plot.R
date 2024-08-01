@@ -25,10 +25,11 @@ source("R/helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
-  make_option(c("-t", "--gt_comparison"), 
+  make_option(c("-t", "--gt_snv_tp_comparison"), 
               action = "store", 
               type = "character", 
-              help="Directory path where Ground Truth vs Caller file tsv file is located."),
+              help="Directory path where Ground Truth vs Caller file tsv file is 
+              located for the snvs TP variants."),
   
   make_option(c("-v", "--vcf_path"), 
               action = "store", 
@@ -62,17 +63,33 @@ options <- list(
 arguments <- parse_args(OptionParser(option_list = options))
 
 #print(arguments)
-
-plots <- plot_synth4bench(arguments$gt_comparison, arguments$vcf_path, arguments$gt_path, arguments$caller, arguments$merged_file)
+print("Plotting SNVs TP Variants")
+plots_snvs_TP <- plot_snvs_TP(arguments$gt_snv_tp_comparison, 
+                          arguments$vcf_path, 
+                          arguments$gt_path, 
+                          arguments$caller, 
+                          arguments$merged_file)
 
 dir.create(paste0(arguments$working_directory, "/Plots"))
 
 ggsave(
-  plot = plots[[1]], filename = paste0(arguments$working_directory, "/Plots/Poster_", arguments$caller, ".png"),
+  plot = plots_snvs_TP[[1]], filename = paste0(arguments$working_directory, 
+                                       "/Plots/Poster_", 
+                                       arguments$caller, 
+                                       "snvs_TP.png"),
   width = 16, height = 12, units = "in", dpi = 600
 )
 
 ggsave(
-  plot = plots[[2]], filename = paste0(arguments$working_directory, "/Plots/Venn_", arguments$caller, ".png"),
+  plot = plots_snvs_TP[[2]], filename = paste0(arguments$working_directory, 
+                                       "/Plots/Venn_", 
+                                       arguments$caller, 
+                                       "all.png"),
   width = 8, height = 8, units = "in", dpi = 600
 )
+
+
+print("Plotting SNVs FP & FN Variants")
+
+
+
