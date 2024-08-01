@@ -489,7 +489,7 @@ venn_plot_gatk <- function(q, p) {
 
 load_gatk_vcf <- function(path, merged_file){
     #function to load caller vcf
-    Mutect2_somatic_vcf <- read.vcfR( paste0(path, merged_file, 
+    Mutect2_somatic_vcf <- read.vcfR( paste0(path, "/",merged_file, 
                                              "_Mutect2_norm.vcf"), verbose = FALSE )
     
     Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -525,7 +525,7 @@ final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-    fp_var = fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
+    fp_var <- fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
     
     return(fp_var)
 }
@@ -533,10 +533,12 @@ final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
 final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-    fn_var = define_fn(Mutect2_somatic_snvs, pick_gt)
-    
-    return(fp_var)
+    Mutect2_somatic_snvs <- select_snvs(Mutect2_somatic)
+    fn_var <- define_fn(Mutect2_somatic_snvs, pick_gt)
+    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP",
+                         "Ground Truth ALT", "Count", "Ground Truth AF",
+                         "mut", "type")
+    return(fn_var)
 }
 
 fp_violin_plots_gatk <- function(q) {

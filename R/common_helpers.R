@@ -475,7 +475,7 @@ explore_mut_pos <- function(runs, folder, caller) {
 
 load_gt_report <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
-    a <- paste0(path, merged_file, "_report.tsv") |>
+    a <- paste0(path, "/", merged_file, "_report.tsv") |>
         readLines() |>
         str_split(pattern = "\t", simplify = TRUE) |>
         as.data.frame() |> 
@@ -524,7 +524,7 @@ load_gt_report <- function(path, merged_file) {
 
 load_gt_vcf <- function(path, merged_file){
     #function to load Ground Truth vcf
-    ground_truth_vcf <- read.vcfR( paste0(path, merged_file, 
+    ground_truth_vcf <- read.vcfR( paste0(path, "/",merged_file, 
                                           "_ground_truth_norm.vcf"),
                                    verbose = FALSE )
     
@@ -720,9 +720,6 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     } else if (caller == "Mutect2") { #DONE
         
         fn_var <- final_fn_snvs_gatk(path, merged_file, pick_gt)
-        colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                             "Ground Truth ALT", "Count", "Ground Truth AF", 
-                             "mut", "type")
         
     } else if (caller == "LoFreq") {
         
