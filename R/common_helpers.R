@@ -685,6 +685,8 @@ read_vcf_snvs_FP <- function(path, caller, merged_file, pick_gt, gt_all) {
     
     if(caller == "Freebayes") {
         
+        fp_var <- final_fp_snvs_Freebayes(path, merged_file, pick_gt, gt_all)
+        
     } else if (caller == "Mutect2") { 
         
         fp_var <- final_fp_snvs_gatk(path, merged_file, pick_gt, gt_all)
@@ -713,7 +715,7 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     
     if(caller == "Freebayes") {
         
-      
+        fn_var <- final_fn_snvs_Freebayes(path, merged_file, pick_gt)
         
     } else if (caller == "Mutect2") {
         
