@@ -7,12 +7,10 @@
 #'
 #'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
 #'
-rm(list = ls())
-gc()
 
+source("R/libraries.R")
 
-source("libraries.R")
-
+#SNVs TP-----------------------------------------------------------------------
 folder = 'read_length/1000_300'
 name = "1000_300"
 
@@ -45,8 +43,7 @@ df[which(df$`Caller ALT` == "")]$`Caller ALT` = NA
 
 
 
-# plot 1 ------------------------
-
+# DP plot
 s1 = df[, c(
     "caller",
     "POS", 
@@ -116,7 +113,7 @@ gr1 = ggplot(data = q) +
 
 
 
-# plot 2 ------------------------
+# AF plot
 
 s1 = df[, c(
     "caller",
@@ -134,7 +131,12 @@ q = rbind(s1, s2) |>
     unique() |>
     melt(id.vars = c("caller", "POS"), variable.factor = FALSE, value.factor = FALSE)
 
-q$caller = q$caller |> factor(levels = c("Ground\nTruth", "Freebayes", "LoFreq", "Mutect2", "VarDict", "VarScan"))
+q$caller = q$caller |> factor(levels = c("Ground\nTruth", 
+                                         "Freebayes", 
+                                         "LoFreq", 
+                                         "Mutect2", 
+                                         "VarDict", 
+                                         "VarScan"))
 
 gr2 = ggplot(data = q) +
     
@@ -158,10 +160,6 @@ gr2 = ggplot(data = q) +
         )
     ) +
     
-    # scale_x_discrete(
-    #     breaks = c("Ground Truth DP", "Mutect2 DP"),
-    #     labels = c("Ground Truth", "Mutect2")
-    # ) +
     
     scale_y_continuous(labels = scales::percent, trans = "log10", limits = c(.00001, 1)) +
 
@@ -186,7 +184,7 @@ gr2 = ggplot(data = q) +
         y = "Allele Frequency"
     )
 
-# plot 3 ----------------------------------------------
+# plot 3 
 
 #vcfs = list()
 #
@@ -261,7 +259,7 @@ gr2 = ggplot(data = q) +
 #    )
 
 
-# plot 4 ---------------------------
+# DAF density
 
 q = df[, c("caller", "POS", "Ground Truth AF", "Caller AF"), with = FALSE] |>
     unique()
@@ -309,15 +307,7 @@ gr4 = q[which(!is.na(delta))] |>
     
     labs(x = "**Δ***AF*")
 
-
-
-
-# patchwork ---------------------------
-
-
-library(patchwork)
-
-
+# patchwork 
 
 #gr = ( (gr1 | gr2) / gr4 / gr3 ) + 
 gr = ( (gr1 | gr2) / gr4  ) + 
@@ -334,8 +324,386 @@ ggsave(
 )
 
 
+#SNVs FP & FN -----------------------------------------------------------------
+#FP
+folder = 'results/'
+name = "Merged"
+
+mutect = fread(paste0(folder, "Merged_Mutect2_snvs_FP.tsv"))
+mutect = mutect[,c("CHROM",	"POS",	"ID",	"Mutect2 REF",	"Mutect2 ALT", 
+                   "Mutect2 QUAL",	"Mutect2 FILTER",	"Mutect2 DP",	"Mutect2 AF",
+                   "mut",	"Ground Truth DP",	"DP Percentage",	"type")]
+
+df = list()
+
+df[["VarDict"]] = fread(paste0(folder, "Merged_VarDict_snvs_FP.tsv"))
+df[["VarScan"]] = fread(paste0(folder, "Merged_Varscan_snvs_FP.tsv"))
+df[["Freebayes"]] = fread(paste0(folder, "Merged_Freebayes_snvs_FP.tsv"))
+df[["Mutect2"]] = mutect
+df[["LoFreq"]] = fread(paste0(folder, "Merged_LoFreq_snvs_FP.tsv"))
+
+
+df = df |> lapply(function(x) {
+    
+    colnames(x) = c(
+        "CHROM",	"POS",	"ID",	"Caller REF",	"Caller ALT", 
+        "Caller QUAL",	"Caller FILTER",	"Caller DP",	"Caller AF",
+        "mut",	"Ground Truth DP",	"DP Percentage",	"type"
+    )
+    
+    return(x)
+    
+}) |> rbindlist(idcol = "caller")
+
+
+df[which(df$`Caller ALT` == "0")]$`Caller ALT` = NA
+
+#DP
+s1 = df[, c(
+    "caller",
+    "POS", 
+    "Caller DP"
+), with = FALSE] 
+
+
+q = rbind(s1) |> 
+    unique() |>
+    melt(id.vars = c("caller", "POS"), variable.factor = FALSE, value.factor = FALSE)
+
+q$caller = q$caller |> factor(levels = c("Freebayes", "LoFreq", "Mutect2", "VarDict", "VarScan"))
+
+fp1 = ggplot(data = q) +
+    
+    geom_point(aes(x = caller, y = value, fill = caller),
+               position = position_jitternormal(sd_x = .025, sd_y = 0),
+               shape = 21, stroke = .1, size = 1) +
+    
+    geom_boxplot(aes(x = caller, y = value, fill = caller),
+                 width = .3, alpha = .5, outlier.shape = NA) +
+    
+    scale_fill_manual(
+        values = c(
+            "VarDict" = "#8d43ae",
+            "VarScan" = "#439aae",
+            "Freebayes" = "#ae8d43",
+            "Mutect2" = "#ae4364",
+            "LoFreq" = "#c974ba"
+        )
+    ) +
+    
+    
+    scale_y_continuous(labels = scales::comma) +
+    
+    theme_minimal() +
+    
+    theme(
+        legend.position = "none",
+        
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 12),
+        axis.text.y = element_text(face = "bold", size = 12),
+        
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        
+        panel.grid = element_blank()
+    ) +
+    
+    labs(
+        y = "Coverage (No. of reads)"
+    )
+
+#AF
+s2 = df[, c(
+    "caller",
+    "POS", 
+    "Caller AF"
+), with = FALSE] 
+
+
+p = rbind(s2) |> 
+    unique() |>
+    melt(id.vars = c("caller", "POS"), variable.factor = FALSE, value.factor = FALSE)
+
+p$caller = p$caller |> factor(levels = c("Freebayes", 
+                                         "LoFreq", 
+                                         "Mutect2", 
+                                         "VarDict", 
+                                         "VarScan"))
+
+fp2 = ggplot(data = p) +
+    
+    geom_point(aes(x = caller, y = value, fill = caller),
+               position = position_jitternormal(sd_x = .025, sd_y = 0),
+               shape = 21, stroke = .1, size = 1) +
+    
+    geom_boxplot(aes(x = caller, y = value, fill = caller),
+                 width = .3, alpha = .5, outlier.shape = NA) +
+
+    scale_fill_manual(
+        values = c(
+            "VarDict" = "#8d43ae",
+            "VarScan" = "#439aae",
+            "Freebayes" = "#ae8d43",
+            "Mutect2" = "#ae4364",
+            "LoFreq" = "#c974ba"
+        )
+    ) +
+    
+
+    scale_y_continuous(labels = scales::percent, 
+                       trans = "log10", 
+                       #limits = c(.00001, 1),
+                       breaks = c(0.01, 0.10, 0.25, 0.50,  1)) +
+    
+    
+    theme_minimal() +
+    
+    theme(
+        legend.position = "none",
+        
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 12),
+        axis.text.y = element_text(face = "bold", size = 12),
+        
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        
+        panel.grid = element_blank()
+    ) +
+    
+    labs(
+        y = "Allele Frequency"
+    )
+
+#patchwork
+
+fp_paper = (fp1 | fp2)  + 
+    plot_layout(heights = c(3, 2)) +
+    plot_annotation(tag_levels = "A"
+                    # title = "FP Variants",
+                    # theme = theme(plot.title = element_text(size = 20, 
+                    #                                         hjust = 0.5, 
+                    #                                         vjust = -1))
+                    ) &
+    theme(
+        plot.tag = element_text(face = "bold"),
+        plot.margin = margin(5, 10, 10, 5)
+    )
+
+
+ggsave(
+    plot = fp_paper, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FP.jpeg"),
+    width = 14, height = 12, units = "in", dpi = 600
+)
+
+ggsave(
+    plot = fp1, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FP_DP.jpeg"),
+    width = 14, height = 12, units = "in", dpi = 600
+)
+
+#FN----------------------------------------------------------------------------
+#FN
+folder = 'results/'
+name = "Merged"
+
+df1 = list()
+
+df1[["VarDict"]] = fread(paste0(folder, "Merged_VarDict_snvs_FN.tsv"))
+df1[["VarScan"]] = fread(paste0(folder, "Merged_Varscan_snvs_FN.tsv"))
+df1[["Freebayes"]] = fread(paste0(folder, "Merged_Freebayes_snvs_FN.tsv"))
+df1[["Mutect2"]] = fread(paste0(folder, "Merged_Mutect2_snvs_FN.tsv"))
+df1[["LoFreq"]] = fread(paste0(folder, "Merged_LoFreq_snvs_FN.tsv"))
+
+
+df1 = df1 |> lapply(function(x) {
+    
+    colnames(x) = c(
+        "POS",	"Ground Truth REF",	"Ground Truth DP",	
+        "Ground Truth ALT",	"Count",	"Ground Truth AF",
+        "mut",	"type"
+    )
+    
+    return(x)
+    
+}) |> rbindlist(idcol = "caller")
+
+
+df1[which(df1$`Caller ALT` == "0")]$`Caller ALT` = NA
+
+#DP
+s3 = df1[, c(
+    "caller",
+    "POS", 
+    "Ground Truth DP"
+), with = FALSE] 
+
+
+q = rbind(s3) |> 
+    unique() |>
+    melt(id.vars = c("caller", "POS"), variable.factor = FALSE, value.factor = FALSE)
+
+q$caller = q$caller |> factor(levels = c("Freebayes", "LoFreq", "Mutect2", "VarDict", "VarScan"))
+
+FN1 = ggplot(data = q) +
+    
+    geom_point(aes(x = caller, y = value, fill = caller),
+               position = position_jitternormal(sd_x = .025, sd_y = 0),
+               shape = 21, stroke = .1, size = 1) +
+    
+    geom_boxplot(aes(x = caller, y = value, fill = caller),
+                 width = .3, alpha = .5, outlier.shape = NA) +
+    
+    scale_fill_manual(
+        values = c(
+            "VarDict" = "#8d43ae",
+            "VarScan" = "#439aae",
+            "Freebayes" = "#ae8d43",
+            "Mutect2" = "#ae4364",
+            "LoFreq" = "#c974ba"
+        )
+    ) +
+    
+    
+    scale_y_continuous(labels = scales::comma) +
+    
+    theme_minimal() +
+    
+    theme(
+        legend.position = "none",
+        
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 12),
+        axis.text.y = element_text(face = "bold", size = 12),
+        
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        
+        panel.grid = element_blank()
+    ) +
+    
+    labs(
+        y = "Coverage (No. of reads)"
+    )
+
+
+#AF
+s4 = df1[, c(
+    "caller",
+    "POS", 
+    "Ground Truth AF"
+), with = FALSE] 
+
+
+p = rbind(s4) |> 
+    unique() |>
+    melt(id.vars = c("caller", "POS"), variable.factor = FALSE, value.factor = FALSE)
+
+p$caller = p$caller |> factor(levels = c("Freebayes", 
+                                         "LoFreq", 
+                                         "Mutect2", 
+                                         "VarDict", 
+                                         "VarScan"))
+
+FN2 = ggplot(data = p) +
+    
+    geom_point(aes(x = caller, y = value, fill = caller),
+               position = position_jitternormal(sd_x = .025, sd_y = 0),
+               shape = 21, stroke = .1, size = 1) +
+    
+    geom_boxplot(aes(x = caller, y = value, fill = caller),
+                 width = .3, alpha = .5, outlier.shape = NA) +
+    
+    scale_fill_manual(
+        values = c(
+            "VarDict" = "#8d43ae",
+            "VarScan" = "#439aae",
+            "Freebayes" = "#ae8d43",
+            "Mutect2" = "#ae4364",
+            "LoFreq" = "#c974ba"
+        )
+    ) +
+    
+    
+    scale_y_continuous(labels = scales::percent, 
+                       trans = "log10", 
+                       #limits = c(.00001, 1),
+                       breaks = c(0.01, 0.10, 0.25, 0.50,  1)) +
+    
+    
+    theme_minimal() +
+    
+    theme(
+        legend.position = "none",
+        
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "bold", size = 13),
+        axis.text.x = element_text(face = "bold", size = 12),
+        axis.text.y = element_text(face = "bold", size = 12),
+        
+        axis.line = element_line(),
+        axis.ticks = element_line(),
+        
+        panel.grid = element_blank()
+    ) +
+    
+    labs(
+        y = "Allele Frequency"
+    )
+
+#patchwork
+FN_paper = (FN1 | FN2)  + 
+    plot_layout(heights = c(3, 2)) +
+    plot_annotation(tag_levels = "A"
+                    # title = "FN Variants",
+                    # theme = theme(plot.title = element_text(size = 20, 
+                    #                                         hjust = 0.5, 
+                    #                                         vjust = -1))
+                    ) &
+    theme(
+        plot.tag = element_text(face = "bold"),
+        plot.margin = margin(5, 10, 10, 5)
+    )
+
+
+ggsave(
+    plot = FN_paper, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FN.jpeg"),
+    width = 14, height = 12, units = "in", dpi = 600
+)
 
 
 
+
+
+
+
+ggsave(
+    plot = FN1, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FN_DP.jpeg"),
+    width = 14, height = 12, units = "in", dpi = 600
+)
+
+
+#BOTH
+FP_FN_DP_paper = (fp1 + FN1)  + 
+    plot_layout(heights = c(3, 2)) +
+    plot_annotation(tag_levels = "A"
+                    # title = "FN Variants",
+                    # theme = theme(plot.title = element_text(size = 20, 
+                    #                                         hjust = 0.5, 
+                    #                                         vjust = -1))
+    ) &
+    theme(
+        plot.tag = element_text(face = "bold"),
+        plot.margin = margin(5, 10, 10, 5)
+    )
+
+
+ggsave(
+    plot = FP_FN_DP_paper, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FP_FN_DP.jpeg"),
+    width = 14, height = 12, units = "in", dpi = 600
+)
 
 
