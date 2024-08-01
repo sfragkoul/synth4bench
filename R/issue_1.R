@@ -51,10 +51,10 @@ final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
 
 fp_var = final_fp_snvs_gatk("results/", "Merged_auto", pick_gt, gt_all)
 
-fwrite(
-    fp_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FP.tsv"),
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
+# fwrite(
+#     fp_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FP.tsv"),
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
 
 
 #FN
@@ -63,19 +63,20 @@ final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
     fn_var = define_fn(Mutect2_somatic_snvs, pick_gt)
+    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
+                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
     
     return(fp_var)
 }
 
 final_fn_snvs_gatk("results/", "Merged_auto", pick_gt)
 
-colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
 
-fwrite(
-    fn_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FN.tsv"),
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
+
+# fwrite(
+#     fn_var, paste0("results/", "Merged_auto_", "Mutect2_", "snvs_FN.tsv"),
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
 
 #tp_var = define_tp(Mutect2_somatic_snvs, pick_gt)
 

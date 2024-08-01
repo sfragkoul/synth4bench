@@ -685,23 +685,19 @@ read_vcf_snvs_FP <- function(path, caller, merged_file, pick_gt, gt_all) {
     
     if(caller == "Freebayes") {
         
-        vcf_df <- read_vcf_freebayes(path, gt, merged_file)
-        
-    } else if (caller == "Mutect2") { #DONE
+    } else if (caller == "Mutect2") { 
         
         fp_var <- final_fp_snvs_gatk(path, merged_file, pick_gt, gt_all)
         
     } else if (caller == "LoFreq") {
         
-        vcf_df <- read_vcf_LoFreq(path, gt, merged_file)
+        fp_var <- final_fp_snvs_LoFreq(path, merged_file, pick_gt, gt_all)
         
     } else if (caller == "VarDict") {
         
-        vcf_df <- read_vcf_VarDict(path, gt, merged_file)
         
     } else if (caller == "VarScan") {
         
-        vcf_df <- read_vcf_VarScan(path, gt, merged_file)
         
     }
     
@@ -715,23 +711,23 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     
     if(caller == "Freebayes") {
         
-        vcf_df <- read_vcf_freebayes(path, gt, merged_file)
+      
         
-    } else if (caller == "Mutect2") { #DONE
+    } else if (caller == "Mutect2") {
         
         fn_var <- final_fn_snvs_gatk(path, merged_file, pick_gt)
         
     } else if (caller == "LoFreq") {
         
-        vcf_df <- read_vcf_LoFreq(path, gt, merged_file)
+        fn_var <- final_fn_snvs_LoFreq(path, merged_file, pick_gt)
         
     } else if (caller == "VarDict") {
         
-        vcf_df <- read_vcf_VarDict(path, gt, merged_file)
+      
         
     } else if (caller == "VarScan") {
         
-        vcf_df <- read_vcf_VarScan(path, gt, merged_file)
+       
         
     }
     

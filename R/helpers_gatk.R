@@ -489,7 +489,7 @@ venn_plot_gatk <- function(q, p) {
 
 load_gatk_vcf <- function(path, merged_file){
     #function to load caller vcf
-    Mutect2_somatic_vcf <- read.vcfR( paste0(path, "/",merged_file, 
+    Mutect2_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
                                              "_Mutect2_norm.vcf"), verbose = FALSE )
     
     Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
