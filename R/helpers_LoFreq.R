@@ -19,7 +19,7 @@ read_vcf_LoFreq <- function(path, gt, merged_file) {
   
 }
 
-plot_synth4bench_LoFreq <- function(df, vcf_GT, vcf_caller, merged_file){
+plot_snvs_TP_LoFreq <- function(df, vcf_GT, vcf_caller, merged_file){
     #plotting function
     out1 = bar_plots_LoFreq(df)
     out2 = density_plot_LoFreq(df)
@@ -606,7 +606,7 @@ fp_violin_plots_LoFreq <- function(q) {
         )
 }
 
-fp_af_barplot <- function(q){
+fp_af_barplot_LoFreq <- function(q){
     #FP AF plot
     df = q[, c(
         "POS",
@@ -663,5 +663,15 @@ fp_af_barplot <- function(q){
     
 }
 
-
-
+plot_snvs_FP_LoFreq <- function(df, merged_file) {
+    #plotting function
+    out1 = fp_violin_plots_LoFreq(df)
+    out2 = fp_af_barplot_LoFreq(df)
+    
+    multi = out1 + out2 +
+        
+        plot_layout(
+            widths = c(1, 1)
+        )
+    return(multi)
+}

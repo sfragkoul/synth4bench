@@ -20,7 +20,7 @@ read_vcf_VarScan <- function(path, gt, merged_file) {
 }
 
 
-plot_synth4bench_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
+plot_snvs_TP_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
     #plotting function
     out1 = bar_plots_VarScan(df)
     out2 = density_plot_VarScan(df)
@@ -610,7 +610,7 @@ fp_violin_plots_VarScan <- function(q) {
         )
 }
 
-fp_af_barplot <- function(q){
+fp_af_barplot_VarScan  <- function(q){
     #FP AF plot
     df = q[, c(
         "POS",
@@ -666,3 +666,17 @@ fp_af_barplot <- function(q){
     return(o2)
     
 }
+
+plot_snvs_FP_VarScan <- function(df, merged_file) {
+    #plotting function
+    out1 = fp_violin_plots_VarScan(df)
+    out2 = fp_af_barplot_VarScan(df)
+    
+    multi = out1 + out2 +
+        
+        plot_layout(
+            widths = c(1, 1)
+        )
+    return(multi)
+}
+

@@ -134,7 +134,7 @@ read_vcf_snvs_TP <- function(path, caller, gt, merged_file) {
 
 plot_snvs_TP <- function(gt_snv_tp_comparison, vcf_path, gt_path, caller, merged_file) {
     
-    df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_Ground_truth_vs_", caller, ".clean_norm.tsv"))
+    df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_", caller, "_snvs_TP.tsv"))
     
     vcf_GT <- read.vcfR(paste0(gt_path, "/", merged_file, "_ground_truth_norm.vcf"), verbose = FALSE )
     
@@ -142,26 +142,25 @@ plot_snvs_TP <- function(gt_snv_tp_comparison, vcf_path, gt_path, caller, merged
     
     if(caller == "Freebayes") {
 
-        plots <- plot_synth4bench_freebayes(df, vcf_GT, vcf_caller, merged_file)
+        plots <- plot_snvs_TP_freebayes(df, vcf_GT, vcf_caller, merged_file)
 
     } else if (caller == "Mutect2") {
 
-        plots <- plot_synth4bench_gatk(df, vcf_GT, vcf_caller, merged_file)
+        plots <- plot_snvs_TP_gatk(df, vcf_GT, vcf_caller, merged_file)
 
     } else if (caller == "LoFreq") {
 
-        plots <- plot_synth4bench_LoFreq(df, vcf_GT, vcf_caller, merged_file)
+        plots <- plot_snvs_TP_LoFreq(df, vcf_GT, vcf_caller, merged_file)
 
     } else if (caller == "VarDict") {
 
-        plots <- plot_synth4bench_VarDict(df, vcf_GT, vcf_caller, merged_file)
+        plots <- plot_snvs_TP_VarDict(df, vcf_GT, vcf_caller, merged_file)
 
     } else if (caller == "VarScan") {
 
-        plots <- plot_synth4bench_VarScan(df, vcf_GT, vcf_caller, merged_file)
+        plots <- plot_snvs_TP_VarScan(df, vcf_GT, vcf_caller, merged_file)
 
     }
-    
     
     return(plots)
     
@@ -625,7 +624,6 @@ fn_dp_barplot <- function(q, caller){
     
 }
 
-
 fn_af_barplot <- function(q, caller){
     #FP AF plot
     df = q[, c(
@@ -682,7 +680,6 @@ fn_af_barplot <- function(q, caller){
     
 }
 
-
 read_vcf_snvs_FP <- function(path, caller, merged_file, pick_gt, gt_all) {
     
     if(caller == "Freebayes") {
@@ -710,9 +707,6 @@ read_vcf_snvs_FP <- function(path, caller, merged_file, pick_gt, gt_all) {
     return(fp_var)
 }
 
-
-
-
 read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     
     if(caller == "Freebayes") {
@@ -739,4 +733,47 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     
     return(fn_var)
 }
+
+plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
+    
+    df = fread(paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FP.tsv"))
+
+    if(caller == "Freebayes") {
+        
+        fp_plot <- plot_snvs_FP_Freebayes(df, merged_file)
+        
+    } else if (caller == "Mutect2") {
+        
+        fp_plot <- plot_snvs_FP_gatk(df, merged_file)
+        
+    } else if (caller == "LoFreq") {
+        
+        fp_plot <- plot_snvs_FP_LoFreq(df, merged_file)
+        
+    } else if (caller == "VarDict") {
+        
+        fp_plot <- plot_snvs_FP_VarDict(df, merged_file)
+        
+    } else if (caller == "VarScan") {
+        
+        fp_plot <- plot_snvs_FP_VarScan(df, merged_file)
+    }
+    
+    return(fp_plot)
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

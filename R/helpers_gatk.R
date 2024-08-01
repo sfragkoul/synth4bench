@@ -19,7 +19,7 @@ read_vcf_mutect2 <- function(path, gt, merged_file) {
   
 }
 
-plot_synth4bench_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
+plot_snvs_TP_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
   #plotting function
   out1 = bar_plots_gatk(df)
   out2 = density_plot_gatk(df)
@@ -482,9 +482,6 @@ venn_plot_gatk <- function(q, p) {
 }
 
 
-
-
-
 #FP & FN SNVS------------------------------------------------------------------
 
 load_gatk_vcf <- function(path, merged_file){
@@ -540,6 +537,13 @@ final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
                          "mut", "type")
     return(fn_var)
 }
+
+
+
+
+
+
+
 
 fp_violin_plots_gatk <- function(q) {
     #function to produce variants' barplots for coverage and AF
@@ -602,9 +606,11 @@ fp_violin_plots_gatk <- function(q) {
         labs(
             y = "Coverage (No. of reads)"
         )
+    
+    return(o1)
 }
 
-fp_af_barplot <- function(q){
+fp_af_barplot_gatk <- function(q){
     #FP AF plot
     df = q[, c(
         "POS",
@@ -661,9 +667,18 @@ fp_af_barplot <- function(q){
     
 }
 
-
-
-
+plot_snvs_FP_gatk <- function(df, merged_file) {
+    #plotting function
+    out1 = fp_violin_plots_gatk(df)
+    out2 = fp_af_barplot_gatk(df)
+    
+    multi = out1 + out2 +
+        
+        plot_layout(
+            widths = c(1, 1)
+        )
+    return(multi)
+}
 
 
 

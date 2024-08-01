@@ -19,7 +19,7 @@ read_vcf_freebayes <- function(path, gt, merged_file) {
   
 }
 
-plot_synth4bench_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
+plot_snvs_TP_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
     #plotting function
     out1 = bar_plots_freebayes(df)
     out2 = density_plot_freebayes(df)
@@ -613,7 +613,7 @@ fp_violin_plots_Freebayes <- function(q) {
         )
 }
 
-fp_af_barplot <- function(q){
+fp_af_barplot_Freebayes <- function(q){
     #FP AF plot
     df = q[, c(
         "POS",
@@ -670,5 +670,15 @@ fp_af_barplot <- function(q){
     
 }
 
-
-
+plot_snvs_FP_Freebayes <- function(df, merged_file) {
+    #plotting function
+    out1 = fp_violin_plots_Freebayes(df)
+    out2 = fp_af_barplot_Freebayes(df)
+    
+    multi = out1 + out2 +
+        
+        plot_layout(
+            widths = c(1, 1)
+        )
+    return(multi)
+}
