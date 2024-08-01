@@ -72,7 +72,6 @@ fwrite(
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
-
 #SNVS FP & FN------------------------------------------------------------------
 print("Begin SNVs FP Variant Analysis")
 

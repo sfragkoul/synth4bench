@@ -695,6 +695,7 @@ read_vcf_snvs_FP <- function(path, caller, merged_file, pick_gt, gt_all) {
         
     } else if (caller == "VarDict") {
         
+        fp_var <- final_fp_snvs_VarDict(path, merged_file, pick_gt, gt_all)
         
     } else if (caller == "VarScan") {
         
@@ -724,7 +725,7 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
         
     } else if (caller == "VarDict") {
         
-      
+        fn_var <- final_fn_snvs_VarDict(path, merged_file, pick_gt)
         
     } else if (caller == "VarScan") {
         

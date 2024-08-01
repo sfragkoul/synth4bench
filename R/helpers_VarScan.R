@@ -547,7 +547,6 @@ final_fn_snvs_VarScan <- function(path, merged_file, pick_gt){
     return(fn_var)
 }
 
-
 fp_violin_plots_VarScan <- function(q) {
     #function to produce variants' barplots for coverage and AF
     #q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
