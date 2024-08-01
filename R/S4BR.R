@@ -3,7 +3,7 @@
 #'
 #' Input files: ground truth files, caller vcf file
 #'
-#' Output files: a tsv file with the comparison between the ground truth 
+#' Output files:  tsv files with the comparison between the ground truth 
 #' and the caller.
 #'
 #' Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)

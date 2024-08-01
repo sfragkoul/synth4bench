@@ -624,6 +624,8 @@ fn_dp_barplot <- function(q, caller){
     return(o3)
     
 }
+
+
 fn_af_barplot <- function(q, caller){
     #FP AF plot
     df = q[, c(
