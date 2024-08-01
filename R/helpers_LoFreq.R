@@ -540,7 +540,7 @@ final_fn_snvs_LoFreq <- function(path, merged_file, pick_gt){
     colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
                          "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
     
-    return(fp_var)
+    return(fn_var)
 }
 
 fp_violin_plots_LoFreq <- function(q) {
