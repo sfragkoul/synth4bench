@@ -538,13 +538,6 @@ final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
     return(fn_var)
 }
 
-
-
-
-
-
-
-
 fp_violin_plots_gatk <- function(q) {
     #function to produce variants' barplots for coverage and AF
     #q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
@@ -679,21 +672,4 @@ plot_snvs_FP_gatk <- function(df, merged_file) {
         )
     return(multi)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -577,6 +577,29 @@ fn_dp_barplot <- function(q, caller){
         unique() |>
         melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
     
+    #set color
+    if(caller == "Freebayes") {
+        
+        color <- "#ae8d43"
+        
+    } else if (caller == "Mutect2") {
+        
+        color <- "#ae4364"
+        
+    } else if (caller == "LoFreq") {
+        
+        color <- "#c974ba"
+        
+    } else if (caller == "VarDict") {
+        
+        color <- "#8d43ae"
+        
+    } else if (caller == "VarScan") {
+        
+        color <- "#439aae"
+    }
+    
+    
     o3=ggplot(data = df) +
         
         geom_point(aes(x = variable, y = value, fill = variable),
@@ -588,7 +611,7 @@ fn_dp_barplot <- function(q, caller){
         
         scale_fill_manual(
             values = c(
-                "Ground Truth DP" = "#43ae8d"
+                "Ground Truth DP" = color
             )
         ) +
         
@@ -634,6 +657,28 @@ fn_af_barplot <- function(q, caller){
         
         melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
     
+    #set color
+    if(caller == "Freebayes") {
+        
+        color <- "#ae8d43"
+        
+    } else if (caller == "Mutect2") {
+        
+        color <- "#ae4364"
+        
+    } else if (caller == "LoFreq") {
+        
+        color <- "#c974ba"
+        
+    } else if (caller == "VarDict") {
+        
+        color <- "#8d43ae"
+        
+    } else if (caller == "VarScan") {
+        
+        color <- "#439aae"
+    }
+    
     o4 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
         
         geom_point(aes(x = variable, y = value, fill = variable),
@@ -645,7 +690,7 @@ fn_af_barplot <- function(q, caller){
         
         scale_fill_manual(
             values = c(
-                "Ground Truth AF" = "#43ae8d"
+                "Ground Truth AF" = color
             )
         ) +
         
@@ -764,16 +809,18 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
+    
+    df = fread(paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FN.tsv"))
+    
+    fn_plot1 <- fn_dp_barplot(df, caller)
+    fn_plot2 <- fn_af_barplot(df, caller)
+    
+    fn_plot = fn_plot1 + fn_plot2 +
+        
+        plot_layout(
+            widths = c(1, 1)
+        )
+    return(fn_plot)
+    
+}
