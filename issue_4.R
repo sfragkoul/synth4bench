@@ -1,5 +1,6 @@
 source("R/libraries.R")
 
+#functions---------------------------------------------------------------------
 `%ni%` <- Negate(`%in%`) 
 
 load_gt_report <- function(path, merged_file) {
@@ -50,7 +51,7 @@ load_gt_report <- function(path, merged_file) {
     return(gt)
 }
 
-select_indels <- function(df){
+select_indels <- function(df){#NEW FUNCTION!!!
     # select indels from caller based on length of REF and ALT
     indels = df[nchar(df$REF) != nchar(df$ALT)]
     #indels = indels[which(nchar(indels$REF) <2), ]
@@ -60,7 +61,7 @@ select_indels <- function(df){
     return(indels)
 }
 
-load_gt_vcf_indels <- function(path, merged_file){
+load_gt_vcf_indels <- function(path, merged_file){#NEW FUNCTION!!!
     #function to load Ground Truth vcf
     ground_truth_vcf <- read.vcfR( paste0(path, "/",merged_file, 
                                           "_ground_truth_norm.vcf"),
@@ -75,8 +76,106 @@ load_gt_vcf_indels <- function(path, merged_file){
     return(pick_gt)
 }
 
+define_fp <- function(caller, gt){
+    #FP Variants
+    fp_var = caller[which(caller$mut %ni% gt$mut)]
+    return(fp_var)
+}
+
+define_fn <- function(caller, gt){
+    #FN Variants
+    fn_var = gt[which(gt$mut %ni% caller$mut)]
+    fn_var$type = "FN"
+    return(fn_var)
+}
+
+define_tp <- function(caller, gt){
+    #FN Variants
+    tp_var = caller[which(caller$mut %in% gt$mut)]
+    return(tp_var)
+}
+
 #GT----------------------------------------------------------------------------
 gt_all = load_gt_report("results", "Merged")$all
 gt_indels = load_gt_report("results/", "Merged")$indels
 pick_gt = load_gt_vcf_indels("results/", "Merged")
 #Mutect2-----------------------------------------------------------------------
+load_gatk_vcf <- function(path, merged_file){
+    #function to load caller vcf
+    Mutect2_somatic_vcf <- read.vcfR( paste0(path, merged_file, 
+                                             "_Mutect2_norm.vcf"), verbose = FALSE )
+    
+    Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    Mutect2_s1  = Mutect2_somatic_vcf |> extract_gt_tidy() |> setDT()
+    Mutect2gatk_s21 = Mutect2_somatic_vcf |> extract_info_tidy() |> setDT()
+    Mutect2_somatic = cbind(Mutect2_s0[Mutect2_s1$Key, ], Mutect2_s1)
+    return(Mutect2_somatic)
+}
+
+#FP
+fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){#term snvs is redundant
+    #find MUtect2 FP variants
+    fp_var = define_fp(Mutect2_somatic_snvs, pick_gt)
+    fp_var$gt_AF = as.numeric(fp_var$gt_AF)
+    colnames(fp_var) = c("CHROM", "POS","ID", "Mutect2 REF",	
+                         "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
+                         "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
+                         "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
+                         "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
+                         "gt_PS",	"gt_SB",	"gt_GT_alleles", "mut")
+    
+    #find DP of FP variants'  location in GT
+    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
+    a = unique(tmp, by = "POS")
+    #to include the presence multiple variants in a POS
+    index = match(fp_var$POS, a$POS)
+    fp_var$`Ground Truth DP` = a[index]$DP
+    fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
+    fp_var$type = "FP"
+    return(fp_var)
+}
+
+final_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
+    fp_var = fp_snvs_gatk(Mutect2_somatic_indels, pick_gt, gt_all)
+    return(fp_var)
+}
+
+fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt, gt_all)
+
+
+#FN
+final_fn_indels_gatk <- function(path, merged_file, pick_gt){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
+    fn_var = define_fn(Mutect2_somatic_indels, pick_gt)
+    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
+                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
+    
+    return(fn_var)
+}
+
+fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt)
+
+
+#TP
+final_tp_indels_gatk <- function(path, merged_file, pick_gt){
+    
+    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
+    Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
+    tp_var = define_tp(Mutect2_somatic_indels, pick_gt)
+    
+    return(tp_var)
+}
+
+
+tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt)
+
+
+
+
+Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
+Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
