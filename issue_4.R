@@ -143,7 +143,7 @@ final_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
     return(fp_var)
 }
 
-fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt, gt_all)
+fp_indels_gatk = final_indels_gatk("results/", "Merged", pick_gt, gt_all)
 
 
 #FN
@@ -175,7 +175,6 @@ final_tp_indels_gatk <- function(path, merged_file, pick_gt){
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt)
 
 
-
-
 Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
 Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
+
