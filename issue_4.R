@@ -3,7 +3,7 @@ source("R/libraries.R")
 #functions---------------------------------------------------------------------
 `%ni%` <- Negate(`%in%`) 
 
-load_gt_report <- function(path, merged_file) {
+load_gt_report_indels <- function(path, merged_file) {#NEW FUNCTION!!!
     #function to load Ground Truth bam-report 
     a <- paste0(path, "/", merged_file, "_report.tsv") |>
         readLines() |>
@@ -23,19 +23,13 @@ load_gt_report <- function(path, merged_file) {
     )
     
     a = a[which(Count != "")]
-    
     a$POS = as.numeric(a$POS)
     a$DP = as.numeric(a$DP)
-    
     a$ALT = str_split_i(a$Count, "\\:", 1)
-    
     a$Count = str_split_i(a$Count, "\\:", 2) |>
         as.numeric()
-    
     a$Freq = round(a$Count / a$DP, digits = 6)
-    
     a = a[order(POS, -Count)]
-    
     a = a[which(REF != a$ALT & Count != 0)]
     
     # select indels
@@ -51,7 +45,7 @@ load_gt_report <- function(path, merged_file) {
     return(gt)
 }
 
-select_indels <- function(df){#NEW FUNCTION!!!
+select_indels <- function(df){ #NEW FUNCTION!!!
     # select indels from caller based on length of REF and ALT
     indels = df[nchar(df$REF) != nchar(df$ALT)]
     #indels = indels[which(nchar(indels$REF) <2), ]
@@ -96,7 +90,7 @@ define_tp <- function(caller, gt){
 }
 
 #GT----------------------------------------------------------------------------
-gt_all = load_gt_report("results", "Merged")$all
+gt_all = load_gt_report_indels("results", "Merged")$all
 gt_indels = load_gt_report("results/", "Merged")$indels
 pick_gt = load_gt_vcf_indels("results/", "Merged")
 #Mutect2-----------------------------------------------------------------------
