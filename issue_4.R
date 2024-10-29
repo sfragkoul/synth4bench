@@ -91,7 +91,7 @@ define_tp <- function(caller, gt){
 
 #GT----------------------------------------------------------------------------
 gt_all = load_gt_report_indels("results", "Merged")$all
-gt_indels = load_gt_report("results/", "Merged")$indels
+gt_indels = load_gt_report_indels("results/", "Merged")$indels
 pick_gt = load_gt_vcf_indels("results/", "Merged")
 #Mutect2-----------------------------------------------------------------------
 load_gatk_vcf <- function(path, merged_file){
