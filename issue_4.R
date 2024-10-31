@@ -174,9 +174,52 @@ Mutect2_indels <-select_indels(Mutect2_somatic)
 
 
 
+#GT
+gt_indels_sub = gt_indels[1:20, c("POS", "REF", "ALT")]
+gt_indels_sub$SampleID <- c("GT", "GT","GT","GT","GT","GT","GT","GT","GT","GT",
+                            "GT", "GT","GT","GT","GT","GT","GT","GT","GT","GT")
+gt_indels_sub$Chr <- c("17", "17","17","17","17","17","17","17","17","17",
+                        "17", "17","17","17","17","17","17","17","17","17")
+gt_indels_sub2 = gt_indels_sub[, c("SampleID", "Chr", "POS", "REF", "ALT")]
 
-gt_indels_sub = gt_indels[1:20, ]
+#Mutect2
+Mutect2_indels_sub = Mutect2_indels[1:20, c("POS", "REF", "ALT") ]
+Mutect2_indels_sub$SampleID <- c("Mutect2", "Mutect2", "Mutect2", "Mutect2",
+                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2",
+                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2",
+                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2",
+                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2")
+Mutect2_indels_sub$Chr <- c("17", "17","17","17","17","17","17","17","17","17",
+                       "17", "17","17","17","17","17","17","17","17","17")
+Mutect2_indels_sub2 = Mutect2_indels_sub[, c("SampleID", "Chr", "POS", "REF", "ALT")]
 
-Mutect2_indels_sub = Mutect2_indels[1:20, ]
+appreci8R::normalized<-normalize("", "", 
+                                 target_calls=list(gt_indels_sub2, Mutect2_indels_sub2), 
+                                 caller_indels_pm=TRUE, caller_mnvs=TRUE)
+
+
+
+standardize_indels <- function(dt) {
+    # Function to standardize indels
+    setDT(dt)
+    
+    # Process deletions
+    dt[grepl("^-", ALT), `:=` (
+        ALT = substring(REF, 1, 1), 
+        REF = paste0(REF, substring(ALT, 2))
+    )]
+    
+    # Process insertions
+    dt[grepl("^\\+", ALT), ALT := paste0(REF, substring(ALT, 2))]
+    
+    return(dt)
+}
+
+
+# Apply the function
+new = standardize_indels(gt_indels_sub)
+
+
+
 
 
