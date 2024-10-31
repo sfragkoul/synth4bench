@@ -170,5 +170,13 @@ tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt)
 
 
 Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
-Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
+Mutect2_indels <-select_indels(Mutect2_somatic)
+
+
+
+
+gt_indels_sub = gt_indels[1:20, ]
+
+Mutect2_indels_sub = Mutect2_indels[1:20, ]
+
 
