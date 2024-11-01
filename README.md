@@ -66,7 +66,7 @@ Here follows the list of all scripts and their description.
 ### Main scripts
 
 <p align="center"> 
-<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 210px; width: 540px;"/>
+<img src="https://github.com/sfragkoul/synth4bench/blob/main/images/merge.png" alt="Scehmatic for merging process of bam files" style="height: 200px; width: 650px;"/>
 </p>
 
 
