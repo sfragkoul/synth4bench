@@ -86,6 +86,7 @@ define_fn <- function(caller, gt){
 define_tp <- function(caller, gt){
     #TP Variants
     tp_var = caller[which(caller$mut %in% gt$mut)]
+    tp_var$type = "TP"
     return(tp_var)
 }
 
@@ -129,15 +130,13 @@ fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){#term snvs is re
     return(fp_var)
 }
 
-final_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
+final_fp_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
     fp_var = fp_snvs_gatk(Mutect2_somatic_indels, pick_gt, gt_all)
     return(fp_var)
 }
-
-fp_indels_gatk = final_indels_gatk("results/", "Merged", pick_gt, gt_all)
 
 
 #FN
@@ -188,6 +187,5 @@ pick_gt_stdz = standardize_indels(pick_gt)
 
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
 fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt_stdz)
-fp_indels_gatk = final_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
-
+fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
 
