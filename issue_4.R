@@ -172,7 +172,7 @@ standardize_indels <- function(dt) { #!!!! NEW FUNCTION
     dt[grepl("^-", ALT), `:=` (
         ALT = substring(REF, 1, 1), 
         REF = paste0(REF, substring(ALT, 2)),
-        POS = POS - 1  #Adjust POS for deletion
+        POS = POS - 1  #Adjust POS for deletions
     )]
     
     #insertions
