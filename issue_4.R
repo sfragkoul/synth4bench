@@ -47,9 +47,9 @@ load_gt_report_indels <- function(path, merged_file) {#NEW FUNCTION!!!
 
 select_indels <- function(df){ #NEW FUNCTION!!!
     # select indels from caller based on length of REF and ALT
+    
+    #identify indels based on length
     indels = df[nchar(df$REF) != nchar(df$ALT)]
-    #indels = indels[which(nchar(indels$REF) <2), ]
-    #indels = indels[which(nchar(indels$ALT) <2), ]
     indels$mut = paste(indels$POS, indels$REF, indels$ALT, sep = ":")
     
     return(indels)
@@ -187,5 +187,7 @@ standardize_indels <- function(dt) { #!!!! NEW FUNCTION
 pick_gt_stdz = standardize_indels(pick_gt)
 
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
+fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt_stdz)
+fp_indels_gatk = final_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
 
 
