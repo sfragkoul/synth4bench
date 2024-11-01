@@ -84,7 +84,7 @@ define_fn <- function(caller, gt){
 }
 
 define_tp <- function(caller, gt){
-    #FN Variants
+    #TP Variants
     tp_var = caller[which(caller$mut %in% gt$mut)]
     return(tp_var)
 }
@@ -165,61 +165,27 @@ final_tp_indels_gatk <- function(path, merged_file, pick_gt){
     return(tp_var)
 }
 
-
-tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt)
-
-
-Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
-Mutect2_indels <-select_indels(Mutect2_somatic)
-
-
-
-#GT
-gt_indels_sub = gt_indels[1:20, c("POS", "REF", "ALT")]
-gt_indels_sub$SampleID <- c("GT", "GT","GT","GT","GT","GT","GT","GT","GT","GT",
-                            "GT", "GT","GT","GT","GT","GT","GT","GT","GT","GT")
-gt_indels_sub$Chr <- c("17", "17","17","17","17","17","17","17","17","17",
-                        "17", "17","17","17","17","17","17","17","17","17")
-gt_indels_sub2 = gt_indels_sub[, c("SampleID", "Chr", "POS", "REF", "ALT")]
-
-#Mutect2
-Mutect2_indels_sub = Mutect2_indels[1:20, c("POS", "REF", "ALT") ]
-Mutect2_indels_sub$SampleID <- c("Mutect2", "Mutect2", "Mutect2", "Mutect2",
-                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2",
-                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2",
-                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2",
-                                 "Mutect2", "Mutect2", "Mutect2", "Mutect2")
-Mutect2_indels_sub$Chr <- c("17", "17","17","17","17","17","17","17","17","17",
-                       "17", "17","17","17","17","17","17","17","17","17")
-Mutect2_indels_sub2 = Mutect2_indels_sub[, c("SampleID", "Chr", "POS", "REF", "ALT")]
-
-appreci8R::normalized<-normalize("", "", 
-                                 target_calls=list(gt_indels_sub2, Mutect2_indels_sub2), 
-                                 caller_indels_pm=TRUE, caller_mnvs=TRUE)
-
-
-
-standardize_indels <- function(dt) {
-    # Function to standardize indels
+standardize_indels <- function(dt) { #!!!! NEW FUNCTION
+    #Function to standardize indels
     setDT(dt)
     
-    # Process deletions
+    #deletions
     dt[grepl("^-", ALT), `:=` (
         ALT = substring(REF, 1, 1), 
         REF = paste0(REF, substring(ALT, 2))
     )]
     
-    # Process insertions
+    #ιnsertions
     dt[grepl("^\\+", ALT), ALT := paste0(REF, substring(ALT, 2))]
     
+    dt$mut = paste(dt$POS, 
+                   dt$REF, 
+                   dt$ALT, sep = ":")
     return(dt)
 }
 
+pick_gt_stdz = standardize_indels(pick_gt)
 
-# Apply the function
-new = standardize_indels(gt_indels_sub)
-
-
-
+tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
 
 
