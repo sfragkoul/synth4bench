@@ -88,15 +88,15 @@ df <- df |>
 p = ggplot(df, aes(x = POS, y = y_cycle)) +
     
     # Lollipop segments: start each from the respective baseline to the point
-    geom_segment(
-        aes(x = POS, xend = POS,
-            y = ifelse(type == "FN", 50, ifelse(type == "FP", 25, 0)),
-            yend = y_cycle),
-        color = "grey75", linewidth = 0.25, lineend = "round"
-    ) +
+    # geom_segment(
+    #     aes(x = POS, xend = POS,
+    #         y = ifelse(type == "FN", 50, ifelse(type == "FP", 25, 0)),
+    #         yend = y_cycle),
+    #     color = "grey75", linewidth = 0.25, lineend = "round"
+    # ) +
 
     # add connecting line
-    # geom_line(aes(color = type), linewidth = 0.25) + 
+    geom_line(aes(color = type), linewidth = 0.25) + 
 
     # Dashed lines for separation of each cycle level
     geom_hline(yintercept = 50, color = "grey40") +
@@ -142,5 +142,5 @@ p
 
 ggsave(
     plot = p, filename = "Rplot_2.jpeg",
-    width = 14, height = 12, units = "in", dpi = 600
+    width = 12, height = 12, units = "in", dpi = 600
 )
