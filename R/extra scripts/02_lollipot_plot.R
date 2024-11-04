@@ -1,10 +1,4 @@
 
-
-rm(list = ls())
-gc()
-
-
-
 # Libraries
 library(data.table)
 library(stringr)
@@ -12,7 +6,6 @@ library(ggplot2)
 
 
 # load data
-
 tp = fread("GATK_indels_TP.tsv", sep = "\t")
 
 fp = fread("GATK_indels_FP.tsv", sep = "\t")
@@ -29,7 +22,7 @@ tp$ALT_len <- str_length(tp$ALT)
 
 tp$len_dif <- tp$ALT_len - tp$REF_len
 
-colnames(tp) <- c("POS", "REF", "ALT", "Type", "REF_len", "ALT_len", "len_dif")
+
 
 
 fp = fp[, .(POS, `Mutect2 REF`, `Mutect2 ALT`, type)]
@@ -41,7 +34,7 @@ fp$ALT_len <- str_length(fp$`Mutect2 ALT`)
 fp$len_dif <- fp$ALT_len - fp$REF_len
 
 
-colnames(fp) <- c("POS", "REF", "ALT", "Type", "REF_len", "ALT_len", "len_dif")
+colnames(fp) <- c("POS", "REF", "ALT", "type", "REF_len", "ALT_len", "len_dif")
 
 
 
@@ -56,9 +49,7 @@ fn$ALT_len <- str_length(fn$`Ground Truth ALT`)
 fn$len_dif <- fn$ALT_len - fn$REF_len
 
 
-colnames(fn) <- c("POS", "REF", "ALT", "Type", "REF_len", "ALT_len", "len_dif")
-
-
+colnames(fn) <- c("POS", "REF", "ALT", "type", "REF_len", "ALT_len", "len_dif")
 
 
 # Combine the datasets 
@@ -68,42 +59,46 @@ data = rbind(tp, fp)
 df = rbind(data, fn)
 
 
-
-df$condition <- ifelse(df$len_dif > 0, "insertion", "deletion")
-
-
-df$Type <- factor(df$Type, levels = c("FN", "TP", "FP"))
-
-
-
-
 # plot ---------
-p = ggplot(df, aes(x = POS, y = len_dif)) +
+
+df$type <- factor(df$type, levels = c("FN", "TP", "FP"))
+
+
+fn_count <- nrow(fn)
+tp_count <- nrow(tp)
+fp_count <- nrow(fp)
+
+
+facet_labels <- c(
+    FN = paste0("FN (n=", fn_count, ")"),
+    TP = paste0("TP (n=", tp_count, ")"),
+    FP = paste0("FP (n=", fp_count, ")")
+)
+
+
+p=ggplot(df, aes(x = POS, y = len_dif)) +
     
-    geom_segment(aes(x = POS, xend = POS, y = 0, yend = len_dif), color = "grey90") +
-    
-    # geom_point(color= "#b9b8e7", size = 3.5) +
+    geom_segment(aes(x = POS, xend = POS, y = 0, yend = len_dif), color = "grey92") +
     
     geom_hline(yintercept = 0) +
-    geom_point(aes(color = Type), size = 1.5) +
     
-    scale_color_manual(values = c("TP" = "#a78d95", "FP" = "#ae4364", "FN" = "#43ae8d")) +  # Customize colors here
-  
-    # geom_density_2d(aes(linetype = condition)) +
+    geom_point(aes(color = type), size = 1.5) +
     
-    # scale_y_continuous(limits = c(-10.5, 10.5)) +
+    scale_color_manual(
+        values = c("TP" = "#a78d95", "FP" = "#ae4364", "FN" = "#43ae8d"),
+        labels = c("FN", "TP", "FP")
+    ) +
     
-    # facet_grid(rows = vars(condition), scales = "free_y") +
+    
+    facet_wrap(vars(type), labeller = as_labeller(facet_labels)) +  # Set facet titles with custom order
+    
     scale_x_continuous(breaks = c(0, 10000, 19010), limits = c(0, 19010)) +
-    
-    facet_wrap(vars(Type)) +
     
     theme_minimal() +
     
     theme(
-        panel.grid.major = element_line(linewidth = .25),
+        panel.grid.major = element_line(linewidth = 0.25),
         panel.grid.minor = element_blank(),
-        
         plot.margin = margin(20, 20, 20, 20),
         panel.border = element_blank(),
         axis.ticks.x = element_blank(),
@@ -111,13 +106,18 @@ p = ggplot(df, aes(x = POS, y = len_dif)) +
     ) +
     
     labs(
-        title = "Ground truth vs Mutect2 INDELS",
+        title = "Ground Truth vs Mutect2 INDELS",
         y = "REF vs ALT length",
-        x = "Chromosomal Position"
+        x = "Chromosomal Position", 
+        color = "Type"
     )
+
+
 
 
 ggsave(
     plot = p, filename = "Mutect2_indels.jpeg",
     width = 16, height = 12, units = "in", dpi = 600
 )
+
+
