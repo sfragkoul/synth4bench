@@ -77,9 +77,9 @@ library(colorspace)
 # Adjust data so that each type has its own y-offset
 df <- df |>
     mutate(y_cycle = case_when(
-        type == "FN" ~ len_dif + 50,   # Shift FN cycle outward
-        type == "FP" ~ len_dif + 25,   # Shift FP cycle to middle
-        type == "TP" ~ len_dif         # Keep TP at the center
+        type == "FP" ~ len_dif + 50,   # Shift FN cycle outward
+        type == "TP" ~ len_dif + 25,   # Shift FP cycle to middle
+        type == "FN" ~ len_dif         # Keep TP at the center
     ))
 
 
@@ -88,15 +88,15 @@ df <- df |>
 p = ggplot(df, aes(x = POS, y = y_cycle)) +
     
     # Lollipop segments: start each from the respective baseline to the point
-    # geom_segment(
-    #     aes(x = POS, xend = POS,
-    #         y = ifelse(type == "FN", 50, ifelse(type == "FP", 25, 0)),
-    #         yend = y_cycle),
-    #     color = "grey75", linewidth = 0.25, lineend = "round"
-    # ) +
+    geom_segment(
+        aes(x = POS, xend = POS,
+            y = ifelse(type == "FP", 50, ifelse(type == "TP", 25, 0)),
+            yend = y_cycle),
+        color = "grey75", linewidth = 0.25, lineend = "round"
+    ) +
 
     # add connecting line
-    geom_line(aes(color = type), linewidth = 0.25) + 
+    #geom_line(aes(color = type), linewidth = 0.25) + 
 
     # Dashed lines for separation of each cycle level
     geom_hline(yintercept = 50, color = "grey40") +
@@ -115,7 +115,7 @@ p = ggplot(df, aes(x = POS, y = y_cycle)) +
     scale_x_continuous(breaks = c(0, 4751, 9503, 14255, 19007), limits = c(0, 19007)) +
     
     
-    coord_radial(start = pi / 2.5, inner.radius = .25, end = 2.6 * pi) +
+    coord_radial(start = pi / 2.5, inner.radius = .5, end = 2.6 * pi) +
     
     theme_minimal() +
     
@@ -141,6 +141,6 @@ p = ggplot(df, aes(x = POS, y = y_cycle)) +
 p
 
 ggsave(
-    plot = p, filename = "Rplot_2.jpeg",
+    plot = p, filename = "Rplot_4.jpeg",
     width = 12, height = 12, units = "in", dpi = 600
 )
