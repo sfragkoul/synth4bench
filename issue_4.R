@@ -189,25 +189,25 @@ pick_gt_stdz = standardize_indels(pick_gt)
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
 fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt_stdz)
 fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
+# 
+# fwrite(
+#     fp_indels_gatk, "GATK_indels_FP.tsv",
+#     
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
+# 
+# fwrite(
+#     fn_indels_gatk, "GATK_indels_FN.tsv",
+#     
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
+# 
+# 
+# fwrite(
+#     tp_indels_gatk, "GATK_indels_TP.tsv",
+#     
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
 
-fwrite(
-    fp_indels_gatk, "GATK_indels_FP.tsv",
-    
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
-
-fwrite(
-    fn_indels_gatk, "GATK_indels_FN.tsv",
-    
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
-
-
-fwrite(
-    tp_indels_gatk, "GATK_indels_TP.tsv",
-    
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
-
-#Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
-#Mutect2_indels <-select_indels(Mutect2_somatic)
+Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
+Mutect2_indels <-select_indels(Mutect2_somatic)
