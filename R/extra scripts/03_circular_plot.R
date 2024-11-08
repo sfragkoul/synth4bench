@@ -138,7 +138,6 @@ p = ggplot(df, aes(x = POS, y = y_cycle)) +
         fill = "Type"
     )
 
-p
 
 ggsave(
     plot = p, filename = "Rplot_4.jpeg",
