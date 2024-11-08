@@ -64,7 +64,6 @@ The extra script vscan_pileup2cns2vcf.py for VarScan can be found [here](https:/
 
 
 ## Execution
-<div align='justify'> 
 
 Once the environment and dependencies have been successfully installed, follow these steps to execute the analysis:
 
@@ -119,6 +118,8 @@ To review and check the parameters and usage for the R scripts involved in your 
 
 5. **Review Output**:
 After executing the scripts, check the output files located in the directories specified in the `parameters.yaml` file. These will include any generated results from the **synthesis and variant calling** steps. You can now proceed to analyze or visualize the data as needed.
+
+
 
 
 
