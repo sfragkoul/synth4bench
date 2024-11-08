@@ -27,29 +27,41 @@
 To set up the environment and dependencies for synth4bench, follow these steps:
 1. Create the Conda Environment
 To create the conda environment that was used for the analysis run the following command:
-bash: `conda env create -f environment.yml`
+
+       bash  
+       `conda env create -f environment.yml`
+
 This will install all the required dependencies specified in the environment.yml file.
 
-2. Activate the Conda Environment
+3. Activate the Conda Environment
 After creating the environment, activate it with the following command:
-bash: `conda activate synth4bench`
 
-3. Install NEATv3.3
+        bash
+        `conda activate synth4bench`
+
+5. Install NEATv3.3
 Download the version [v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3).
 Once downloaded, in order to call the main script and view available options, run:
-bash: `python gen_reads.py --help`
+
+        bash
+       `python gen_reads.py --help`
+  
 For any further details, please see the README.md file included in the downloaded NEATv3.3 version.
 
-4. Install bam-readcount
+7. Install bam-readcount
 Follow the installation [instructions](https://github.com/genome/bam-readcount/tree/master?tab=readme-ov-file#build) from their official documentation.
 After installation, verify that it has being installed properly with the following command:
-bash: `build/bin/bam-readcount --help`
 
-5. Install R Package Dependencies
+        bash
+       `build/bin/bam-readcount --help`
+
+9. Install R Package Dependencies
 Install the required R packages by running the following command in your R console:
-R: `install.packages(c("stringr", "data.table", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "patchwork"))`
 
-6. Download VarScan Extra Script
+        R
+       `install.packages(c("stringr", "data.table", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "patchwork"))`
+
+11. Download VarScan Extra Script
 The extra script vscan_pileup2cns2vcf.py for VarScan can be found [here](https://github.com/sfragkoul/Varscan2VCF).
 
 ## Using synth4bench
