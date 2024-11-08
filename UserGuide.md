@@ -13,7 +13,6 @@
 
 ### Key Features
 
-ergae
 ## Synth4bench
 
 ### Synthetic Data Generation
