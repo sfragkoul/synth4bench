@@ -26,7 +26,30 @@
 
 The datasets required for this analysis are available for open access on [Zenodo](https://zenodo.org/records/10683211). 
 
-This repository contains 10 synthetic genomics datasets, generated specifically for benchmarking somatic variant callers. Each dataset was produced with NEAT v3, based on the TP53 gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
+This repository contains 10 synthetic genomics datasets, generated specifically for benchmarking somatic variant callers. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
+
+### Data Overview
+
+These datasets explore two primary variables to observe their impact on somatic variant calling:
+
+   - **Coverage:** Five datasets vary in coverage while keeping read length constant (150 bp). Coverage levels include 300x, 700x, 1000x, 3000x, and 5000x.
+
+   - **Read Length:** Another set of five datasets vary in read length while maintaining a coverage level of 1000x. Read lengths include 50 bp, 100 bp, 150 bp, 170 bp, 200 bp, and 300 bp.
+
+Each dataset contains paired-end reads, providing compatibility with most standard analysis pipelines for synthetic genomics data.
+
+### Available Files
+
+There are two compressed folders for download:
+
+   - **Reference folders**: reference.rar (25.7 kB)
+
+This folders includes reference sequences necessary for aligning or comparing generated synthetic reads.
+
+   - **Synthetic folders:** synth_datasets.rar (55.9 MB)
+
+This folders includes all 10 synthetic datasets, with filenames indicating coverage and read length details. Each dataset is structured and named according to the parameters it explores.
+
 
 ## Installation
 
