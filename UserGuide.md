@@ -19,14 +19,16 @@
 ### Synthetic Data Generation
 
 ### Variant Calling
-
-
 ### Visualization
 
 
+## Data Download
+
+The datasets required for this analysis are available for open access on [Zenodo](https://zenodo.org/records/10683211). 
+
+This repository contains 10 synthetic genomics datasets, generated specifically for benchmarking somatic variant callers. Each dataset was produced with NEAT v3, based on the TP53 gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
+
 ## Installation
-       
-To set up the environment and dependencies for synth4bench, follow these steps:
 
 1. **Create the Conda Environment**:
 To create the conda environment that was used for the analysis run the following command in your terminal **(Bash)**:
