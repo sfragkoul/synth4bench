@@ -83,6 +83,34 @@ define_fn <- function(caller, gt){
     return(fn_var)
 }
 
+# Function to identify FN variants with specific categories
+categorize_fns <- function(caller, fn_var) {
+    
+    caller = Mutect2_indels 
+    fn_var = fn_indels_gatk
+    setDT(caller)
+    setDT(fn_var)
+    
+    # For each FN, check the categories
+    categorized_fns <- fn_var[, .(
+        category = if (!POS %in% caller$POS) {
+            "Different_POS"
+        } else if (!any(`Ground Truth REF` == caller[POS == .SD$POS]$REF) && any(`Ground Truth ALT` == caller[POS == .SD$POS]$ALT)) {
+            "Different_REF"
+        } else if (any(`Ground Truth REF` == caller[POS == .SD$POS]$REF) && !any(`Ground Truth ALT` == caller[POS == .SD$POS & REF == .SD$REF]$ALT)) {
+            "Different_ALT"
+        } else if (nchar(`Ground Truth REF`) != nchar(caller[POS == .SD$POS]$REF[1])) {
+            "Different_REF_Length"
+        } else if (nchar(`Ground Truth ALT`) != nchar(caller[POS == .SD$POS]$ALT[1])) {
+            "Different_ALT_Length"
+        } else {
+            "Uncategorized"
+        }
+    ), by = .(POS, `Ground Truth REF`, `Ground Truth ALT`)]
+    
+    return(categorized_fns)
+}
+
 define_tp <- function(caller, gt){
     #TP Variants
     tp_var = caller[which(caller$mut %in% gt$mut)]
