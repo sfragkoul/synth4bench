@@ -83,33 +83,26 @@ define_fn <- function(caller, gt){
     return(fn_var)
 }
 
-# Function to identify FN variants with specific categories
-categorize_fns <- function(caller, fn_var) {
+categorize_fns <- function(caller, fn_var) { #!!!! NEW FUNCTION
+    #Function to identify FN categories
     
-    caller = Mutect2_indels 
-    fn_var = fn_indels_gatk
-    setDT(caller)
-    setDT(fn_var)
+    caller$POS = as.numeric(caller$POS)
+    fn_var$POS = as.numeric(fn_var$POS)
+    colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
+                         "Count", "Ground Truth AF","mut","type")
+    #Same POS
+    same_POS <- merge(fn_var, caller, by = c("POS"))
+    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
     
-    # For each FN, check the categories
-    categorized_fns <- fn_var[, .(
-        category = if (!POS %in% caller$POS) {
-            "Different_POS"
-        } else if (!any(`Ground Truth REF` == caller[POS == .SD$POS]$REF) && any(`Ground Truth ALT` == caller[POS == .SD$POS]$ALT)) {
-            "Different_REF"
-        } else if (any(`Ground Truth REF` == caller[POS == .SD$POS]$REF) && !any(`Ground Truth ALT` == caller[POS == .SD$POS & REF == .SD$REF]$ALT)) {
-            "Different_ALT"
-        } else if (nchar(`Ground Truth REF`) != nchar(caller[POS == .SD$POS]$REF[1])) {
-            "Different_REF_Length"
-        } else if (nchar(`Ground Truth ALT`) != nchar(caller[POS == .SD$POS]$ALT[1])) {
-            "Different_ALT_Length"
-        } else {
-            "Uncategorized"
-        }
-    ), by = .(POS, `Ground Truth REF`, `Ground Truth ALT`)]
+    #Same POS & REF
+    same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
+    # Update only rows where POS and REF match
+    fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
+           category := "diff ALT"]
     
-    return(categorized_fns)
+    return(fn_var)
 }
+
 
 define_tp <- function(caller, gt){
     #TP Variants
@@ -217,25 +210,10 @@ pick_gt_stdz = standardize_indels(pick_gt)
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
 fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt_stdz)
 fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
-# 
-# fwrite(
-#     fp_indels_gatk, "GATK_indels_FP.tsv",
-#     
-#     row.names = FALSE, quote = FALSE, sep = "\t"
-# )
-# 
-# fwrite(
-#     fn_indels_gatk, "GATK_indels_FN.tsv",
-#     
-#     row.names = FALSE, quote = FALSE, sep = "\t"
-# )
-# 
-# 
-# fwrite(
-#     tp_indels_gatk, "GATK_indels_TP.tsv",
-#     
-#     row.names = FALSE, quote = FALSE, sep = "\t"
-# )
 
 Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
 Mutect2_indels <-select_indels(Mutect2_somatic)
+
+fn_indels_gatk_categories <- categorize_fns(Mutect2_indels, fn_indels_gatk)
+
+
