@@ -26,7 +26,7 @@
 
 The datasets required for this analysis are available for open access on [Zenodo](https://zenodo.org/records/10683211). 
 
-This repository contains 10 synthetic genomics datasets, generated specifically for benchmarking somatic variant callers. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
+This repository contains 10 synthetic genomics datasets, generated specifically for **benchmarking somatic variant callers**. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
 
 ### Data Overview
 
@@ -50,6 +50,9 @@ This folders includes reference sequences necessary for aligning or comparing ge
 
 This folders includes all 10 synthetic datasets, with filenames indicating coverage and read length details. Each dataset is structured and named according to the parameters it explores.
 
+### Required Files for Analysis
+
+To successfully **run the analysis**, users need the reference files located in the reference.rar folder.
 
 ## Installation
 
@@ -100,13 +103,13 @@ To create customized execution scripts for data synthesis and variant calling, r
 
    - **Generate the Synthesis Script**: This will create the `synth_generation_template.sh` script with the parameters specified in the `parameters.yaml` file:
 
-         bash synth_generation_template.sh > desired_name.sh
+         bash synth_generation_template.sh > synth_generation_run.sh
 
      Replace `desired_name.sh` with the desired name for your generated script.
 
     - **Generate the Variant Calling Script**: Similarly, this will create the `variant_calling_template.sh` script with the parameters from the `parameters.yaml` file:
 
-          bash variant_calling_template.sh > desired_name.sh
+          bash variant_calling_template.sh > variant_calling_run.sh
 
        Again, replace `desired_name.sh` with the name you would like to assign to this generated script.
 
@@ -116,13 +119,13 @@ Once you have generated the scripts, you should review them to ensure the parame
 
    - **Run the Synthesis Script**:
 
-         bash desired_name.sh
+         bash synth_generation_run.sh
 
     This will display the available options and details for the `S4BR.R` script.
    
    - **Check Parameters for S4BR Plotting R Script**:
 
-         bash desired_name.sh
+         bash variant_calling_run.sh
 
     This command will execute the variant calling step.
 
@@ -143,10 +146,6 @@ To review and check the parameters and usage for the R scripts involved in your 
 
 5. **Review Output**:
 After executing the scripts, check the output files located in the directories specified in the `parameters.yaml` file. These will include any generated results from the **synthesis and variant calling** steps. You can now proceed to analyze or visualize the data as needed.
-
-
-
-
 
 
 ## Using synth4bench
