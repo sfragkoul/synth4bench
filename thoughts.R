@@ -27,8 +27,8 @@ fn_var <- fread("fn_var.tsv", header = TRUE, sep = "\t")
 new = categorize_fns(caller, fn_var)
 
 
-# fwrite(
-#     fn_var, "fn_var.tsv",
-# 
-#         row.names = FALSE, quote = FALSE, sep = "\t"
-#     )
+fwrite(
+    same_POS, "same_POS.tsv",
+
+        row.names = FALSE, quote = FALSE, sep = "\t"
+    )
