@@ -45,14 +45,23 @@ fn_var_same_POS <- fn_indels_gatk[POS %in% caller$POS]
 caller_same_POS <- caller[POS %in% fn_indels_gatk$POS]
 
 
-# Same REF?
-colnames(same_POS_from_fn_indels_gatk) = c("POS","REF", "Ground Truth DP",  "ALT",
-                                              "Count", "Ground Truth AF","mut","type")     
-    
-same_REF <- merge(same_POS_from_fn_indels_gatk, caller_same_POS, by = "REF", all = FALSE)
+colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
+                                           "Count", "Ground Truth AF","mut","type") 
 
-same_POS_from_fn_indels_gatk_same_REF <- same_POS_from_fn_indels_gatk[REF %in% caller_same_POS$REF]
-caller_same_POS_same_REF <- caller_same_POS[REF %in% same_POS_from_fn_indels_gatk$REF]
+
+#Same REF?
+fn_var_same_POS_REF <- fn_var_same_POS[POS %in% caller_same_POS$POS & 
+                                       REF %in% caller_same_POS$REF]
+
+caller_same_POS_REF <- caller_same_POS[POS %in% fn_var_same_POS$POS & 
+                                       REF %in% fn_var_same_POS$REF]
+
+same_POS <- merge(fn_var, caller, by = c("POS"))
+same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
+same_POS_REF_ALT <- merge(fn_var, caller, by = c("POS", "REF", "ALT"))
+
+
+
 
     
     
