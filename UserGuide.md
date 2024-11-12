@@ -26,7 +26,7 @@
 
 The datasets required for this analysis are available for open access on [Zenodo](https://zenodo.org/records/10683211). 
 
-This repository contains 10 synthetic genomics datasets, generated specifically for benchmarking somatic variant callers. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
+This repository contains 10 synthetic genomics datasets, generated specifically for **benchmarking somatic variant callers**. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
 
 ### Data Overview
 
@@ -50,6 +50,9 @@ This folders includes reference sequences necessary for aligning or comparing ge
 
 This folders includes all 10 synthetic datasets, with filenames indicating coverage and read length details. Each dataset is structured and named according to the parameters it explores.
 
+### Required Files for Analysis
+
+To successfully **run the analysis**, users need the reference files located in the reference.rar folder.
 
 ## Installation
 
