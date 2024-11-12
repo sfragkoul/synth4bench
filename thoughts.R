@@ -1,6 +1,6 @@
-# Function to identify FN variants with specific categories
-categorize_fns <- function(caller, fn_var) {
 
+categorize_fns <- function(caller, fn_var) {
+    #Function to identify FN categories
     caller$POS = as.numeric(caller$POS)
     fn_var$POS = as.numeric(fn_var$POS)
     colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
