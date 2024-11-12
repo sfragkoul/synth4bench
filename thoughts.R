@@ -11,6 +11,7 @@ categorize_fns <- function(caller, fn_var) {
     
     #Same POS & REF
     same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
+    # Update only rows where POS and REF match
     fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
            category := "diff ALT"]
     
