@@ -28,7 +28,7 @@ categorize_fns <- function(caller, fn_var) {
 #     
 #     return(categorized_fns)
 # }
-
+}
  
   
 
@@ -37,10 +37,11 @@ fn_var$POS = as.numeric(fn_var$POS)
 
 
 # Same POS?
-same_POS <- merge(fn_indels_gatk, caller, by = "POS", all = FALSE)
+#same_POS <- merge(fn_indels_gatk, caller, by = "POS", all = FALSE)
+#same_POS = fn_indels_gatk[which(fn_indels_gatk$POS %in% caller$POS)]
             
-#each original data.table separately
-same_POS_from_fn_indels_gatk <- fn_indels_gatk[POS %in% caller$POS]
+#Same POS?
+fn_var_same_POS <- fn_indels_gatk[POS %in% caller$POS]
 caller_same_POS <- caller[POS %in% fn_indels_gatk$POS]
 
 
@@ -51,6 +52,7 @@ colnames(same_POS_from_fn_indels_gatk) = c("POS","REF", "Ground Truth DP",  "ALT
 same_REF <- merge(same_POS_from_fn_indels_gatk, caller_same_POS, by = "REF", all = FALSE)
 
 same_POS_from_fn_indels_gatk_same_REF <- same_POS_from_fn_indels_gatk[REF %in% caller_same_POS$REF]
-caller_same_POS_same_REF <- caller_same_POS[REF %in% same_POS_from_fn_indels_gatk$REF]    
+caller_same_POS_same_REF <- caller_same_POS[REF %in% same_POS_from_fn_indels_gatk$REF]
+
     
     
