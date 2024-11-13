@@ -56,19 +56,19 @@ To successfully **run the analysis**, users need the reference files located in 
 
 ## Installation
 
-1. **Create the Conda Environment**:
+**Create the Conda Environment**:
 To create the conda environment that was used for the analysis run the following command in your terminal **(Bash)**:
 
-       conda env create -f environment.yml
+    conda env create -f environment.yml
 
 This will install all the required dependencies specified in the environment.yml file.
 
-2. **Activate the Conda Environment:**
+**Activate the Conda Environment:**
 After creating the environment, activate it with the following command in your terminal **(Bash)**:
 
-       conda activate synth4bench
+    conda activate synth4bench
 
-3. **Install NEATv3.3:**
+**Install NEATv3.3:**
 Download the version [v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3).
 Once downloaded, in order to call the main script and view available options, run in your terminal **(Bash)**:
 
