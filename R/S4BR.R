@@ -110,5 +110,24 @@ fwrite(
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
+#INDELs------------------------------------------------------------------
+print("Begin INDELs Variant Analysis")
+
+
+pick_gt_stdz = gt_stdz_indels(arguments$vcf_path,
+                              arguments$merged_file)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

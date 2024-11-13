@@ -878,7 +878,7 @@ select_indels <- function(df){
     return(indels)
 }
 
-load_gt_vcf_indels <- function(path, merged_file){
+load_gt_vcf_indels <- function(path, merged_file, gt_indels){
     #function to load Ground Truth vcf
     ground_truth_vcf <- read.vcfR( paste0(path, "/",merged_file, 
                                           "_ground_truth_norm.vcf"),
@@ -916,7 +916,7 @@ standardize_indels <- function(dt) {
 gt_stdz_indels <- function(path, merged_file){
     gt_all = load_gt_report_indels(path, merged_file)$all
     gt_indels = load_gt_report_indels(path, merged_file)$indels
-    pick_gt = load_gt_vcf_indels(path, merged_file)
+    pick_gt = load_gt_vcf_indels(path, merged_file, gt_indels)
     pick_gt_stdz = standardize_indels(pick_gt)
     return(pick_gt_stdz)
 } 

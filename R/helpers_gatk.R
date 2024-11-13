@@ -699,6 +699,7 @@ categorize_fps_gatk <- function(pick_gt_stdz, fp_indels_gatk) {
     #function to identify FP categories
     pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
     fp_indels_gatk$POS = as.numeric(fp_indels_gatk$POS)
+    
     colnames(fp_indels_gatk) = c("CHROM", "POS", "ID", "REF", "ALT", "Mutect2 QUAL",
                                  "Mutect2 FILTER", "key", "Indiv", "Mutect2 AD", 
                                  "Mutect2 AF", "Mutect2 DP", "gt_F1R2", "gt_F2R1", 
