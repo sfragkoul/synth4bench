@@ -1,8 +1,9 @@
 source("R/libraries.R")
 
 #functions---------------------------------------------------------------------
+#exists
 `%ni%` <- Negate(`%in%`) 
-
+#transferred
 load_gt_report_indels <- function(path, merged_file) {#NEW FUNCTION!!!
     #function to load Ground Truth bam-report 
     a <- paste0(path, "/", merged_file, "_report.tsv") |>
@@ -44,7 +45,7 @@ load_gt_report_indels <- function(path, merged_file) {#NEW FUNCTION!!!
     )
     return(gt)
 }
-
+#transferred
 select_indels <- function(df){ #NEW FUNCTION!!!
     # select indels from caller based on length of REF and ALT
     
@@ -54,7 +55,7 @@ select_indels <- function(df){ #NEW FUNCTION!!!
     
     return(indels)
 }
-
+#transferred
 load_gt_vcf_indels <- function(path, merged_file){#NEW FUNCTION!!!
     #function to load Ground Truth vcf
     ground_truth_vcf <- read.vcfR( paste0(path, "/",merged_file, 
@@ -69,20 +70,20 @@ load_gt_vcf_indels <- function(path, merged_file){#NEW FUNCTION!!!
                         pick_gt$ALT, sep = ":")
     return(pick_gt)
 }
-
+#exists
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
     return(fp_var)
 }
-
+#exists
 define_fn <- function(caller, gt){
     #FN Variants
     fn_var = gt[which(gt$mut %ni% caller$mut)]
     fn_var$type = "FN"
     return(fn_var)
 }
-
+#transferred
 categorize_fns_gatk <- function(caller, fn_var) { #!!!! NEW FUNCTION
     #Function to identify FN categories
     
@@ -102,7 +103,7 @@ categorize_fns_gatk <- function(caller, fn_var) { #!!!! NEW FUNCTION
     
     return(fn_var)
 }
-
+#transferred
 categorize_fps_gatk <- function(pick_gt_stdz, fp_indels_gatk) { #!!!! NEW FUNCTION
     #Function to identify FP categories
     pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
@@ -125,19 +126,14 @@ categorize_fps_gatk <- function(pick_gt_stdz, fp_indels_gatk) { #!!!! NEW FUNCTI
     
     return(fp_indels_gatk)
 }
-
+#edited
 define_tp <- function(caller, gt){
     #TP Variants
     tp_var = caller[which(caller$mut %in% gt$mut)]
     tp_var$type = "TP"
     return(tp_var)
 }
-
-#GT----------------------------------------------------------------------------
-gt_all = load_gt_report_indels("results", "Merged")$all
-gt_indels = load_gt_report_indels("results/", "Merged")$indels
-pick_gt = load_gt_vcf_indels("results/", "Merged")
-#Mutect2-----------------------------------------------------------------------
+#exists
 load_gatk_vcf <- function(path, merged_file){
     #function to load caller vcf
     Mutect2_somatic_vcf <- read.vcfR( paste0(path, merged_file, 
@@ -149,8 +145,7 @@ load_gatk_vcf <- function(path, merged_file){
     Mutect2_somatic = cbind(Mutect2_s0[Mutect2_s1$Key, ], Mutect2_s1)
     return(Mutect2_somatic)
 }
-
-#FP
+#edited
 fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){#term snvs is redundant
     #find MUtect2 FP variants
     fp_var = define_fp(Mutect2_somatic_snvs, pick_gt)
@@ -172,7 +167,7 @@ fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){#term snvs is re
     fp_var$type = "FP"
     return(fp_var)
 }
-
+#transferred
 final_fp_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
@@ -180,9 +175,7 @@ final_fp_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
     fp_var = fp_snvs_gatk(Mutect2_somatic_indels, pick_gt, gt_all)
     return(fp_var)
 }
-
-
-#FN
+#transferred
 final_fn_indels_gatk <- function(path, merged_file, pick_gt){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
@@ -190,23 +183,17 @@ final_fn_indels_gatk <- function(path, merged_file, pick_gt){
     fn_var = define_fn(Mutect2_somatic_indels, pick_gt)
     colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
                          "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
-    
     return(fn_var)
 }
-
-fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt)
-
-
-#TP
+#transferred
 final_tp_indels_gatk <- function(path, merged_file, pick_gt){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
     tp_var = define_tp(Mutect2_somatic_indels, pick_gt)
-    
     return(tp_var)
 }
-
+#transferred
 standardize_indels <- function(dt) { #!!!! NEW FUNCTION
     #Function to standardize indels
     setDT(dt)
@@ -226,16 +213,18 @@ standardize_indels <- function(dt) { #!!!! NEW FUNCTION
                    dt$ALT, sep = ":")
     return(dt)
 }
-
+#GT----------------------------------------------------------------------------
+gt_all = load_gt_report_indels("results", "Merged")$all
+gt_indels = load_gt_report_indels("results/", "Merged")$indels
+pick_gt = load_gt_vcf_indels("results/", "Merged")
+#Mutect2-----------------------------------------------------------------------
+fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt)
 pick_gt_stdz = standardize_indels(pick_gt)
-
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
 fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt_stdz)
 fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
-
 Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
 Mutect2_indels <-select_indels(Mutect2_somatic)
-
 fn_indels_gatk_categories <- categorize_fns(Mutect2_indels, fn_indels_gatk)
 
 
