@@ -217,12 +217,12 @@ standardize_indels <- function(dt) { #!!!! NEW FUNCTION
 gt_all = load_gt_report_indels("results", "Merged")$all
 gt_indels = load_gt_report_indels("results/", "Merged")$indels
 pick_gt = load_gt_vcf_indels("results/", "Merged")
-#Mutect2-----------------------------------------------------------------------
-fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt)
 pick_gt_stdz = standardize_indels(pick_gt)
+#Mutect2-----------------------------------------------------------------------
 tp_indels_gatk = final_tp_indels_gatk("results/", "Merged", pick_gt_stdz)
 fn_indels_gatk = final_fn_indels_gatk("results/", "Merged", pick_gt_stdz)
 fp_indels_gatk = final_fp_indels_gatk("results/", "Merged", pick_gt_stdz, gt_all)
+
 Mutect2_somatic <- load_gatk_vcf("results/", "Merged")
 Mutect2_indels <-select_indels(Mutect2_somatic)
 fn_indels_gatk_categories <- categorize_fns(Mutect2_indels, fn_indels_gatk)
