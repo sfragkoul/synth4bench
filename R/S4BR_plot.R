@@ -2,12 +2,13 @@
 #'visualizations to illustrate the comparison between the ground truth 
 #'and the caller.
 #'
-#' Input files: a tsv file with the comparison between the ground truth 
-#' and the caller, ground truth vcf file, caller vcf file
+#'Input files: a tsv file with the comparison between the ground truth 
+#'and the caller, ground truth vcf file, caller vcf file
 #'
-#' Output files: multi planel figure and a Venn plot
+#'Output files: multi planel figure and a Venn plot
 #'
-#' Authors: Nikos Pechlivanis(github:npechl),Stella Fragkouli(github:sfragkoul)
+#'Authors: Nikos Pechlivanis(github:npechl),Stella Fragkouli(github:sfragkoul), 
+#'Natasa Anastasiadou(github:natanast)
 #' 
 
 
