@@ -103,13 +103,13 @@ To create customized execution scripts for data synthesis and variant calling, r
 
    - **Generate the Synthesis Script**: This will create the `synth_generation_template.sh` script with the parameters specified in the `parameters.yaml` file:
 
-         bash synth_generation_template.sh > synth_generation_run.sh
+         bash synth_generation_template.sh > desired_name.sh
 
      Replace `desired_name.sh` with the desired name for your generated script.
 
     - **Generate the Variant Calling Script**: Similarly, this will create the `variant_calling_template.sh` script with the parameters from the `parameters.yaml` file:
 
-          bash variant_calling_template.sh > variant_calling_run.sh
+          bash variant_calling_template.sh > desired_name.sh
 
        Again, replace `desired_name.sh` with the name you would like to assign to this generated script.
 
@@ -164,7 +164,9 @@ This guide will walk you through using Synth4bench with a practical example, fro
     wget https://zenodo.org/record/10683211/files/reference.rar
     unrar x reference.rar
 
-**Configure Parameters:** Edit `parameters.yaml` to set your working directory and specify paths to the output directory and reference files. Below is an example `parameters.yaml`:
+2. **Configure Parameters:**
+
+Edit `parameters.yaml` to set your working directory and specify paths to the output directory and reference files. Below is an example `parameters.yaml`:
 
     ### synth_generation_template.sh parameters ###
 
@@ -219,6 +221,26 @@ This guide will walk you through using Synth4bench with a practical example, fro
     vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080
 
 If you want to run the analysis at the synth4bench_analysis folder and you have downloaded all the files at this directory, you can change /path/to with a dot.
+
+3. **Run the Execution Scripts**
+
+   - **Generate the Synthesis Script**: Run the following to create a customized synthesis script based on the parameters in `parameters.yaml`:
+
+         bash synth_generation_template.sh > synth_generation_run.sh
+
+   - **Generate the Variant Calling Script**: Create the variant calling script similarly:
+
+          bash variant_calling_template.sh > variant_calling_run.sh
+
+    This step will output synthetic FASTQ files ready for the variant calling analysis.
+
+   - **Run the Synthesis Script**: Execute the synthesis script to generate synthetic reads:
+
+         bash synth_generation_run.sh
+
+     This script will output a VCF file in the specified output_directory, containing the variant calls for the synthetic data.
+
+4. **Analyze the Results Using R Scripts**
 
 
 
