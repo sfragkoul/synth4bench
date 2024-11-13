@@ -150,5 +150,78 @@ After executing the scripts, check the output files located in the directories s
 
 ## Using synth4bench
 
+This guide will walk you through using Synth4bench with a practical example, from downloading data to executing the analysis and reviewing results. We assume you have the necessary environment and dependencies set up as outlined above.
+
+1. **Set Up Your Analysis Folder**
+
+**Create a New Analysis Folder:** Start by creating an analysis folder and navigating into it in your **terminal (Bash)**:
+
+    mkdir synth4bench_analysis
+    cd synth4bench_analysis
+
+**Download the Data:** Download the reference files from Zenodo and extract the files into your analysis folder:
+    
+    wget https://zenodo.org/record/10683211/files/reference.rar
+    unrar x reference.rar
+
+**Configure Parameters:** Edit `parameters.yaml` to set your working directory and specify paths to the output directory and reference files. Below is an example `parameters.yaml`:
+
+    ### synth_generation_template.sh parameters ###
+
+    # path to working directory
+    working_directory: "/path/to/synth4bench_analysis"
+    
+    # folder for results
+    folder: results 
+    
+    # path to NEAT scripts
+    path_to_neat:  /path/to/NEAT-3.3
+    
+    # number of individual synth batches 
+    runs: 5
+    
+    # seeds for each individual synth batch
+    rng: 213,214,215,217,218
+    
+    # mutation rate parameter as taken from NEAT
+    mutation_rate: 0.1
+    
+    # read length parameter as taken from NEAT
+    read_length: 150
+    
+    # coverage parameter as taken from NEAT
+    coverage: 100
+    
+    # fragment parameters as taken from NEAT
+    fragment_stats:
+     1: 300
+     2: 30
+     
+    # path to reference file
+    path_to_reference: /path/to/reference/TP53.fasta
+    
+    # name of final merged bam file
+    output_bam_merged: Merged
+   
+   
+    ### variant_calling_template.sh parameters ###
+   
+    # path to bam readcount scripts
+    path_to_bam_readcount: /path/to/build/bin/bam_readcount
+    
+    # somatic variant caller name
+    caller: VarScan
+    
+    # path to varscan_scripts_path extra scripts
+    varscan_scripts_path: /path/to/varscan_extra_scripts
+    
+    # genomic region of interest as taken from VarScan
+    vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080
+
+If you want to run the analysis at the synth4bench_analysis folder and you have downloaded all the files at this directory, you can change /path/to with a dot.
+
+
+
+
 
 ## Requirements
