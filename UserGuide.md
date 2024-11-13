@@ -240,10 +240,6 @@ If you want to run the analysis at the synth4bench_analysis folder and you have 
 
      This script will output a VCF file in the specified output_directory, containing the variant calls for the synthetic data.
 
-4. **Analyze the Results Using R Scripts**
-
-
-
 
 
 ## Requirements
