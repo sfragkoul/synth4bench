@@ -9,7 +9,7 @@
 #TP SNVS-----------------------------------------------------------------------
 read_vcf_freebayes <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format   
-  vcf <- read.vcfR( paste0(path, "/", merged_file, "_Freebayes_norm.vcf"), verbose = FALSE )
+  vcf <- read.vcfR( paste0(path, "/", merged_file, "_freebayes_norm.vcf"), verbose = FALSE )
   
   vcf_df <- vcf |>
     merge_freebayes(gt) |>
@@ -501,7 +501,7 @@ venn_plot_freebayes <- function(q, p) {
 load_Freebayes_vcf <- function(path, merged_file){
     #function to load caller vcf
     Freebayes_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                               "_Freebayes_norm.vcf"), verbose = FALSE )
+                                               "_freebayes_norm.vcf"), verbose = FALSE )
     Freebayes_s0  = Freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #Freebayes_s1  = Freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
     Freebayes_s2 = Freebayes_somatic_vcf |> extract_info_tidy() |> setDT()

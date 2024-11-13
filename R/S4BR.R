@@ -110,5 +110,54 @@ fwrite(
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
+#INDELs------------------------------------------------------------------
+print("Begin INDELs Variant Analysis")
+
+pick_gt_stdz = gt_stdz_indels(arguments$vcf_path,
+                              arguments$merged_file)
+#TP
+tp_indels = call_tp_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
+fwrite(
+        tp_indels, paste0(arguments$working_directory, "/",
+                         arguments$merged_file, "_",
+                         arguments$caller, "_indels_TP.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+#FN
+fn_indels = call_fn_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
+fwrite(
+  fn_indels, paste0(arguments$working_directory, "/",
+                    arguments$merged_file, "_",
+                    arguments$caller, "_indels_FN.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+#FP  
+fp_indels = call_fp_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
+fwrite(
+  fp_indels, paste0(arguments$working_directory, "/",
+                    arguments$merged_file, "_",
+                    arguments$caller, "_indels_FP.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+
+
+
+
+
+
+
+
 
 
