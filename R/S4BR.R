@@ -118,9 +118,11 @@ pick_gt_stdz = gt_stdz_indels(arguments$vcf_path,
                               arguments$merged_file)
 
 #if statement to call function to call callers' functions
+tp_indels = 
 
-
-
+fn_indels =
+  
+fp_indels =   
 
 
 

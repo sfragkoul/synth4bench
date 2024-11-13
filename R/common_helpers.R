@@ -1,5 +1,4 @@
 
-
 #TP SNVS-----------------------------------------------------------------------
 gt_analysis <- function(runs, folder, merged_file) {
   
@@ -920,6 +919,24 @@ gt_stdz_indels <- function(path, merged_file){
     pick_gt_stdz = standardize_indels(pick_gt)
     return(pick_gt_stdz)
 } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
