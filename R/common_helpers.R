@@ -913,7 +913,13 @@ standardize_indels <- function(dt) {
     return(dt)
 }
 
-
+gt_stdz_indels <- function(path, merged_file){
+    gt_all = load_gt_report_indels(path, merged_file)$all
+    gt_indels = load_gt_report_indels(path, merged_file)$indels
+    pick_gt = load_gt_vcf_indels(path, merged_file)
+    pick_gt_stdz = standardize_indels(pick_gt)
+    return(pick_gt_stdz)
+} 
 
 
 
