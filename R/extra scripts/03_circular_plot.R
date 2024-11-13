@@ -100,23 +100,39 @@ p <- ggplot(df, aes(x = POS, y = y_cycle)) +
     geom_hline(yintercept = 25, color = "grey40") +
     geom_hline(yintercept = 0,  color = "grey40") +
     
+    # # Add points at the end of each segment for the lollipop head
+    # geom_point(aes(fill = Type, color = Type, shape = Category), size = 2.3, stroke = .15) +
+    # 
+
     # Add points at the end of each segment for the lollipop head
-    geom_point(aes(fill = Type, color = Type, shape = Category), size = 2.3, stroke = .15) +
+
+    geom_point(aes(fill = Type, color = Type, shape = Category, 
+                   size = ifelse(Category == "not exist", 1.5, 3)), # Increase size for specific categories
+               stroke = .15) +
     
-    
+    scale_size_identity() +
+
+
     # Define specific shapes for each category level
     scale_shape_manual(values = c("diff REF" = 23, "diff ALT" = 24, "not exist" = 21)) +
     
     
     # Define custom colors for each type
     scale_fill_manual(values = c("TP" = "#a78d95", "FP" = "#ae4364", "FN" = "#43ae8d")) +
+
     
     scale_color_manual(values = c("TP" = "#a78d95", "FP" = "#ae4364", "FN" = "#43ae8d") |> darken(.25)) +
     
 
     # Customize the x-axis and radial coordinates
     scale_x_continuous(breaks = c(0, 4751, 9503, 14255, 19007), limits = c(0, 19007)) +
+    
     coord_radial(start = pi / 2.5, inner.radius = .25, end = 2.6 * pi) +
+    
+
+    # Remove legend for size if unnecessary
+    guides(size = "none") +
+
     
     # Define minimal theme and other plot aesthetics
     theme_minimal() +
