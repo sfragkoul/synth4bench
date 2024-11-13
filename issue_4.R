@@ -232,7 +232,7 @@ pick_gt_stdz = gt_stdz_indels("results", "Merged")
 tp_indels_gatk = final_tp_indels_gatk("results", "Merged", pick_gt_stdz)
 
 #FN
-categorized_fn_indels_gatk <- function(path, merged_file){
+call_fn_indels_gatk <- function(path, merged_file){
     #function to output categorized FN indels
     fn_indels_gatk = final_fn_indels_gatk(path, merged_file, pick_gt_stdz)
     Mutect2_somatic = load_gatk_vcf(path, merged_file)
@@ -241,16 +241,16 @@ categorized_fn_indels_gatk <- function(path, merged_file){
     
     return(fn_indels_gatk_categories)
 }
-new_fn = categorized_fn_indels_gatk("results", "Merged")
+new_fn = call_fn_indels_gatk("results", "Merged")
 
 
-categorized_fp_indels_gatk <- function(path, merged_file){
+call_fp_indels_gatk <- function(path, merged_file){
     #function to output categorized FP indels
-    gt_all = load_gt_report_indels(path, merged_file)$all
+    gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
     fp_indels_gatk = final_fp_indels_gatk(path, merged_file, pick_gt_stdz, gt_all)
     fp_indels_gatk_categories = categorize_fps_gatk(pick_gt_stdz, fp_indels_gatk)
     
     return(fp_indels_gatk_categories)
 }
-new_fp = categorized_fp_indels_gatk("results", "Merged")
+new_fp = call_fp_indels_gatk("results", "Merged")
 
