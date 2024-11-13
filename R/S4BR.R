@@ -117,12 +117,22 @@ print("Begin INDELs Variant Analysis")
 pick_gt_stdz = gt_stdz_indels(arguments$vcf_path,
                               arguments$merged_file)
 
-#if statement to call function to call callers' functions
-tp_indels = 
+tp_indels = call_tp_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
 
-fn_indels =
+fwrite(
+        tp_indels, paste0(arguments$working_directory, "/",
+                         arguments$merged_file, "_",
+                         arguments$caller, "_indels_TP.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+
+fn_indels = call_fn_indels()
   
-fp_indels =   
+fp_indels = call_fp_indels() 
 
 
 

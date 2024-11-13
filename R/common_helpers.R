@@ -943,3 +943,52 @@ gt_stdz_indels <- function(path, merged_file){
 
 
 
+
+
+call_tp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
+  
+  if(caller == "Freebayes") {
+    
+    tp_indels <- final_tp_indels_freebayes(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "Mutect2") {
+    
+    tp_indels <- final_tp_indels_gatk(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "LoFreq") {
+    
+    tp_indels <- final_tp_indels_LoFreq(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "VarDict") {
+    
+    tp_indels <- final_tp_indels_VarDict(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "VarScan") {
+    
+    tp_indels <- final_tp_indels_VarScan(path, merged_file, pick_gt_stdz)
+    
+  }
+  
+  return(tp_indels)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
