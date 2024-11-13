@@ -240,6 +240,46 @@ If you want to run the analysis at the synth4bench_analysis folder and you have 
 
      This script will output a VCF file in the specified output_directory, containing the variant calls for the synthetic data.
 
+4. **Analyze the Results Using R Scripts**
+
+Check **Parameters** for S4BR R Script 
+
+    Rscript R/S4BR.R --help
+    
+**Options:**
+
+   -v VCF_PATH, --vcf_path=VCF_PATH
+           Directory path where VCF files are located.
+           
+   -c CALLER, --caller=CALLER
+           Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)
+           
+   -r RUNS, --runs=RUNS
+           Number of individual runs to produce synthetic data which will then be combined to form the final Merged ground truth file.
+
+   -w WORKING_DIRECTORY, --working_directory=WORKING_DIRECTORY
+             Path of working directory.
+
+   -m MERGED_FILE, --merged_file=MERGED_FILE
+             Indicate the name given to the final merged ground truth file.
+
+   -h, --help
+             Show this help message and exit.
+
+
+Run **S4BR.R** to perform the analysis:
+
+    Rscript R/S4BR.R -v ./results -c VarScan -r 5 -w ./results -m test
+
+Run **S4BR_plot.R** to generate visualizations:
+   
+    Rscript R/S4BR_plot.R -t ./results -v ./results -g ./results -c VarScan -w . -m test
+
+5. **Review the Output**
+   
+**Check Analysis Results:** Open the `analysis_output.tsv` file in the results directory. This file summarizes the variants found in the synthetic data.
+
+**View Plots:** Navigate to the plots directory to review the generated visualizations. These plots provide insights into the variants called and their characteristics under different conditions.
 
 
 ## Requirements
