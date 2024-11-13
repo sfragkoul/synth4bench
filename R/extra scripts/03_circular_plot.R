@@ -105,18 +105,21 @@ p <- ggplot(df, aes(x = POS, y = y_cycle)) +
     # 
 
     # Add points at the end of each segment for the lollipop head
+
     geom_point(aes(fill = Type, color = Type, shape = Category, 
                    size = ifelse(Category == "not exist", 1.5, 3)), # Increase size for specific categories
                stroke = .15) +
     
     scale_size_identity() +
-    
+
+
     # Define specific shapes for each category level
     scale_shape_manual(values = c("diff REF" = 23, "diff ALT" = 24, "not exist" = 21)) +
     
     
     # Define custom colors for each type
     scale_fill_manual(values = c("TP" = "#a78d95", "FP" = "#ae4364", "FN" = "#43ae8d")) +
+
     
     scale_color_manual(values = c("TP" = "#a78d95", "FP" = "#ae4364", "FN" = "#43ae8d") |> darken(.25)) +
     
@@ -129,9 +132,10 @@ p <- ggplot(df, aes(x = POS, y = y_cycle)) +
 
     # Remove legend for size if unnecessary
     guides(size = "none") +
+
     
+    # Define minimal theme and other plot aesthetics
     theme_minimal() +
-    
     theme(
         axis.text.y = element_blank(),
         panel.grid.major = element_line(linewidth = 0.35),
@@ -150,6 +154,6 @@ p <- ggplot(df, aes(x = POS, y = y_cycle)) +
 p
 
 ggsave(
-    plot = p, filename = "Rplot_3.jpeg",
+    plot = p, filename = "Rplot_2.jpeg",
     width = 14, height = 12, units = "in", dpi = 600
 )
