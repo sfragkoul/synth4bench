@@ -972,9 +972,60 @@ call_tp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   return(tp_indels)
 }
 
+call_fn_indels <- function(path, caller, merged_file, pick_gt_stdz) {
+  
+  if(caller == "Freebayes") {
+    
+    fn_indels <- call_fn_indels_freebayes(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "Mutect2") {
+    
+    fn_indels <- call_fn_indels_gatk(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "LoFreq") {
+    
+    fn_indels <- call_fn_indels_LoFreq(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "VarDict") {
+    
+    fn_indels <- call_fn_indels_VarDict(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "VarScan") {
+    
+    fn_indels <- call_fn_indels_VarScan(path, merged_file, pick_gt_stdz)
+    
+  }
+  
+  return(fn_indels)
+}
 
 
-
+call_fp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
+  
+  if(caller == "Freebayes") {
+    
+    fp_indels <- call_fp_indels_freebayes(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "Mutect2") {
+    
+    fp_indels <- call_fp_indels_gatk(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "LoFreq") {
+    
+    fp_indels <- call_fp_indels_LoFreq(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "VarDict") {
+    
+    fp_indels <- call_fp_indels_VarDict(path, merged_file, pick_gt_stdz)
+    
+  } else if (caller == "VarScan") {
+    
+    fp_indels <- call_fp_indels_VarScan(path, merged_file, pick_gt_stdz)
+    
+  }
+  
+  return(fp_indels)
+}
 
 
 
