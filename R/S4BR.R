@@ -6,7 +6,7 @@
 #' Output files:  tsv files with the comparison between the ground truth 
 #' and the caller.
 #'
-#' Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
+#' Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(sfragkoul)
 #' 
 
 

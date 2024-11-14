@@ -7,8 +7,8 @@
 #'
 #'Output files: multi planel figure and a Venn plot
 #'
-#'Authors: Nikos Pechlivanis(github:npechl),Stella Fragkouli(github:sfragkoul), 
-#'Natasa Anastasiadou(github:natanast)
+#'Authors: Nikos Pechlivanis(github:npechl),Stella Fragkouli(sfragkoul), 
+#'Natasa Anastasiadou(natanast)
 #' 
 
 
