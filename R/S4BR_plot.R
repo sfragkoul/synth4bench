@@ -77,13 +77,13 @@ ggsave(
   width = 16, height = 12, units = "in", dpi = 600
 )
 
-ggsave(
-  plot = plots_snvs_TP[[2]], filename = paste0(arguments$working_directory,
-                                       "/Plots/Venn_all_Variants_",
-                                       arguments$caller,
-                                       "all.png"),
-  width = 8, height = 8, units = "in", dpi = 600
-)
+# ggsave(
+#   plot = plots_snvs_TP[[2]], filename = paste0(arguments$working_directory,
+#                                        "/Plots/Venn_all_Variants_",
+#                                        arguments$caller,
+#                                        ".png"),
+#   width = 8, height = 8, units = "in", dpi = 600
+# )
 
 #SNVs FP & FN------------------------------------------------------------------
 print("Plotting SNVs FP Variants")

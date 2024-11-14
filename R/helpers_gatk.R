@@ -764,6 +764,9 @@ call_fp_indels_gatk <- function(path, merged_file, pick_gt_stdz){
   return(fp_indels_gatk_categories)
 }
 
+
+
+
 circular_plot_gatk <- function(path, merged_file, caller){
     #Load data
     tp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_TP.tsv"), sep = "\t")
