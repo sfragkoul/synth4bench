@@ -2,7 +2,7 @@
 # Libraries
 source("R/libraries.R")
 
-circular_plot <- function(path, merged_file, caller){
+circular_plot_gatk <- function(path, merged_file, caller){
     #Load data
     tp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_TP.tsv"), sep = "\t")
     fp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_FP.tsv"), sep = "\t")
