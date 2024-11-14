@@ -1015,6 +1015,40 @@ call_fp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
 
 
 
+plot_indels<- function(gt_snv_tp_comparison, vcf_path, gt_path, caller, merged_file) {
+    
+    df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_", caller, "_snvs_TP.tsv"))
+    
+    vcf_GT <- read.vcfR(paste0(vcf_path, "/", merged_file, "_ground_truth_norm.vcf"), verbose = FALSE )
+    
+    vcf_caller <- read.vcfR(paste0(vcf_path, "/", merged_file, "_", caller, "_norm.vcf"), verbose = FALSE )
+    
+    if(caller == "Freebayes") {
+        
+        plots <- plot_snvs_TP_freebayes(df, vcf_GT, vcf_caller, merged_file)
+        
+    } else if (caller == "Mutect2") {
+        
+        plots <- plot_snvs_TP_gatk(df, vcf_GT, vcf_caller, merged_file)
+        
+    } else if (caller == "LoFreq") {
+        
+        plots <- plot_snvs_TP_LoFreq(df, vcf_GT, vcf_caller, merged_file)
+        
+    } else if (caller == "VarDict") {
+        
+        plots <- plot_snvs_TP_VarDict(df, vcf_GT, vcf_caller, merged_file)
+        
+    } else if (caller == "VarScan") {
+        
+        plots <- plot_snvs_TP_VarScan(df, vcf_GT, vcf_caller, merged_file)
+        
+    }
+    
+    return(plots)
+    
+}
+
 
 
 
