@@ -4,7 +4,7 @@ source("R/helpers_gatk.R")
 
 pick_gt_stdz = gt_stdz_indels("results", "Merged")
 
-#Mutect2-----------------------------------------------------------------------
+#Caller------------------------------------------------------------------------
 #TP
 tp_indels_gatk = final_tp_indels_gatk("results", "Merged", pick_gt_stdz)
 
@@ -20,7 +20,6 @@ call_fn_indels_gatk <- function(path, merged_file, pick_gt_stdz){
 }
 new_fn = call_fn_indels_gatk("results", "Merged")
 
-
 call_fp_indels_gatk <- function(path, merged_file){
     #function to output categorized FP indels
     gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
@@ -31,8 +30,6 @@ call_fp_indels_gatk <- function(path, merged_file){
 }
 new_fp = call_fp_indels_gatk("results", "Merged")
 
-
-
 # fwrite(
 #     new_fn, paste0("fn_var_new.tsv"),
 #     row.names = FALSE, quote = FALSE, sep = "\t"
@@ -42,6 +39,3 @@ new_fp = call_fp_indels_gatk("results", "Merged")
 #     new_fp, paste0("fp_var_new.tsv"),
 #     row.names = FALSE, quote = FALSE, sep = "\t"
 # )
-
-
-

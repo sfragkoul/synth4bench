@@ -115,7 +115,8 @@ print("Begin INDELs Variant Analysis")
 
 pick_gt_stdz = gt_stdz_indels(arguments$vcf_path,
                               arguments$merged_file)
-#TP
+
+print("Begin TP INDELs Variant Analysis")
 tp_indels = call_tp_indels(arguments$vcf_path,
                            arguments$caller,
                            arguments$merged_file,
@@ -127,7 +128,7 @@ fwrite(
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
-#FN
+print("Begin FN INDELs Variant Analysis")
 fn_indels = call_fn_indels(arguments$vcf_path,
                            arguments$caller,
                            arguments$merged_file,
@@ -139,7 +140,7 @@ fwrite(
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
-#FP  
+print("Begin FP INDELs Variant Analysis")
 fp_indels = call_fp_indels(arguments$vcf_path,
                            arguments$caller,
                            arguments$merged_file,

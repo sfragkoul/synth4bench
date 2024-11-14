@@ -929,22 +929,6 @@ gt_stdz_indels <- function(path, merged_file){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 call_tp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   
   if(caller == "Freebayes") {
@@ -971,6 +955,8 @@ call_tp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   
   return(tp_indels)
 }
+
+
 
 call_fn_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   
