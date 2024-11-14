@@ -100,7 +100,7 @@ circular_plot_gatk <- function(path, merged_file, caller){
     return(p)
 }
 
-p = circular_plot("results", "Merged", "Mutect2")
+p = circular_plot_gatk("results", "Merged", "Mutect2")
 
 
 ggsave(

@@ -1015,7 +1015,7 @@ call_fp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
 
 
 
-plot_indels<- function(path, merged_file, caller) {
+plot_indels <- function(path, merged_file, caller) {
     
     if(caller == "Freebayes") {
         
