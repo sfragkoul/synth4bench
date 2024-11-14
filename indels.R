@@ -43,17 +43,46 @@ tp_indels_freebayes = final_tp_indels_freebayes("results", "Merged", pick_gt_std
 
 
 
+
+final_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
+    #function to identify FN indels
+    Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
+    fn_var = define_fn(Freebayes_somatic_indels, pick_gt_stdz)
+    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
+                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
+    return(fn_var)
+}
+
+categorize_fns_Freebayes <- function(caller, fn_var) {
+    #function to identify FN categories
+    
+    caller$POS = as.numeric(caller$POS)
+    fn_var$POS = as.numeric(fn_var$POS)
+    colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
+                         "Count", "Ground Truth AF","mut","type")
+    #Same POS
+    same_POS <- merge(fn_var, caller, by = c("POS"))
+    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
+    
+    #Same POS & REF
+    same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
+    # Update only rows where POS and REF match
+    fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
+           category := "diff ALT"]
+    
+    return(fn_var)
+}
+
 #FN
 call_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
     #function to output categorized FN indels
     fn_indels_Freebayes = final_fn_indels_Freebayes(path, merged_file, pick_gt_stdz)
-    Freebayes_somatic = load_Freebayes_vcf(path, merged_file)
-    Freebayes_indels = select_indels(Freebayes_somatic)
+    Freebayes_indels = load_Freebayes_vcf(path, merged_file) |> select_indels()
     fn_indels_Freebayes_categories = categorize_fns_Freebayes(Freebayes_indels, fn_indels_Freebayes)
     
     return(fn_indels_Freebayes_categories)
 }
-new_fn = call_fn_indels_Freebayes("results", "Merged")
+new_fn = call_fn_indels_Freebayes("results", "Merged", pick_gt_stdz)
 
 
 
