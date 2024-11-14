@@ -33,16 +33,15 @@ new_fp = call_fp_indels_gatk("results", "Merged")
 
 
 
-
-fwrite(
-    new_fn, paste0("fn_var_new.tsv"),
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
-
-fwrite(
-    new_fp, paste0("fp_var_new.tsv"),
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
+# fwrite(
+#     new_fn, paste0("fn_var_new.tsv"),
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
+# 
+# fwrite(
+#     new_fp, paste0("fp_var_new.tsv"),
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
 
 
 
