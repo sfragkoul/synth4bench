@@ -148,7 +148,7 @@ For the case of VarScan an extra step was required to convert its output to the 
 
 We welcome and greatly appreciate any sort of feedback and/or contribution!
 
-If you have any questions, please either open an issue or write us at `sfragkoul@certh.gr` or `inab.bioinformatics@lists.certh.gr`.
+If you have any questions, please either open an issue [here](https://github.com/sfragkoul/synth4bench/issues/new) or write to us at `sfragkoul@certh.gr` or `inab.bioinformatics@lists.certh.gr`.
 
 ## Citation
 Our work has been submitted to the *bioRxiv* preprint repository. If you use our work please cite as follows:
