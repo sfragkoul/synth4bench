@@ -53,8 +53,6 @@ options <- list(
               action = "store", 
               type = "character", 
               help="Indicate the name given to the final merged ground truth file.")
-  
-  
 )
 
 arguments <- parse_args(OptionParser(option_list = options))
