@@ -60,30 +60,30 @@ options <- list(
 arguments <- parse_args(OptionParser(option_list = options))
 
 #SNVs TP-----------------------------------------------------------------------
-# print("Plotting SNVs TP Variants")
-# plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
-#                           arguments$vcf_path,
-#                           arguments$gt_path,
-#                           arguments$caller,
-#                           arguments$merged_file)
-# 
-# dir.create(paste0(arguments$working_directory, "/Plots"))
-# 
-# ggsave(
-#   plot = plots_snvs_TP[[1]], filename = paste0(arguments$working_directory,
-#                                        "/Plots/Poster_",
-#                                        arguments$caller,
-#                                        "snvs_TP.png"),
-#   width = 16, height = 12, units = "in", dpi = 600
-# )
+print("Plotting SNVs TP Variants")
+plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
+                          arguments$vcf_path,
+                          arguments$gt_path,
+                          arguments$caller,
+                          arguments$merged_file)
 
-# ggsave(
-#   plot = plots_snvs_TP[[2]], filename = paste0(arguments$working_directory,
-#                                        "/Plots/Venn_all_Variants_",
-#                                        arguments$caller,
-#                                        "all.png"),
-#   width = 8, height = 8, units = "in", dpi = 600
-# )
+dir.create(paste0(arguments$working_directory, "/Plots"))
+
+ggsave(
+  plot = plots_snvs_TP[[1]], filename = paste0(arguments$working_directory,
+                                       "/Plots/Poster_",
+                                       arguments$caller,
+                                       "snvs_TP.png"),
+  width = 16, height = 12, units = "in", dpi = 600
+)
+
+ggsave(
+  plot = plots_snvs_TP[[2]], filename = paste0(arguments$working_directory,
+                                       "/Plots/Venn_all_Variants_",
+                                       arguments$caller,
+                                       "all.png"),
+  width = 8, height = 8, units = "in", dpi = 600
+)
 
 #SNVs FP & FN------------------------------------------------------------------
 print("Plotting SNVs FP Variants")
