@@ -71,7 +71,7 @@ ggsave(
   plot = plots_snvs_TP[[1]], filename = paste0(arguments$working_directory,
                                        "/Plots/Poster_",
                                        arguments$caller,
-                                       "snvs_TP.png"),
+                                       "_snvs_TP.png"),
   width = 16, height = 12, units = "in", dpi = 600
 )
 

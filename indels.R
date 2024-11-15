@@ -1,7 +1,7 @@
 source("R/libraries.R")
 source("R/common_helpers.R")
 #source("R/helpers_gatk.R")
-source("R/helpers_freebayes.R")
+source("R/helpers_VarScan.R")
 
 pick_gt_stdz = gt_stdz_indels("results", "Merged")
 
@@ -39,7 +39,7 @@ final_tp_indels_freebayes <- function(path, merged_file, pick_gt_stdz){
     return(tp_var)
 }
 
-new_tp = final_tp_indels_freebayes("results", "Merged", pick_gt_stdz)
+new_tp = final_tp_indels_VarScan("results", "Merged", pick_gt_stdz)
 
 #FN
 final_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
@@ -81,7 +81,7 @@ call_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
     return(fn_indels_Freebayes_categories)
 }
 
-new_fn = call_fn_indels_Freebayes("results", "Merged", pick_gt_stdz)
+new_fn = call_fn_indels_VarScan("results", "Merged", pick_gt_stdz)
 
 
 
@@ -115,15 +115,16 @@ categorize_fps_Freebayes <- function(pick_gt_stdz, fp_indels_Freebayes) {
     return(fp_indels_Freebayes)
 }
 
-call_fp_indels_Freebayes <- function(path, merged_file){
+call_fp_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
     #function to output categorized FP indels
     gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
-    fp_indels_Freebayes = final_fp_indels_Freebayes(path, merged_file, pick_gt_stdz, gt_all)
+    fp_indels_VarScan = final_fp_indels_VarScan(path, merged_file, pick_gt_stdz, gt_all)
     fp_indels_Freebayes_categories = categorize_fps_Freebayes(pick_gt_stdz, fp_indels_Freebayes)
     
     return(fp_indels_Freebayes_categories)
 }
-new_fp = call_fp_indels_Freebayes("results", "Merged")
+
+new_fp = call_fp_indels_VarScan("results", "Merged", pick_gt_stdz)
 
 
 path = "results"

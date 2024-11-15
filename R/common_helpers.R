@@ -1022,15 +1022,15 @@ plot_indels <- function(path, merged_file, caller) {
         
     } else if (caller == "LoFreq") {
         
-        plots <- circular_plot_LoFreq()
+        plots <- circular_plot_LoFreq(path, merged_file, caller)
         
     } else if (caller == "VarDict") {
         
-        plots <- circular_plot_VarDict()
+        plots <- circular_plot_VarDict(path, merged_file, caller)
         
     } else if (caller == "VarScan") {
         
-        plots <- circular_plot_VarScan()
+        plots <- circular_plot_VarScan(path, merged_file, caller)
         
     }
     
