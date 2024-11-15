@@ -31,7 +31,7 @@ call_fp_indels_gatk <- function(path, merged_file){
 }
 new_fp = call_fp_indels_gatk("results", "Merged")
 #------------------------------------------------------------------------------
-
+#TP
 final_tp_indels_freebayes <- function(path, merged_file, pick_gt_stdz){
     #function to identify TP indels
     Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
@@ -39,11 +39,9 @@ final_tp_indels_freebayes <- function(path, merged_file, pick_gt_stdz){
     return(tp_var)
 }
 
-tp_indels_freebayes = final_tp_indels_freebayes("results", "Merged", pick_gt_stdz)
+new_tp = final_tp_indels_freebayes("results", "Merged", pick_gt_stdz)
 
-
-
-
+#FN
 final_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
     #function to identify FN indels
     Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
@@ -73,7 +71,7 @@ categorize_fns_Freebayes <- function(caller, fn_var) {
     return(fn_var)
 }
 
-#FN
+
 call_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
     #function to output categorized FN indels
     fn_indels_Freebayes = final_fn_indels_Freebayes(path, merged_file, pick_gt_stdz)
@@ -82,22 +80,72 @@ call_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
     
     return(fn_indels_Freebayes_categories)
 }
+
 new_fn = call_fn_indels_Freebayes("results", "Merged", pick_gt_stdz)
 
 
 
+#FP
+final_fp_indels_Freebayes <- function(path, merged_file, pick_gt, gt_all){
+    #function to identify FP indels
+    Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
+    fp_var = fp_snvs_Freebayes(Freebayes_somatic_indels, pick_gt, gt_all)
+    return(fp_var)
+}
 
 
+categorize_fps_Freebayes <- function(pick_gt_stdz, fp_indels_Freebayes) {
+    #function to identify FP categories
+    pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
+    fp_indels_Freebayes$POS = as.numeric(fp_indels_Freebayes$POS)
+    
+    colnames(fp_indels_Freebayes) = c("CHROM", "POS", "ID", "REF", 
+                                      "ALT", "Freebayes QUAL", "Freebayes FILTER", "Freebayes DP", 
+                                      "Freebayes AF", "mut", "Ground Truth DP","DP Percentage", "type")
+    #Same POS
+    same_POS <- merge(fp_indels_Freebayes, pick_gt_stdz, by = c("POS"))
+    fp_indels_Freebayes[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
+    
+    #Same POS & REF
+    same_POS_REF <- merge(fp_indels_Freebayes, pick_gt_stdz, by = c("POS", "REF"))
+    # Update only rows where POS and REF match
+    fp_indels_Freebayes[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
+                        category := "diff ALT"]
+    
+    return(fp_indels_Freebayes)
+}
+
+call_fp_indels_Freebayes <- function(path, merged_file){
+    #function to output categorized FP indels
+    gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
+    fp_indels_Freebayes = final_fp_indels_Freebayes(path, merged_file, pick_gt_stdz, gt_all)
+    fp_indels_Freebayes_categories = categorize_fps_Freebayes(pick_gt_stdz, fp_indels_Freebayes)
+    
+    return(fp_indels_Freebayes_categories)
+}
+new_fp = call_fp_indels_Freebayes("results", "Merged")
 
 
+path = "results"
+merged_file = "Merged"
+caller =  "Freebayes"
 
+p = circular_plot_Freebayes(path, merged_file, caller)
 
+fwrite(
+    new_tp, paste0("Merged_Freebayes_indels_TP.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
 
+fwrite(
+    new_fp, paste0("Merged_Freebayes_indels_FP.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
 
-
-
-
-
+fwrite(
+    new_fn, paste0("Merged_Freebayes_indels_FN.tsv"),
+    row.names = FALSE, quote = FALSE, sep = "\t"
+)
 
 
 

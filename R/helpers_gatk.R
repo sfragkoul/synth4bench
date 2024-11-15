@@ -719,6 +719,7 @@ categorize_fps_gatk <- function(pick_gt_stdz, fp_indels_gatk) {
     return(fp_indels_gatk)
 }
 
+
 final_fp_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
     #function to identify FP indels
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
@@ -744,6 +745,7 @@ final_tp_indels_gatk <- function(path, merged_file, pick_gt){
     tp_var = define_tp(Mutect2_somatic_indels, pick_gt)
     return(tp_var)
 }
+
 
 call_fn_indels_gatk <- function(path, merged_file, pick_gt_stdz){
   #function to output categorized FN indels

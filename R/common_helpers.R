@@ -928,7 +928,7 @@ call_tp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   
   if(caller == "Freebayes") {
     
-    tp_indels <- final_tp_indels_freebayes(path, merged_file, pick_gt_stdz)
+    tp_indels <- final_tp_indels_Freebayes(path, merged_file, pick_gt_stdz)
     
   } else if (caller == "Mutect2") {
     
@@ -957,7 +957,7 @@ call_fn_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   
   if(caller == "Freebayes") {
     
-    fn_indels <- call_fn_indels_freebayes(path, merged_file, pick_gt_stdz)
+    fn_indels <- call_fn_indels_Freebayes(path, merged_file, pick_gt_stdz)
     
   } else if (caller == "Mutect2") {
     
@@ -985,7 +985,7 @@ call_fp_indels <- function(path, caller, merged_file, pick_gt_stdz) {
   
   if(caller == "Freebayes") {
     
-    fp_indels <- call_fp_indels_freebayes(path, merged_file, pick_gt_stdz)
+    fp_indels <- call_fp_indels_Freebayes(path, merged_file, pick_gt_stdz)
     
   } else if (caller == "Mutect2") {
     
@@ -1014,7 +1014,7 @@ plot_indels <- function(path, merged_file, caller) {
     
     if(caller == "Freebayes") {
         
-        plots <- circular_plot_freebayes()
+        plots <- circular_plot_Freebayes(path, merged_file, caller)
         
     } else if (caller == "Mutect2") {
         
