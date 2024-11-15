@@ -1,7 +1,7 @@
 source("R/libraries.R")
 source("R/common_helpers.R")
 #source("R/helpers_gatk.R")
-source("R/helpers_VarScan.R")
+source("R/helpers_VarDict.R")
 
 pick_gt_stdz = gt_stdz_indels("results", "Merged")
 
@@ -32,26 +32,26 @@ call_fp_indels_gatk <- function(path, merged_file){
 new_fp = call_fp_indels_gatk("results", "Merged")
 #------------------------------------------------------------------------------
 #TP
-final_tp_indels_freebayes <- function(path, merged_file, pick_gt_stdz){
+final_tp_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
     #function to identify TP indels
-    Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
-    tp_var = define_tp(Freebayes_somatic_indels, pick_gt_stdz)
+    VarDict_somatic_indels <- load_VarDict_vcf(path, merged_file) |> select_indels()
+    tp_var = define_tp(VarDict_somatic_indels, pick_gt_stdz)
     return(tp_var)
 }
 
-new_tp = final_tp_indels_VarScan("results", "Merged", pick_gt_stdz)
+new_tp = final_tp_indels_VarDict("results", "Merged", pick_gt_stdz)
 
 #FN
-final_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
+final_fn_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
     #function to identify FN indels
-    Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
-    fn_var = define_fn(Freebayes_somatic_indels, pick_gt_stdz)
+    VarDict_somatic_indels <- load_VarDict_vcf(path, merged_file) |> select_indels()
+    fn_var = define_fn(VarDict_somatic_indels, pick_gt_stdz)
     colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
                          "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
     return(fn_var)
 }
 
-categorize_fns_Freebayes <- function(caller, fn_var) {
+categorize_fns_VarDict <- function(caller, fn_var) {
     #function to identify FN categories
     
     caller$POS = as.numeric(caller$POS)
@@ -72,79 +72,79 @@ categorize_fns_Freebayes <- function(caller, fn_var) {
 }
 
 
-call_fn_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
+call_fn_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
     #function to output categorized FN indels
-    fn_indels_Freebayes = final_fn_indels_Freebayes(path, merged_file, pick_gt_stdz)
-    Freebayes_indels = load_Freebayes_vcf(path, merged_file) |> select_indels()
-    fn_indels_Freebayes_categories = categorize_fns_Freebayes(Freebayes_indels, fn_indels_Freebayes)
+    fn_indels_VarDict = final_fn_indels_VarDict(path, merged_file, pick_gt_stdz)
+    VarDict_indels = load_VarDict_vcf(path, merged_file) |> select_indels()
+    fn_indels_VarDict_categories = categorize_fns_VarDict(VarDict_indels, fn_indels_VarDict)
     
-    return(fn_indels_Freebayes_categories)
+    return(fn_indels_VarDict_categories)
 }
 
-new_fn = call_fn_indels_VarScan("results", "Merged", pick_gt_stdz)
+new_fn = call_fn_indels_VarDict("results", "Merged", pick_gt_stdz)
 
 
 
 #FP
-final_fp_indels_Freebayes <- function(path, merged_file, pick_gt, gt_all){
+final_fp_indels_VarDict <- function(path, merged_file, pick_gt, gt_all){
     #function to identify FP indels
-    Freebayes_somatic_indels <- load_Freebayes_vcf(path, merged_file) |> select_indels()
-    fp_var = fp_snvs_Freebayes(Freebayes_somatic_indels, pick_gt, gt_all)
+    VarDict_somatic_indels <- load_VarDict_vcf(path, merged_file) |> select_indels()
+    fp_var = fp_snvs_VarDict(VarDict_somatic_indels, pick_gt, gt_all)
     return(fp_var)
 }
 
 
-categorize_fps_Freebayes <- function(pick_gt_stdz, fp_indels_Freebayes) {
+categorize_fps_VarDict <- function(pick_gt_stdz, fp_indels_VarDict) {
     #function to identify FP categories
     pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
-    fp_indels_Freebayes$POS = as.numeric(fp_indels_Freebayes$POS)
+    fp_indels_VarDict$POS = as.numeric(fp_indels_VarDict$POS)
     
-    colnames(fp_indels_Freebayes) = c("CHROM", "POS", "ID", "REF", 
-                                      "ALT", "Freebayes QUAL", "Freebayes FILTER", "Freebayes DP", 
-                                      "Freebayes AF", "mut", "Ground Truth DP","DP Percentage", "type")
+    colnames(fp_indels_VarDict) = c("CHROM", "POS", "ID", "REF", 
+                                      "ALT", "VarDict QUAL", "VarDict FILTER", "VarDict DP", 
+                                      "VarDict AF", "mut", "Ground Truth DP","DP Percentage", "type")
     #Same POS
-    same_POS <- merge(fp_indels_Freebayes, pick_gt_stdz, by = c("POS"))
-    fp_indels_Freebayes[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
+    same_POS <- merge(fp_indels_VarDict, pick_gt_stdz, by = c("POS"))
+    fp_indels_VarDict[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
     
     #Same POS & REF
-    same_POS_REF <- merge(fp_indels_Freebayes, pick_gt_stdz, by = c("POS", "REF"))
+    same_POS_REF <- merge(fp_indels_VarDict, pick_gt_stdz, by = c("POS", "REF"))
     # Update only rows where POS and REF match
-    fp_indels_Freebayes[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
+    fp_indels_VarDict[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
                         category := "diff ALT"]
     
-    return(fp_indels_Freebayes)
+    return(fp_indels_VarDict)
 }
 
-call_fp_indels_Freebayes <- function(path, merged_file, pick_gt_stdz){
+call_fp_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
     #function to output categorized FP indels
     gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
-    fp_indels_VarScan = final_fp_indels_VarScan(path, merged_file, pick_gt_stdz, gt_all)
-    fp_indels_Freebayes_categories = categorize_fps_Freebayes(pick_gt_stdz, fp_indels_Freebayes)
+    fp_indels_VarDict = final_fp_indels_VarDict(path, merged_file, pick_gt_stdz, gt_all)
+    fp_indels_VarDict_categories = categorize_fps_VarDict(pick_gt_stdz, fp_indels_VarDict)
     
-    return(fp_indels_Freebayes_categories)
+    return(fp_indels_VarDict_categories)
 }
 
-new_fp = call_fp_indels_VarScan("results", "Merged", pick_gt_stdz)
+new_fp = call_fp_indels_VarDict("results", "Merged", pick_gt_stdz)
 
 
 path = "results"
 merged_file = "Merged"
-caller =  "Freebayes"
+caller =  "VarDict"
 
-p = circular_plot_Freebayes(path, merged_file, caller)
+p = circular_plot_VarDict(path, merged_file, caller)
 
 fwrite(
-    new_tp, paste0("Merged_Freebayes_indels_TP.tsv"),
+    new_tp, paste0("Merged_VarDict_indels_TP.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
 fwrite(
-    new_fp, paste0("Merged_Freebayes_indels_FP.tsv"),
+    new_fp, paste0("Merged_VarDict_indels_FP.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
 fwrite(
-    new_fn, paste0("Merged_Freebayes_indels_FN.tsv"),
+    new_fn, paste0("Merged_VarDict_indels_FN.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
