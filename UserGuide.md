@@ -11,17 +11,6 @@
 <div align='justify'> Somatic variant calling algorithms are widely used to detect genomic alterations associated with cancer. Evaluating the performance of these algorithms can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation framework for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets based on <i>TP53</i> gene, using the NEATv3.3 (NExt-generation sequencing Analysis Toolkit version 3) simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms using <strong> GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq </strong> on these datasets, and compared the results to the “golden” files produced by NEATv3.3 containing the actual variants. Synthetic datasets provide an excellent ground truth for studying the performance and behaviour of somatic variant calling algorithms, thus enabling researchers to evaluate and improve the accuracy of these algorithms for cancer genomics applications.</div>
 
 
-
-### Key Features
-
-## Synth4bench
-
-### Synthetic Data Generation
-
-### Variant Calling
-### Visualization
-
-
 ## Data Download
 
 The datasets required for this analysis are available for open access on [Zenodo](https://zenodo.org/records/10683211). 
@@ -91,7 +80,7 @@ Install the required R packages by running the following command in your **R con
 The extra script vscan_pileup2cns2vcf.py for VarScan can be found [here](https://github.com/sfragkoul/Varscan2VCF).
 
 
-## Execution
+## Key Features
 
 Once the environment and dependencies have been successfully installed, follow these steps to execute the analysis:
 
