@@ -137,7 +137,7 @@ This will show you the available options and help documentation for the `S4BR_pl
 After executing the scripts, check the output files located in the directories specified in the `parameters.yaml` file. These will include any generated results from the **synthesis and variant calling** steps. You can now proceed to analyze or visualize the data as needed.
 
 
-## Using synth4bench
+## Executing synth4bench
 
 This guide will walk you through using Synth4bench with a practical example, from downloading data to executing the analysis and reviewing results. We assume you have the necessary environment and dependencies set up as outlined above.
 
