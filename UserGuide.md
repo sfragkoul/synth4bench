@@ -251,25 +251,15 @@ This script will output a VCF file in the specified output_directory, containing
 
     Rscript R/S4BR.R --help
     
-   **Options:**
-
-   -v VCF_PATH, --vcf_path=VCF_PATH
-           Directory path where VCF files are located.
-           
-   -c CALLER, --caller=CALLER
-           Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)
-           
-   -r RUNS, --runs=RUNS
-           Number of individual runs to produce synthetic data which will then be combined to form the final Merged ground truth file.
-
-   -w WORKING_DIRECTORY, --working_directory=WORKING_DIRECTORY
-             Path of working directory.
-
-   -m MERGED_FILE, --merged_file=MERGED_FILE
-             Indicate the name given to the final merged ground truth file.
-
-   -h, --help
-             Show this help message and exit.
+   
+| **Options**  | **Description**   |
+|:-----|:-|
+|-v, --vcf_path | Directory path where VCF files are located.|
+|-c, --caller | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)| 
+|-r, --runs |  Number of individual runs to produce synthetic data which will then be combined to form the final Merged ground truth file.|
+|-w, --working_directory| Path of working directory.|
+|-m, --merged_file | Indicate the name given to the final merged ground truth file.|
+|-h, --help | Show this help message and exit.|
 
 
    - Run **S4BR.R** to perform the analysis:
