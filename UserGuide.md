@@ -217,7 +217,7 @@ Edit `parameters.yaml` to set your working directory and specify paths to the ou
 
 If you want to run the analysis at the synth4bench_analysis folder and you have downloaded all the files at this directory, you can change /path/to with a dot.
 
-**Run the Execution Scripts**
+### **Run the Execution Scripts**
 
    - **Generate the Synthesis Script**: Run the following to create a customized synthesis script based on the parameters in `parameters.yaml`:
 
@@ -240,7 +240,7 @@ This step will output synthetic FASTQ  and bam files ready for the variant calli
 This script will output a VCF file in the specified output_directory, containing the variant calls for the synthetic data.
 
 
-**Analyze the Results Using R Scripts**
+### **Analyze the Results Using R Scripts**
 
    - Check **Parameters** for S4BR R Script: 
 
@@ -260,7 +260,8 @@ This script will output a VCF file in the specified output_directory, containing
    - Run **S4BR.R** to perform the analysis:
 
     Rscript R/S4BR.R -v ./results -c VarScan -r 5 -w ./results -m test
-
+    
+### **Visualization Using R Scripts**
     
    - Check **Parameters** for S4BR_plot R Script: 
 
