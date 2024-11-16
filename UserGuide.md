@@ -38,10 +38,6 @@ This folders includes reference sequences necessary for aligning or comparing ge
 
 This folders includes all 10 synthetic datasets, with filenames indicating coverage and read length details. Each dataset is structured and named according to the parameters it explores.
 
-### Required Files for Analysis
-
-To successfully **run the analysis**, users need the reference files located in the reference.rar folder.
-
 ## Installation
 
 **Create the Conda Environment**:
