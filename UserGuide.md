@@ -9,7 +9,7 @@ This is the guide to help users execute our pipeline.
 - [Installation](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#installation)
 - [Key Features](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#key-features)
 - [Executing synth4bench](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#executing-synth4bench)
-- [Requirement](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#requirements)
+- [Requirements](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#requirements)
 
 
 ## Overview
