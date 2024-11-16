@@ -46,17 +46,15 @@ To create the conda environment that was used for the analysis run the following
     conda env create -f environment.yml
 
 **Activate the Conda Environment:**
-After creating the environment, activate it with the following command in your terminal **(Bash)**:
+After creating the environment, activate it with the following command in your terminal **(Bash)**.
 
     conda activate synth4bench
 
 **Install NEATv3.3:**
 Download the version [v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3).
-Once downloaded, in order to call the main script and view available options, run in your terminal **(Bash)**:
+Once downloaded, in order to call the main script and view available options, run in your terminal **(Bash)**. For any further details, please see the README.md file included in the downloaded NEATv3.3 version.
 
     python gen_reads.py --help
-  
-For any further details, please see the README.md file included in the downloaded NEATv3.3 version.
 
 **Install bam-readcount:**
 Follow the installation [instructions](https://github.com/genome/bam-readcount/tree/master?tab=readme-ov-file#build) from their official documentation.
@@ -67,7 +65,7 @@ After installation, verify that it has being installed properly with the followi
 **Install R Package Dependencies:**
 Install the required R packages by running the following command in your **R console**:
 
-    install.packages(c("stringr", "data.table", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "patchwork"))
+    install.packages(c("stringr", "data.table", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "patchwork", "optparse", "GenomicAlignments", "Rsamtools"))
 
 **Download VarScan Extra Script:**
 The extra script vscan_pileup2cns2vcf.py for VarScan can be found [here](https://github.com/sfragkoul/Varscan2VCF).
