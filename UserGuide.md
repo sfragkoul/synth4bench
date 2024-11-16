@@ -1,9 +1,15 @@
 
-#Synth4bench User Guide
-
+# Synth4bench User Guide
+This is the guide to help users execute our pipeline.
 
 ## Contents
 
+- [Overview](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#overview)
+- [Data Download](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#data-download)
+- [Installation](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#installation)
+- [Key Features](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#key-features)
+- [Executing synth4bench](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#executing-synth4bench)
+- [Requirement](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#requirements)
 
 
 ## Overview
