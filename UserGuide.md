@@ -41,11 +41,9 @@ This folders includes all 10 synthetic datasets, with filenames indicating cover
 ## Installation
 
 **Create the Conda Environment**:
-To create the conda environment that was used for the analysis run the following command in your terminal **(Bash)**:
+To create the conda environment that was used for the analysis run the following command in your terminal **(Bash)**. This will install all the required dependencies specified in the environment.yml file.
 
     conda env create -f environment.yml
-
-This will install all the required dependencies specified in the environment.yml file.
 
 **Activate the Conda Environment:**
 After creating the environment, activate it with the following command in your terminal **(Bash)**:
