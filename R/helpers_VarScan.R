@@ -808,6 +808,7 @@ circular_plot_VarScan <- function(path, merged_file, caller){
     
     #Ensure 'category' is a factor
     df$Category <- factor(df$Category, levels = c("not exist", "diff REF", "diff ALT"))
+    df$Type <- factor(df$Type, levels = c("TP", "FP", "FN"))
     
     p <- ggplot(df, aes(x = POS, y = y_cycle)) +
         

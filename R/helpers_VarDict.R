@@ -803,6 +803,7 @@ circular_plot_VarDict <- function(path, merged_file, caller){
     
     #Ensure 'category' is a factor
     df$Category <- factor(df$Category, levels = c("not exist", "diff REF", "diff ALT"))
+    df$Type <- factor(df$Type, levels = c("TP", "FP", "FN"))
     
     p <- ggplot(df, aes(x = POS, y = y_cycle)) +
         
@@ -857,7 +858,8 @@ circular_plot_VarDict <- function(path, merged_file, caller){
             title = "Ground Truth vs VarDict INDELS",
             y = "REF vs ALT Length Difference",
             x = "Chromosomal Position"
-            # color = "Type"
+            #color = "Type",
+            #fill = "Type"
         )
     
     return(p)
