@@ -6,7 +6,7 @@
 #' Output files:  tsv files with the comparison between the ground truth 
 #' and the caller.
 #'
-#' Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
+#' Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(sfragkoul)
 #' 
 
 
@@ -71,8 +71,8 @@ fwrite(
 
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
-
-#SNVS FP & FN------------------------------------------------------------------
+# 
+# #SNVS FP & FN------------------------------------------------------------------
 print("Begin SNVs FP Variant Analysis")
 
 gt_all = load_gt_report(arguments$vcf_path,
@@ -100,15 +100,65 @@ fwrite(
 print("Begin SNVs FN Variant Analysis")
 out_df_snvs_fn = read_vcf_snvs_FN(arguments$vcf_path,
                                   arguments$caller,
-                                  arguments$merged_file, 
+                                  arguments$merged_file,
                                   pick_gt)
 
 fwrite(
-    out_df_snvs_fn, paste0(arguments$working_directory, "/", 
-                               arguments$merged_file, "_", 
+    out_df_snvs_fn, paste0(arguments$working_directory, "/",
+                               arguments$merged_file, "_",
                                arguments$caller, "_snvs_FN.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
+
+#INDELs------------------------------------------------------------------
+print("Begin INDELs Variant Analysis")
+
+pick_gt_stdz = gt_stdz_indels(arguments$vcf_path,
+                              arguments$merged_file)
+
+print("Begin TP INDELs Variant Analysis")
+tp_indels = call_tp_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
+fwrite(
+        tp_indels, paste0(arguments$working_directory, "/",
+                         arguments$merged_file, "_",
+                         arguments$caller, "_indels_TP.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+print("Begin FN INDELs Variant Analysis")
+fn_indels = call_fn_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
+fwrite(
+  fn_indels, paste0(arguments$working_directory, "/",
+                    arguments$merged_file, "_",
+                    arguments$caller, "_indels_FN.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+print("Begin FP INDELs Variant Analysis")
+fp_indels = call_fp_indels(arguments$vcf_path,
+                           arguments$caller,
+                           arguments$merged_file,
+                           pick_gt_stdz)
+fwrite(
+  fp_indels, paste0(arguments$working_directory, "/",
+                    arguments$merged_file, "_",
+                    arguments$caller, "_indels_FP.tsv"),
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+
+print("Analysis Completed")
+
+
+
+
+
 
 
 

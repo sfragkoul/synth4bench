@@ -687,23 +687,20 @@ ggsave(
 
 
 #BOTH
-FP_FN_DP_paper = (fp1 + FN1)  + 
-    plot_layout(heights = c(3, 2)) +
-    plot_annotation(tag_levels = "A"
-                    # title = "FN Variants",
-                    # theme = theme(plot.title = element_text(size = 20, 
-                    #                                         hjust = 0.5, 
-                    #                                         vjust = -1))
+FP_FN_all_paper = (fp_paper / FN_paper)  + 
+    plot_layout(heights = c(1, 1)) +
+    plot_annotation(tag_levels = "A",
+                    title = folder,
+                    
     ) &
     theme(
         plot.tag = element_text(face = "bold"),
-        plot.margin = margin(5, 10, 10, 5)
+        plot.margin = margin(5, 5, 5, 5)
     )
 
 
 ggsave(
-    plot = FP_FN_DP_paper, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FP_FN_DP.jpeg"),
+    plot = FP_FN_all_paper, filename = paste0(folder,"/Plots/Final_", name,"_SNVs_FP_FN_all_new.jpeg"),
     width = 14, height = 12, units = "in", dpi = 600
 )
-
 

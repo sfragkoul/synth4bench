@@ -15,5 +15,7 @@ library(GenomicAlignments)
 library(Rsamtools)
 # library(seqinr)
 
+library(dplyr)
+library(colorspace)
 
 # library(GenomicRanges)
