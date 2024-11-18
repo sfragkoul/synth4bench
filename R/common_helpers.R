@@ -778,50 +778,80 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     return(fn_var)
 }
 
+
 plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
     
-    df = fread(paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FP.tsv"))
-
-    if(caller == "Freebayes") {
-        
+    # Construct file path
+    file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FP.tsv")
+    
+    # Check if file exists
+    if (!file.exists(file_path)) {
+        stop(paste("File does not exist:", file_path))
+    }
+    
+    # Read the file
+    df <- fread(file_path)
+    
+    # Check if the file is empty
+    if (nrow(df) == 0) {
+        warning(paste("File is empty:", file_path))
+        # Return a placeholder plot or NULL
+        return(ggplot() + labs(title = paste("No FP snvs data for", caller), x = NULL, y = NULL))
+    }
+    
+    # Call specific plotting function based on the caller
+    if (caller == "Freebayes") {
         fp_plot <- plot_snvs_FP_Freebayes(df, merged_file)
-        
     } else if (caller == "Mutect2") {
-        
         fp_plot <- plot_snvs_FP_gatk(df, merged_file)
-        
     } else if (caller == "LoFreq") {
-        
         fp_plot <- plot_snvs_FP_LoFreq(df, merged_file)
-        
     } else if (caller == "VarDict") {
-        
         fp_plot <- plot_snvs_FP_VarDict(df, merged_file)
-        
     } else if (caller == "VarScan") {
-        
         fp_plot <- plot_snvs_FP_VarScan(df, merged_file)
+    } else {
+        stop(paste("Unknown caller:", caller))
     }
     
     return(fp_plot)
-    
 }
+
+
 
 plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
     
-    df = fread(paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FN.tsv"))
+    # Construct file path
+    file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FN.tsv")
     
+    # Check if file exists
+    if (!file.exists(file_path)) {
+        stop(paste("File does not exist:", file_path))
+    }
+    
+    # Read the file
+    df <- fread(file_path)
+    
+    # Check if the file is empty
+    if (nrow(df) == 0) {
+        warning(paste("File is empty:", file_path))
+        # Return a placeholder plot or NULL
+        return(ggplot() + labs(title = paste("No FN snvs data for", caller), x = NULL, y = NULL))
+    }
+    
+    # Generate subplots if the file is not empty
     fn_plot1 <- fn_dp_barplot(df, caller)
     fn_plot2 <- fn_af_barplot(df, caller)
     
-    fn_plot = fn_plot1 + fn_plot2 +
-        
+    # Combine the subplots
+    fn_plot <- fn_plot1 + fn_plot2 +
         plot_layout(
             widths = c(1, 1)
         )
-    return(fn_plot)
     
+    return(fn_plot)
 }
+
 
 #INDELs------------------------------------------------------------------------
 
