@@ -47,6 +47,9 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 
 
 ## Execution
+
+For detailed instructions regarding the execution please read our [**UserGuide**](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md).
+
 <div align='justify'> 
 	
 To run the bash scripts, fill in the parameters in the `parameters.yaml` file and then run:
