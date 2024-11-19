@@ -37,7 +37,7 @@
 The framework's overall aim is to provide a robust framework for evaluating the performance of tumor-only somatic variant calling algorithms by using synthetic datasets. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This framework represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
 
 ## Data Download
-All data are open and available in [Zenodo](https://zenodo.org/records/10683211).
+All data are open and available in [Zenodo](https://zenodo.org/records/10683211). For specific instructions please see our [**UserGuide**](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#data-download).
 
 ## Installation
 1.  To create the conda environment that was used for the analysis run `conda env create -f environment.yml` and to activate it run `conda activate synth4bench`.
@@ -49,7 +49,7 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 
 ## Execution
 
-For detailed instructions regarding the execution please read our [**UserGuide**](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md).
+For detailed instructions regarding the execution please read our [**UserGuide**](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#executing-synth4bench).
 
 <div align='justify'> 
 	

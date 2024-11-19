@@ -3,8 +3,8 @@
 This is the documentation of the scripts.
 
 ## Contents
-- [Main scripts]()
-- [Extra scripts]()
+- [Main scripts](https://github.com/sfragkoul/synth4bench/blob/main/docs/Documentation.md#main-scripts)
+- [Extra scripts](https://github.com/sfragkoul/synth4bench/blob/main/docs/Documentation.md#extra-scripts)
 
 
 Here follows the list of all scripts and their description.
@@ -59,6 +59,7 @@ Here follows the list of all scripts and their description.
 ## Extra scripts
 
 #### VarScan scripts
+
 For the case of VarScan an extra step was required to convert its output to the standard VCF format. The script `vscan_pileup2cns2vcf.py` can be found [here](https://github.com/sfragkoul/Varscan2VCF).
 
 #### Statistical Analysis scripts

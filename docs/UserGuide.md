@@ -3,11 +3,11 @@
 This is the guide to help users execute our pipeline.
 
 ## Contents
-- [Data Download](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#data-download)
-- [Installation](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#installation)
-- [Key Features](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#key-features)
-- [Executing synth4bench](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#executing-synth4bench)
-- [Requirements](https://github.com/sfragkoul/synth4bench/blob/main/UserGuide.md#requirements)
+- [Data Download](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#data-download)
+- [Installation](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#installation)
+- [Key Features](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#key-features)
+- [Executing synth4bench](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#executing-synth4bench)
+- [Requirements](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#requirements)
 
 
 ## Data Download
