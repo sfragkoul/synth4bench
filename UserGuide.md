@@ -160,7 +160,7 @@ Edit `parameters.yaml` to set your working directory and specify paths to the ou
     path_to_neat:  /path/to/NEAT-3.3
     
     # number of individual synth batches 
-    runs: 5
+    runs: 10
     
     # seeds for each individual synth batch
     rng: 213,214,215,217,218
@@ -216,7 +216,7 @@ If you want to run the analysis at the synth4bench_analysis folder and you have 
 
     bash synth_generation_run.sh
 
-This step will output synthetic FASTQ  and bam files ready for the variant calling analysis.
+This step will output synthetic BAM files ready for the variant calling analysis.
      
    - **Run the Variant Calling Script**: Execute the variant calling script to analyze the generated synthetic data:
 
