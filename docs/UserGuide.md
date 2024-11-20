@@ -235,17 +235,16 @@ This script will output a VCF file in the specified output_directory, containing
    
 | **Options**  | **Description**   |
 |:-----|:-|
-|-v, --vcf_path | Directory path where VCF files are located.|
 |-c, --caller | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)| 
 |-r, --runs |  Number of individual runs to produce synthetic data which will then be combined to form the final Merged ground truth file.|
-|-w, --working_directory| Path of working directory.|
+|-w, --working_directory| Path of working directory.Path of working directory were all files are located and the results will be generated.|
 |-m, --merged_file | Indicate the name given to the final merged ground truth file.|
 |-h, --help | Show this help message and exit.|
 
 
    - Run **S4BR.R** to perform the analysis:
 
-    Rscript R/S4BR.R -v ./results -c VarScan -r 5 -w ./results -m test
+    Rscript R/S4BR.R -c VarScan -r 10 -w ./results -m test
     
 ### **Visualization Using R Scripts**
     
@@ -255,9 +254,6 @@ This script will output a VCF file in the specified output_directory, containing
     
 | **Options**  | **Description**   |
 |:-----|:-|
-|-t, --gt_comparison | Directory path where Ground Truth vs Caller file tsv file is located.|
-|-v, --vcf_path | Directory path where VCF files are located.|
-|-g, --gt_path| Directory path where ground truth vcf file is located.|
 |-c, --caller | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)| 
 |-w, --working_directory| Path of working directory.|
 |-m, --merged_file | Indicate the name given to the final merged ground truth file.|
@@ -266,7 +262,7 @@ This script will output a VCF file in the specified output_directory, containing
                 
    - Run **S4BR_plot.R** to generate visualizations:
    
-    Rscript R/S4BR_plot.R -t ./results -v ./results -g ./results -c VarScan -w . -m test
+    Rscript R/S4BR_plot.R -c VarScan -w ./results -m test
 
 **Review the Output**
    
