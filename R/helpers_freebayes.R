@@ -613,62 +613,136 @@ fp_violin_plots_Freebayes <- function(q) {
         )
 }
 
-fp_af_barplot_Freebayes <- function(q){
-    #FP AF plot
-    df = q[, c(
-        "POS",
-        "Freebayes AF"
-    ), with = FALSE] |>
-        unique() |>
-        
-        melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+# fp_af_barplot_Freebayes <- function(q){
+#     #FP AF plot
+#     df = q[, c(
+#         "POS",
+#         "Freebayes AF"
+#     ), with = FALSE] |>
+#         unique() |>
+#         
+#         melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+#     
+#     o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
+#         
+#         geom_point(aes(x = variable, y = value, fill = variable),
+#                    position = position_jitternormal(sd_x = .01, sd_y = 0),
+#                    shape = 21, stroke = .1, size = 2.5) +
+#         
+#         geom_boxplot(aes(x = variable, y = value, fill = variable),
+#                      width = .25, alpha = .5, outlier.shape = NA) +
+#         
+#         scale_fill_manual(
+#             values = c(
+#                 #"Ground Truth AF" = "#43ae8d",
+#                 "Freebayes AF"      = "#ae8d43"
+#             )
+#         ) +
+#         
+#         scale_x_discrete(
+#             labels = c("Freebayes FP Variants")
+#         ) +
+#         
+#         scale_y_continuous(labels = scales::percent, trans = "log10") +
+#         
+#         theme_minimal() +
+#         
+#         theme(
+#             legend.position = "none",
+#             
+#             axis.title.x = element_blank(),
+#             axis.title.y = element_text(face = "bold", size = 13),
+#             axis.text.x = element_text(face = "bold", size = 13),
+#             axis.text.y = element_text(face = "bold", size = 13),
+#             
+#             axis.line = element_line(),
+#             axis.ticks = element_line(),
+#             
+#             panel.grid = element_blank(),
+#             
+#             plot.margin = margin(20, 20, 20, 20)
+#         ) +
+#         
+#         labs(
+#             y = "Allele Frequency"
+#         )
+#     return(o2)
+#     
+# }
+
+
+
+fp_af_barplot_Freebayes <- function(q) {
+    # Select and melt data
+    if (!("POS" %in% colnames(q)) || !("Freebayes AF" %in% colnames(q))) {
+        stop("The required columns 'POS' and 'Freebayes AF' are not present in the input data.")
+    }
     
-    o2 = ggplot(data = df[which(!is.na(value) & value != 0)]) +
-        
-        geom_point(aes(x = variable, y = value, fill = variable),
-                   position = position_jitternormal(sd_x = .01, sd_y = 0),
-                   shape = 21, stroke = .1, size = 2.5) +
-        
-        geom_boxplot(aes(x = variable, y = value, fill = variable),
-                     width = .25, alpha = .5, outlier.shape = NA) +
-        
+    # Subset data
+    df <- tryCatch(
+        {
+            q[, c("POS", "Freebayes AF"), with = FALSE] |>
+                unique() |>
+                melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
+        },
+        error = function(e) {
+            warning("Error during data processing: ", e$message)
+            return(NULL)
+        }
+    )
+    
+    # Check if df is empty or NULL
+    if (is.null(df) || nrow(df) == 0 || all(is.na(df$value) | df$value == 0)) {
+        warning("No valid data to plot for Freebayes AF")
+        return(ggplot() + labs(title = "No valid data", x = NULL, y = "Allele Frequency"))
+    }
+    
+    # Debugging: Inspect the processed data
+    print("Processed data:")
+    print(head(df))
+    print(nrow(df))
+    
+    # Filter out NA or zero values
+    filtered_df <- df[which(!is.na(value) & value != 0)]
+    print("Filtered data:")
+    print(head(filtered_df))
+    print(nrow(filtered_df))
+    
+    # Create the plot
+    o2 <- ggplot(data = filtered_df) +
+        geom_point(
+            aes(x = variable, y = value, fill = variable),
+            position = position_jitternormal(sd_x = .01, sd_y = 0),
+            shape = 21, stroke = .1, size = 2.5
+        ) +
+        geom_boxplot(
+            aes(x = variable, y = value, fill = variable),
+            width = .25, alpha = .5, outlier.shape = NA
+        ) +
         scale_fill_manual(
-            values = c(
-                #"Ground Truth AF" = "#43ae8d",
-                "Freebayes AF"      = "#ae8d43"
-            )
+            values = c("Freebayes AF" = "#ae8d43")
         ) +
-        
-        scale_x_discrete(
-            labels = c("Freebayes FP Variants")
-        ) +
-        
+        scale_x_discrete(labels = c("Freebayes FP Variants")) +
         scale_y_continuous(labels = scales::percent, trans = "log10") +
-        
         theme_minimal() +
-        
         theme(
             legend.position = "none",
-            
             axis.title.x = element_blank(),
             axis.title.y = element_text(face = "bold", size = 13),
             axis.text.x = element_text(face = "bold", size = 13),
             axis.text.y = element_text(face = "bold", size = 13),
-            
             axis.line = element_line(),
             axis.ticks = element_line(),
-            
             panel.grid = element_blank(),
-            
             plot.margin = margin(20, 20, 20, 20)
         ) +
-        
-        labs(
-            y = "Allele Frequency"
-        )
-    return(o2)
+        labs(y = "Allele Frequency")
     
+    return(o2)
 }
+
+
+
 
 plot_snvs_FP_Freebayes <- function(df, merged_file) {
     #plotting function

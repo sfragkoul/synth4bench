@@ -780,15 +780,15 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
 
 
 plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
-    
+
     # Construct file path
     file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FP.tsv")
-    
+
     # Check if file exists
     if (!file.exists(file_path)) {
         stop(paste("File does not exist:", file_path))
     }
-    
+
     # Read the file
     df <- tryCatch(
         fread(file_path),
@@ -796,14 +796,14 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
             stop(paste("Error reading file:", file_path, "\n", e$message))
         }
     )
-    
+
     # Check if the file is empty
     if (nrow(df) == 0) {
         warning(paste("File is empty:", file_path))
         # Return a placeholder plot or NULL
         return(ggplot() + labs(title = paste("No FP snvs data for", caller), x = NULL, y = NULL))
     }
-    
+
     # Call specific plotting function based on the caller
     if (caller == "Freebayes") {
         fp_plot <- plot_snvs_FP_Freebayes(df, merged_file)
@@ -818,9 +818,10 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
     } else {
         stop(paste("Unknown caller:", caller))
     }
-    
+
     return(fp_plot)
 }
+
 
 
 
