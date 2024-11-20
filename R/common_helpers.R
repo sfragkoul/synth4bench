@@ -790,7 +790,12 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
     }
     
     # Read the file
-    df <- fread(file_path)
+    df <- tryCatch(
+        fread(file_path),
+        error = function(e) {
+            stop(paste("Error reading file:", file_path, "\n", e$message))
+        }
+    )
     
     # Check if the file is empty
     if (nrow(df) == 0) {
