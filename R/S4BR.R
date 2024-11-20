@@ -21,10 +21,10 @@ source("R/helpers_VarScan.R")
 
 #Parse arguments from command line
 options <- list(
-  make_option(c("-v", "--vcf_path"), 
-              action = "store", 
-              type = "character", 
-              help="Directory path where VCF files are located."),
+  # make_option(c("-v", "--vcf_path"), 
+  #             action = "store", 
+  #             type = "character", 
+  #             help="Directory path where VCF files are located."),
   
   make_option(c("-c", "--caller"), 
               action = "store", 
@@ -39,7 +39,7 @@ options <- list(
   make_option(c("-w", "--working_directory"), 
               action = "store", 
               type = "character", 
-              help="Path of working directory."),
+              help="Path of working directory were all files are located and the results will be generated."),
   
   make_option(c("-m", "--merged_file"), 
               action = "store", 
@@ -49,6 +49,7 @@ options <- list(
 )
 
 arguments <- parse_args(OptionParser(option_list = options))
+arguments$vcf_path <- arguments$working_directory
 
 #SNVS TP-----------------------------------------------------------------------
 print("Begin SNVs TP Variant Analysis")
