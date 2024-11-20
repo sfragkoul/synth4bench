@@ -255,7 +255,7 @@ This script will output a VCF file in the specified output_directory, containing
 | **Options**  | **Description**   |
 |:-----|:-|
 |-c, --caller | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)| 
-|-w, --working_directory| Path of working directory.|
+|-w, --working_directory| Path of working directory were all files are located and the results will be generated.|
 |-m, --merged_file | Indicate the name given to the final merged ground truth file.|
 |-h, --help | Show this help message and exit.|
 
