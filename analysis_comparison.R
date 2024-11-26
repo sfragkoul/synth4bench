@@ -16,26 +16,42 @@ cov300 = fread(paste0(folder1, "300_30_10","/Merged_", caller, "_snvs_TP.tsv"))
 cov300= cov300[!is.na(cov300$`Mutect2 DP`),]
 cov300$delta = cov300$`Mutect2 AF` - cov300$`Ground Truth AF`
 cov300$delta_dp = cov300$`Mutect2 DP` - cov300$`Ground Truth DP`
+cov300$DP_percentage = cov300$`Mutect2 DP`/cov300$`Ground Truth DP`
 
 cov700 = fread(paste0(folder1, "700_70_10","/Merged_", caller, "_snvs_TP.tsv"))
 cov700= cov700[!is.na(cov700$`Mutect2 DP`),]
 cov700$delta = cov700$`Mutect2 AF` - cov700$`Ground Truth AF`
 cov700$delta_dp = cov700$`Mutect2 DP` - cov700$`Ground Truth DP`
+cov700$DP_percentage = cov700$`Mutect2 DP`/cov700$`Ground Truth DP`
 
 cov1000 = fread(paste0(folder1, "1000_100_10","/Merged_", caller, "_snvs_TP.tsv"))
 cov1000= cov1000[!is.na(cov1000$`Mutect2 DP`),]
 cov1000$delta = cov1000$`Mutect2 AF` - cov1000$`Ground Truth AF`
 cov1000$delta_dp = cov1000$`Mutect2 DP` - cov1000$`Ground Truth DP`
+cov1000$DP_percentage = cov1000$`Mutect2 DP`/cov1000$`Ground Truth DP`
 
 cov3000 = fread(paste0(folder1, "3000_300_10","/Merged_", caller, "_snvs_TP.tsv"))
 cov3000= cov3000[!is.na(cov3000$`Mutect2 DP`),]
 cov3000$delta = cov3000$`Mutect2 AF` - cov3000$`Ground Truth AF`
 cov3000$delta_dp = cov3000$`Mutect2 DP` - cov3000$`Ground Truth DP`
+cov3000$DP_percentage = cov3000$`Mutect2 DP`/cov3000$`Ground Truth DP`
 
 cov5000 = fread(paste0(folder1, "5000_500_10","/Merged_", caller, "_snvs_TP.tsv"))
 cov5000= cov5000[!is.na(cov5000$`Mutect2 DP`),]
 cov5000$delta = cov5000$`Mutect2 AF` - cov5000$`Ground Truth AF`
 cov5000$delta_dp = cov5000$`Mutect2 DP` - cov5000$`Ground Truth DP`
+cov5000$DP_percentage = cov5000$`Mutect2 DP`/cov5000$`Ground Truth DP`
+
+
+summary(cov300$DP_percentage)
+summary(cov700$DP_percentage)
+summary(cov1000$DP_percentage)
+summary(cov3000$DP_percentage)
+
+
+
+
+
 
 # List of datasets with corresponding coverage values
 datasets <- list(
@@ -63,11 +79,15 @@ for (coverage in names(datasets)) {
     # Calculate metrics
     mean_af <- mean(data$`Mutect2 AF`, na.rm = TRUE)
     sigma_af <- sd(data$`Mutect2 AF`, na.rm = TRUE)
+    
     mean_dp <- mean(data$`Mutect2 DP`, na.rm = TRUE)
     sigma_dp <- sd(data$`Mutect2 DP`, na.rm = TRUE)
+    
     mutation_count <- nrow(data)  # Number of mutations
+    
     mean_delta <-  mean(data$delta, na.rm = TRUE)
     sigma_delta <- sd(data$delta, na.rm = TRUE)
+    
     mean_delta_dp <-  mean(data$delta_dp, na.rm = TRUE)
     sigma_delta_dp <- sd(data$delta_dp, na.rm = TRUE)
     
