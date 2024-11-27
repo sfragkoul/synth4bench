@@ -133,6 +133,7 @@ coverage_plot <- ggplot(cov_data, aes(x = Coverage, y = DP_percentage, fill = Me
     theme_minimal() +
     ylim(0, 1.00)
 
+
 # Plot for Read Length using mean-based color
 read_length_plot <- ggplot(read_data, aes(x = ReadLength, y = DP_percentage, fill = Mean_DP)) +
     geom_boxplot(width = 0.4) +
@@ -141,12 +142,13 @@ read_length_plot <- ggplot(read_data, aes(x = ReadLength, y = DP_percentage, fil
     theme_minimal() +
     ylim(0, 1.00)
 
+
 # Add centered title to the combined plot
 combined_plot <- coverage_plot / read_length_plot +
     plot_annotation(
         title = "DP Percentage utilized by Mutect2",
-        theme = theme(plot.title = element_text(hjust = 0.5))
-    )
+        theme = theme(plot.title = element_text(hjust = 0.5))) +  # Title for the combined plot
+    plot_layout(guides = "collect")  # Collects the legends
 
 # Print the combined plot
 print(combined_plot)
