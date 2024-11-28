@@ -4,17 +4,17 @@ source("R/libraries.R")
 folder1 = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/"
 
 #SNVs
-tp_300 = fread(paste0(folder1, "300_30_10","/Merged_", "Mutect2", "_snvs_TP.tsv"))
-tp_300= tp_300[!is.na(tp_300$`Mutect2 DP`),]
-fp_300 = fread(paste0(folder1, "300_30_10","/Merged_", "Mutect2", "_snvs_FP.tsv"))
-fn_300 = fread(paste0(folder1, "300_30_10","/Merged_", "Mutect2", "_snvs_FN.tsv"))
+tp_300 = fread(paste0(folder1, "700_70_10","/Merged_", "LoFreq", "_snvs_TP.tsv"))
+tp_300= tp_300[!is.na(tp_300$`LoFreq DP`),]
+fp_300 = fread(paste0(folder1, "700_70_10","/Merged_", "LoFreq", "_snvs_FP.tsv"))
+fn_300 = fread(paste0(folder1, "700_70_10","/Merged_", "LoFreq", "_snvs_FN.tsv"))
 
 snv_sum = as.numeric(nrow(fn_300)+nrow(tp_300)+nrow(fp_300))
 
 #Indels
-indels_tp_300 = fread(paste0(folder1, "300_30_10","/Merged_", "Mutect2", "_indels_TP.tsv"))
-indels_fp_300 = fread(paste0(folder1, "300_30_10","/Merged_", "Mutect2", "_indels_FP.tsv"))
-indels_fn_300 = fread(paste0(folder1, "300_30_10","/Merged_", "Mutect2", "_indels_FN.tsv"))
+indels_tp_300 = fread(paste0(folder1, "700_70_10","/Merged_", "LoFreq", "_indels_TP.tsv"))
+indels_fp_300 = fread(paste0(folder1, "700_70_10","/Merged_", "LoFreq", "_indels_FP.tsv"))
+indels_fn_300 = fread(paste0(folder1, "700_70_10","/Merged_", "LoFreq", "_indels_FN.tsv"))
 
 indels_sum = as.numeric(nrow(indels_fn_300)+nrow(indels_tp_300)+nrow(indels_fp_300))
 
