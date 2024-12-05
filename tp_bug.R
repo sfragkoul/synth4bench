@@ -1,13 +1,17 @@
+source("R/libraries.R")
 
+runs = c(1,2,3,4,5,6,7,8,9,10)
+folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
+merged_file = "Merged"
 
 gt_analysis <- function(runs, folder, merged_file) {
     
     nt_runs = list()
     
     for(r in runs) {
-        r=1
-        folder = "."
-        merged_file = "Merged"
+        r=2
+        #folder = "."
+        #merged_file = "Merged"
         a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
             readLines() |>
             str_split(pattern = "\t", simplify = TRUE) |>
@@ -91,7 +95,7 @@ gt_analysis <- function(runs, folder, merged_file) {
     
     
     merged_gt = b[which(POS %in% gt_runs$POS)]
-    #merged_gt1 <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
+    merged_gt1 <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
     
     
     merged_gt = merged_gt[order(POS)]
