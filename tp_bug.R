@@ -1,6 +1,6 @@
 source("R/libraries.R")
 
-runs = c(1,2,3,4,5,6,7,8,9,10)
+#runs = c(1,2,3,4,5,6,7,8,9,10)
 folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
 merged_file = "Merged"
 
@@ -56,6 +56,7 @@ gt_analysis <- function(runs, folder, merged_file) {
     pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
     
     gt_runs = nt_runs[which(POS %in% pos_of_interest)]
+    gt_runs = gt_runs[which(Freq == "100")] #!!!NEW
     
     a <- paste0(folder, "/", merged_file , "_report.tsv") |> 
         readLines() |>
@@ -94,11 +95,12 @@ gt_analysis <- function(runs, folder, merged_file) {
     b = a[which(Nt %in% c("A", "C", "G", "T")), ]
     
     
-    merged_gt = b[which(POS %in% gt_runs$POS)]
-    merged_gt1 <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
+    #merged_gt = b[which(POS %in% gt_runs$POS)]
+    merged_gt <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
     
     
     merged_gt = merged_gt[order(POS)]
+    colnames(merged_gt) = c()
     
     merged_gt$Freq = merged_gt$Freq / 100
     
