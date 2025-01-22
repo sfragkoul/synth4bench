@@ -1,13 +1,13 @@
 source("R/libraries.R")
 
 #runs = c(1,2,3,4,5,6,7,8,9,10)
-folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
+folder = "C:/Users/stell/Desktop/300_30_10"
 merged_file = "Merged"
 
 gt_analysis <- function(runs, folder, merged_file) {
     
     nt_runs = list()
-    
+    #ground truth   variants from individual files
     for(r in runs) {
         r=2
         #folder = "."
@@ -58,6 +58,7 @@ gt_analysis <- function(runs, folder, merged_file) {
     gt_runs = nt_runs[which(POS %in% pos_of_interest)]
     gt_runs = gt_runs[which(Freq == "100")] #!!!NEW
     
+    #ground truth   variants from Merged file
     a <- paste0(folder, "/", merged_file , "_report.tsv") |> 
         readLines() |>
         str_split(pattern = "\t", simplify = TRUE) |> 
