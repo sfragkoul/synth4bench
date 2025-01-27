@@ -10,7 +10,6 @@ gt_analysis <- function(runs, folder, merged_file) {
     nt_runs = list()
     #ground truth   variants from individual files
     for(r in runs) {
-        #r=2
         #folder = "."
         #merged_file = "Merged"
         #process reports.tsv files for individual files
