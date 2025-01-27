@@ -114,3 +114,38 @@ gt_analysis <- function(runs, folder, merged_file) {
     return(merged_gt)
     
 }
+
+
+gatk_somatic_vcf <- read.vcfR("D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE )
+
+merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
+    #return cleaned vcf
+    gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
+    gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
+    gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+    
+    #Merge everything into a common file
+    merged_gt$POS = as.character(merged_gt$POS)
+    merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
+    
+    merged_bnch$POS = as.numeric(merged_bnch$POS)
+    merged_bnch = merged_bnch[order(POS)]
+    colnames(merged_bnch) = c(
+        "POS",	"Ground Truth REF",	"Ground Truth DP",
+        "Ground Truth ALT", "Ground Truth AD", 
+        "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
+        "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
+        "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
+        "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
+        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
+        "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
+        "gt_PS",	"gt_SB",	"gt_GT_alleles"
+    )
+    
+    return(merged_bnch)
+    
+}
+
+
+

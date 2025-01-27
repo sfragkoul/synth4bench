@@ -71,7 +71,8 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth DP",
         "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID",	"Mutect2 REF",	
+        "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
+        "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
         "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
         "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
         "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
