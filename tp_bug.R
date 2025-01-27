@@ -1,8 +1,8 @@
 source("R/libraries.R")
 
 folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
-runs = c(1,2)
-#runs = c(1,2,3,4,5,6,7,8,9,10)
+#runs = c(1,2)
+runs = c(1,2,3,4,5,6,7,8,9,10)
 merged_file = "Merged"
 
 gt_analysis <- function(runs, folder, merged_file) {
@@ -98,7 +98,7 @@ gt_analysis <- function(runs, folder, merged_file) {
     
     #merged_gt = b[which(POS %in% gt_runs$POS)]
     merged_gt <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
-    colnames(merged_gt) = c("POS", "REF", "DP", "Nt", "Count", "Freq",
+    colnames(merged_gt) = c("POS", "REF", "ALT", "DP", "Count", "Freq",
                              "Run", "DP Indiv", "Count Indiv", "Freq Indiv")
     
     merged_gt = merged_gt[order(POS)]
@@ -132,8 +132,8 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
     colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth DP",
-        "Ground Truth ALT", "Ground Truth AD", 
+        "POS",	"Ground Truth REF",	"Ground Truth ALT",
+        "Ground Truth DP", "Ground Truth AD", 
         "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
         "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
         "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
@@ -147,5 +147,81 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     
 }
 
+df = merge_gatk(gatk_somatic_vcf, merged_gt)
 
 
+clean_gatk <- function(df) {
+    #function to produce the caller's reported variants in the desired format 
+    df2 = df[, c(
+        "POS",
+        
+        "Ground Truth REF",
+        "Ground Truth ALT",
+        "Ground Truth DP",
+        "Ground Truth AF",
+        
+        "Mutect2 REF",
+        "Mutect2 ALT",
+        "Mutect2 DP",
+        "Mutect2 AF"
+    ), with = FALSE]
+    
+    
+    
+    df2 = df2[, by = c(
+        "POS",
+        "Ground Truth REF",
+        "Ground Truth DP",
+        "Mutect2 REF",
+        "Mutect2 ALT",
+        "Mutect2 DP",
+        "Mutect2 AF"
+        
+    ), .(
+        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
+        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
+        # "Mutect2 REF" = `Mutect2 REF` |> tstrsplit(",") |> unlist(),
+        # "Mutect2 ALT" = `Mutect2 ALT` |> tstrsplit(",") |> unlist(),
+        # "Mutect2 DP"  = `Mutect2 DP` |> tstrsplit(",") |> unlist() |> as.integer(),
+        # "Mutect2 AF"  = `Mutect2 AF` |> tstrsplit(",") |> unlist() |> as.numeric()
+    )]
+    
+    mutect2_alt = str_split(df2$`Mutect2 ALT`, ",")
+    mutect2_af = str_split(df2$`Mutect2 AF`, ",")
+    
+    cln = mapply(
+        function(x, y, z) {
+            
+            index = which(y == x)
+            
+            return(
+                c(y[index], z[index])
+            )
+            
+        },
+        
+        df2$`Ground Truth ALT`, mutect2_alt, mutect2_af
+    )
+    
+    
+    df2$`Mutect2 ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
+    df2$`Mutect2 AF` = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
+    
+    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 DP` = NA
+    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 REF` = NA
+    
+    df2 = df2[, c(
+        "POS",
+        "Ground Truth REF",
+        "Ground Truth ALT",
+        "Ground Truth DP",
+        "Ground Truth AF",
+        "Mutect2 REF",
+        "Mutect2 ALT",
+        "Mutect2 DP",
+        "Mutect2 AF"
+    ), with = FALSE]
+    
+    return(df2)
+    
+}
