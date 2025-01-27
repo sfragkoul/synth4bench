@@ -1,9 +1,9 @@
 source("R/libraries.R")
 
-folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
+#folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
 #runs = c(1,2)
-runs = c(1,2,3,4,5,6,7,8,9,10)
-merged_file = "Merged"
+#runs = c(1,2,3,4,5,6,7,8,9,10)
+#merged_file = "Merged"
 
 gt_analysis <- function(runs, folder, merged_file) {
     
@@ -115,8 +115,9 @@ gt_analysis <- function(runs, folder, merged_file) {
     
 }
 
-
-gatk_somatic_vcf <- read.vcfR("D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE )
+merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
+                        "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10",
+                        "Merged")
 
 merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     #return cleaned vcf
@@ -128,7 +129,6 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
     merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
-    
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
     colnames(merged_bnch) = c(
@@ -147,7 +147,10 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     
 }
 
-df = merge_gatk(gatk_somatic_vcf, merged_gt)
+#gatk_somatic_vcf <- read.vcfR("D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE )
+
+df = merge_gatk(read.vcfR("D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+                merged_gt)
 
 
 clean_gatk <- function(df) {
