@@ -91,7 +91,7 @@ gt_analysis <- function(runs, folder, merged_file) {
   
   #merged_gt = b[which(POS %in% gt_runs$POS)]
   merged_gt <- merge(b, gt_runs, by = c("POS", "REF", "Nt"))
-  colnames(merged_gt) = c("POS", "REF", "DP", "Nt", "Count", "Freq",
+  colnames(merged_gt) = c("POS", "REF", "ALT", "DP", "Count", "Freq",
                           "Run", "DP Indiv", "Count Indiv", "Freq Indiv")
   merged_gt = merged_gt[order(POS)]
   
