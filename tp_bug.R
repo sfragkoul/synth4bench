@@ -1,6 +1,6 @@
 source("R/libraries.R")
 
-#runs = c(1,2,3,4,5,6,7,8,9,10)
+runs = c(1,2)
 folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
 merged_file = "Merged"
 
@@ -9,9 +9,10 @@ gt_analysis <- function(runs, folder, merged_file) {
     nt_runs = list()
     
     for(r in runs) {
-        r=2
+        #r=2
         #folder = "."
         #merged_file = "Merged"
+        #process reports.tsv files for individual files
         a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
             readLines() |>
             str_split(pattern = "\t", simplify = TRUE) |>
@@ -55,9 +56,9 @@ gt_analysis <- function(runs, folder, merged_file) {
     
     pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
     
-    gt_runs = nt_runs[which(POS %in% pos_of_interest)]
-    gt_runs = gt_runs[which(Freq == "100")] #!!!NEW
+    gt_runs = nt_runs[POS %in% pos_of_interest & Freq == "100"] #!!!NEW
     
+    #same process reports.tsv files for Merged file
     a <- paste0(folder, "/", merged_file , "_report.tsv") |> 
         readLines() |>
         str_split(pattern = "\t", simplify = TRUE) |> 
@@ -95,8 +96,8 @@ gt_analysis <- function(runs, folder, merged_file) {
     b = a[which(Nt %in% c("A", "C", "G", "T")), ]
     
     
-    #merged_gt = b[which(POS %in% gt_runs$POS)]
-    merged_gt <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
+    merged_gt = b[which(POS %in% gt_runs$POS)]
+    merged_gt1 <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
     
     
     merged_gt = merged_gt[order(POS)]
