@@ -1,13 +1,14 @@
 source("R/libraries.R")
 
-runs = c(1,2)
 folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
+runs = c(1,2)
+#runs = c(1,2,3,4,5,6,7,8,9,10)
 merged_file = "Merged"
 
 gt_analysis <- function(runs, folder, merged_file) {
     
     nt_runs = list()
-    
+    #ground truth   variants from individual files
     for(r in runs) {
         #r=2
         #folder = "."
