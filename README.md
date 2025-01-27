@@ -70,7 +70,7 @@ For more info regarding the documentation please visit [here](https://github.com
 
 We welcome and greatly appreciate any sort of feedback and/or contribution!
 
-If you have any questions, please either open an issue [here](https://github.com/sfragkoul/synth4bench/issues/new) or write to us at `sfragkoul@certh.gr` or `inab.bioinformatics@lists.certh.gr`.
+If you have any questions, please either open an issue [here](https://github.com/sfragkoul/synth4bench/issues/new) or send an email to `sfragkoul@certh.gr`.
 
 ## Citation
 Our work has been submitted to the *bioRxiv* preprint repository. If you use our work please cite as follows:
