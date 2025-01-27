@@ -5,7 +5,7 @@ gt_analysis <- function(runs, folder, merged_file) {
   nt_runs = list()
   
   for(r in runs) {
-    
+    #process reports.tsv files for individual files
     a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
       readLines() |>
       str_split(pattern = "\t", simplify = TRUE) |>
@@ -49,8 +49,9 @@ gt_analysis <- function(runs, folder, merged_file) {
   
   pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
   
-  gt_runs = nt_runs[which(POS %in% pos_of_interest)]
+  gt_runs = nt_runs[POS %in% pos_of_interest & Freq == "100"]
   
+  #same process reports.tsv files for Merged file
   a <- paste0(folder, "/", merged_file , "_report.tsv") |> 
     readLines() |>
     str_split(pattern = "\t", simplify = TRUE) |> 
@@ -88,16 +89,19 @@ gt_analysis <- function(runs, folder, merged_file) {
   b = a[which(Nt %in% c("A", "C", "G", "T")), ]
   
   
-  merged_gt = b[which(POS %in% gt_runs$POS)]
+  #merged_gt = b[which(POS %in% gt_runs$POS)]
+  merged_gt <- merge(b, gt_runs, by = c("POS", "REF", "Nt"))
+  colnames(merged_gt) = c("POS", "REF", "DP", "Nt", "Count", "Freq",
+                          "Run", "DP Indiv", "Count Indiv", "Freq Indiv")
   merged_gt = merged_gt[order(POS)]
   
   merged_gt$Freq = merged_gt$Freq / 100
   
-  merged_gt = merged_gt[, by = .(POS, REF, DP), .(
-    Nt = paste(Nt, collapse = ","),
-    Count = paste(Count, collapse = ","),
-    Freq = paste(round(Freq, digits = 3), collapse = ",")
-  )]
+  # merged_gt = merged_gt[, by = .(POS, REF, DP), .(
+  #   Nt = paste(Nt, collapse = ","),
+  #   Count = paste(Count, collapse = ","),
+  #   Freq = paste(round(Freq, digits = 3), collapse = ",")
+  # )]
   
   
   return(merged_gt)
