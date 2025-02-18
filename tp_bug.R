@@ -116,7 +116,7 @@ gt_analysis <- function(runs, folder, merged_file) {
 }
 
 merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
-                        "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10",
+                        "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10",
                         "Merged")
 
 merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
@@ -147,9 +147,9 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     
 }
 
-#gatk_somatic_vcf <- read.vcfR("D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE )
+gatk_somatic_vcf <- read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE )
 
-df = merge_gatk(read.vcfR("D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
                 merged_gt)
 
 
@@ -228,3 +228,33 @@ clean_gatk <- function(df) {
     return(df2)
     
 }
+
+
+
+venn_plot_gatk <- function(q, p) {
+    #function to produce Venn plot for each caller
+    vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
+    vcf_GT$scenario = "GT"
+    
+    vcf_gatk = vcfR::getFIX(p) |> as.data.frame() |> setDT()
+    vcf_gatk$scenario = "GATK"
+    
+    x = rbind(vcf_GT, vcf_gatk)
+    y = x[, c("CHROM", "POS", "REF", "ALT", "scenario"), with = FALSE]
+    
+    y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
+    
+    y = split(y, y$scenario)
+    
+    y = list(
+        'Ground Truth' = y$GT$mut,
+        'GATK'         = y$GATK$mut
+    )
+    
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
+        
+        coord_equal(clip = "off")
+    
+    return(gr)
+}
+
