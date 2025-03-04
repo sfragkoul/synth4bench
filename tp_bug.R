@@ -229,8 +229,6 @@ clean_gatk <- function(df) {
     
 }
 
-
-
 venn_plot_gatk <- function(q, p) {
     #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
@@ -257,4 +255,3 @@ venn_plot_gatk <- function(q, p) {
     
     return(gr)
 }
-
