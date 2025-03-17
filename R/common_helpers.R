@@ -379,4 +379,3 @@ read_vcf_snvs_FN <- function(path, caller, merged_file, pick_gt) {
     
     return(fn_var)
 }
-

@@ -1,24 +1,4 @@
-#'A script, written in R, where all the appropriate functions for 
-#'the analysis of Mutect2 are located.
-#'
-#'
-#'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
-#'
-#'
-
-#TP SNVS-----------------------------------------------------------------------
-read_vcf_mutect2 <- function(path, gt, merged_file) {
-  #takes two files and produce a caller vcf file in a certain format 
-  vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )
-  
-  vcf_df = vcf |>
-    merge_gatk(gt) |>
-    clean_gatk()
-  
-  return(vcf_df)
-  
-}
-
+#SNVS-----------------------------------------------------------------------
 plot_snvs_TP_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
   #plotting function
   out1 = bar_plots_gatk(df)
@@ -55,112 +35,6 @@ plot_snvs_TP_gatk <- function(df, vcf_GT, vcf_caller, merged_file) {
   
   
 }
-
-merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
-    #return cleaned vcf
-    gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
-    gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
-    gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
-    
-    #Merge everything into a common file
-    merged_gt$POS = as.character(merged_gt$POS)
-    merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
-    merged_bnch$POS = as.numeric(merged_bnch$POS)
-    merged_bnch = merged_bnch[order(POS)]
-    colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth ALT",
-        "Ground Truth DP", "Ground Truth AD", 
-        "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
-        "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
-        "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-        "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-        "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-        "gt_PS",	"gt_SB",	"gt_GT_alleles"
-    )
-    
-    return(merged_bnch)
-    
-}
-
-
-clean_gatk <- function(df) {
-  #function to produce the caller's reported variants in the desired format 
-    df2 = df[, c(
-        "POS",
-        
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
-    ), with = FALSE]
-    
-    
-    
-    df2 = df2[, by = c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth DP",
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
-
-    ), .(
-        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
-        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-        # "Mutect2 REF" = `Mutect2 REF` |> tstrsplit(",") |> unlist(),
-        # "Mutect2 ALT" = `Mutect2 ALT` |> tstrsplit(",") |> unlist(),
-        # "Mutect2 DP"  = `Mutect2 DP` |> tstrsplit(",") |> unlist() |> as.integer(),
-        # "Mutect2 AF"  = `Mutect2 AF` |> tstrsplit(",") |> unlist() |> as.numeric()
-    )]
-
-    mutect2_alt = str_split(df2$`Mutect2 ALT`, ",")
-    mutect2_af = str_split(df2$`Mutect2 AF`, ",")
-
-    cln = mapply(
-        function(x, y, z) {
-
-            index = which(y == x)
-
-            return(
-                c(y[index], z[index])
-            )
-
-        },
-
-        df2$`Ground Truth ALT`, mutect2_alt, mutect2_af
-    )
-
-
-    df2$`Mutect2 ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`Mutect2 AF` = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
-
-    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 DP` = NA
-    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 REF` = NA
-
-    df2 = df2[, c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
-    ), with = FALSE]
-    
-    return(df2)
-    
-}
-
 
 bar_plots_gatk <- function(q) {
     #function to produce variants' barplots for coverage and AF
@@ -286,7 +160,6 @@ bar_plots_gatk <- function(q) {
     
 }
 
-
 density_plot_gatk <- function(q) {
     #function to produce AF density plots
     q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
@@ -375,7 +248,6 @@ density_plot_gatk <- function(q) {
     
 }
 
-
 bubble_plots_gatk <- function(q) {
     
     #function to produce SNVs bubble plot
@@ -454,7 +326,6 @@ bubble_plots_gatk <- function(q) {
     
 }
 
-
 venn_plot_gatk <- function(q, p) {
     #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
@@ -482,63 +353,7 @@ venn_plot_gatk <- function(q, p) {
     return(gr)
 }
 
-
 #FP & FN SNVS------------------------------------------------------------------
-
-load_gatk_vcf <- function(path, merged_file){
-    #function to load caller vcf
-    Mutect2_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                             "_Mutect2_norm.vcf"), verbose = FALSE )
-    
-    Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    Mutect2_s1  = Mutect2_somatic_vcf |> extract_gt_tidy() |> setDT()
-    Mutect2gatk_s21 = Mutect2_somatic_vcf |> extract_info_tidy() |> setDT()
-    Mutect2_somatic = cbind(Mutect2_s0[Mutect2_s1$Key, ], Mutect2_s1)
-    return(Mutect2_somatic)
-}
-
-fp_snvs_gatk <- function(Mutect2_somatic_snvs, pick_gt, gt_all){#term snvs is redundant
-    #find MUtect2 FP variants
-    fp_var = define_fp(Mutect2_somatic_snvs, pick_gt)
-    fp_var$gt_AF = as.numeric(fp_var$gt_AF)
-    colnames(fp_var) = c("CHROM", "POS","ID", "Mutect2 REF",	
-                         "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-                         "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-                         "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-                         "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-                         "gt_PS",	"gt_SB",	"gt_GT_alleles", "mut")
-    
-    #find DP of FP variants'  location in GT
-    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
-    a = unique(tmp, by = "POS")
-    #to include the presence multiple variants in a POS
-    index = match(fp_var$POS, a$POS)
-    fp_var$`Ground Truth DP` = a[index]$DP
-    fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
-    fp_var$type = "FP"
-    return(fp_var)
-}
-
-final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
-    
-    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-    fp_var <- fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
-    
-    return(fp_var)
-}
-
-final_fn_snvs_gatk <- function(path, merged_file, pick_gt){
-    
-    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_snvs <- select_snvs(Mutect2_somatic)
-    fn_var <- define_fn(Mutect2_somatic_snvs, pick_gt)
-    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP",
-                         "Ground Truth ALT", "Count", "Ground Truth AF",
-                         "mut", "type")
-    return(fn_var)
-}
-
 fp_violin_plots_gatk <- function(q) {
     #function to produce variants' barplots for coverage and AF
     #q[which(q$`Mutect2 ALT` == "")]$`Mutect2 ALT` = NA
@@ -675,101 +490,6 @@ plot_snvs_FP_gatk <- function(df, merged_file) {
 }
 
 #INDELs------------------------------------------------------------------------
-
-categorize_fns_gatk <- function(caller, fn_var) {
-    #function to identify FN categories
-    
-    caller$POS = as.numeric(caller$POS)
-    fn_var$POS = as.numeric(fn_var$POS)
-    colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
-                         "Count", "Ground Truth AF","mut","type")
-    #Same POS
-    same_POS <- merge(fn_var, caller, by = c("POS"))
-    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
-    
-    #Same POS & REF
-    same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
-    # Update only rows where POS and REF match
-    fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
-           category := "diff ALT"]
-    
-    return(fn_var)
-}
-
-categorize_fps_gatk <- function(pick_gt_stdz, fp_indels_gatk) {
-    #function to identify FP categories
-    pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
-    fp_indels_gatk$POS = as.numeric(fp_indels_gatk$POS)
-    
-    colnames(fp_indels_gatk) = c("CHROM", "POS", "ID", "REF", "ALT", "Mutect2 QUAL",
-                                 "Mutect2 FILTER", "key", "Indiv", "Mutect2 AD", 
-                                 "Mutect2 AF", "Mutect2 DP", "gt_F1R2", "gt_F2R1", 
-                                 "gt_FAD", "gt_GQ", "gt_GT", "gt_PGT", "gt_PID", 
-                                 "gt_PL" , "gt_PS", "gt_SB", "gt_GT_alleles", 
-                                 "mut", "Ground Truth DP","DP Percentage", "type")
-    #Same POS
-    same_POS <- merge(fp_indels_gatk, pick_gt_stdz, by = c("POS"))
-    fp_indels_gatk[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
-    
-    #Same POS & REF
-    same_POS_REF <- merge(fp_indels_gatk, pick_gt_stdz, by = c("POS", "REF"))
-    # Update only rows where POS and REF match
-    fp_indels_gatk[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
-                   category := "diff ALT"]
-    
-    return(fp_indels_gatk)
-}
-
-
-final_fp_indels_gatk <- function(path, merged_file, pick_gt, gt_all){
-    #function to identify FP indels
-    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
-    fp_var = fp_snvs_gatk(Mutect2_somatic_indels, pick_gt, gt_all)
-    return(fp_var)
-}
-
-final_fn_indels_gatk <- function(path, merged_file, pick_gt){
-    #function to identify FN indels
-    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
-    fn_var = define_fn(Mutect2_somatic_indels, pick_gt)
-    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
-    return(fn_var)
-}
-
-final_tp_indels_gatk <- function(path, merged_file, pick_gt){
-    #function to identify TP indels
-    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_indels <-select_indels(Mutect2_somatic)
-    tp_var = define_tp(Mutect2_somatic_indels, pick_gt)
-    return(tp_var)
-}
-
-
-call_fn_indels_gatk <- function(path, merged_file, pick_gt_stdz){
-  #function to output categorized FN indels
-  fn_indels_gatk = final_fn_indels_gatk(path, merged_file, pick_gt_stdz)
-  Mutect2_somatic = load_gatk_vcf(path, merged_file)
-  Mutect2_indels = select_indels(Mutect2_somatic)
-  fn_indels_gatk_categories = categorize_fns_gatk(Mutect2_indels, fn_indels_gatk)
-  
-  return(fn_indels_gatk_categories)
-}
-
-call_fp_indels_gatk <- function(path, merged_file, pick_gt_stdz){
-  #function to output categorized FP indels
-  gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
-  fp_indels_gatk = final_fp_indels_gatk(path, merged_file, pick_gt_stdz, gt_all)
-  fp_indels_gatk_categories = categorize_fps_gatk(pick_gt_stdz, fp_indels_gatk)
-  
-  return(fp_indels_gatk_categories)
-}
-
-
-
-
 circular_plot_gatk <- function(path, merged_file, caller){
     #Load data
     tp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_TP.tsv"), sep = "\t")
@@ -868,6 +588,4 @@ circular_plot_gatk <- function(path, merged_file, caller){
     
     return(p)
 }
-
-
 
