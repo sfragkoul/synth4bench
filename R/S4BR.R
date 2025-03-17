@@ -66,6 +66,15 @@ print("Begin SNVs TP Variant Analysis")
 gt <- gt_analysis(seq_len(arguments$runs),
                   arguments$working_directory,
                   arguments$merged_file)
+# 
+# fwrite(
+#     gt, paste0(arguments$working_directory,
+#                            "/",
+#                            arguments$merged_file,
+#                            "_snvs_GT.tsv"),
+#     
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
 
 out_df_snvs_tp <- read_vcf_snvs_TP(arguments$vcf_path,
                                    arguments$caller,
