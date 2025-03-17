@@ -12,7 +12,12 @@
 
 #!/usr/bin/env Rscript
 source("R/libraries.R")
+
 source("R/common_helpers.R")
+source("R/indels_common_helpers.R")
+source("R/snvs_common_helpers.R")
+source("R/viz_common_helpers.R")
+
 source("R/helpers_freebayes.R")
 source("R/helpers_gatk.R")
 source("R/helpers_LoFreq.R")
