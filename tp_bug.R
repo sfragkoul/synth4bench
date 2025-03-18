@@ -160,8 +160,8 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
 df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
                 merged_gt)$merged_bnch
 
-gatk = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
-                  merged_gt)$gatk_somatic
+# gatk = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+#                   merged_gt)$gatk_somatic
 
 clean_gatk <- function(df) {
     #function to produce the caller's reported variants in the desired format 
@@ -202,13 +202,8 @@ clean_gatk <- function(df) {
     
     cln = mapply(
         function(x, y, z) {
-            
             index = which(y == x)
-            
-            return(
-                c(y[index], z[index])
-            )
-            
+            return(c(y[index], z[index]))
         },
         
         df2$`Ground Truth ALT`, mutect2_alt, mutect2_af
