@@ -233,6 +233,13 @@ clean_gatk <- function(df) {
 }
 
 df_cleaned = clean_gatk(df)
+ 
+TP = sum(!is.na(df_cleaned$`Mutect2 REF`))
+FN = sum(is.na(df_cleaned$`Mutect2 REF`))
+recall = TP / (TP + FN)
+
+
+
 #------------------------------------------------
 # load_vcf <- function(vcf){
 #     gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
