@@ -4,7 +4,7 @@ source("R/libraries.R")
 #runs = c(1,2)
 #runs = c(1,2,3,4,5,6,7,8,9,10)
 #merged_file = "Merged"
-
+#-----------------------------------------------------------------------------
 gt_analysis <- function(runs, folder, merged_file) {
     
     nt_runs = list()
@@ -114,20 +114,16 @@ gt_analysis <- function(runs, folder, merged_file) {
     return(merged_gt)
     
 }
-
 merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
                         "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10",
                         "Merged")
-
 
 fwrite(
     merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_snvs_GT.tsv"),
     row.names = FALSE,
     quote = FALSE, sep = "\t"
 )
-
-
-
+#-----------------------------------------------------------------------------
 
 merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     #return cleaned vcf
@@ -141,6 +137,7 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
+    #merged_bnch = merged_bnch[POS %in% merged_gt$POS, ]
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
         "Ground Truth DP", "Ground Truth AD", 
@@ -153,14 +150,18 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
         "gt_PS",	"gt_SB",	"gt_GT_alleles"
     )
     
-    return(merged_bnch)
-    
+    return(
+           list(
+               "merged_bnch" = merged_bnch,
+               "gatk_somatic" = gatk_somatic)
+           )
 }
 
-gatk_somatic_vcf <- read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE )
-
 df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
-                merged_gt)
+                merged_gt)$merged_bnch
+
+gatk = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+                  merged_gt)$gatk_somatic
 
 clean_gatk <- function(df) {
     #function to produce the caller's reported variants in the desired format 
@@ -177,8 +178,6 @@ clean_gatk <- function(df) {
         "Mutect2 DP",
         "Mutect2 AF"
     ), with = FALSE]
-    
-    
     
     df2 = df2[, by = c(
         "POS",
@@ -237,3 +236,17 @@ clean_gatk <- function(df) {
     return(df2)
     
 }
+
+df_cleaned = clean_gatk(df)
+#------------------------------------------------
+# load_vcf <- function(vcf){
+#     gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+#     gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
+#     gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
+#     gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+# 
+#     return(gatk_somatic)
+# }
+# 
+# gatk_somatic_vcf = read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf")
+# gatk_somatic_vcf = load_vcf(gatk_somatic_vcf)
