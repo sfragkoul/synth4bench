@@ -64,19 +64,21 @@ arguments$vcf_path <- arguments$working_directory
 #SNVS TP-----------------------------------------------------------------------
 print("Begin SNVs TP Variant Analysis")
 
-#add if check to see if Merged_snvs_GT.tsv exists
-gt <- gt_analysis(seq_len(arguments$runs),
-                  arguments$working_directory,
-                  arguments$merged_file)
-# 
-# fwrite(
-#     gt, paste0(arguments$working_directory,
-#                            "/",
-#                            arguments$merged_file,
-#                            "_snvs_GT.tsv"),
-#     
-#     row.names = FALSE, quote = FALSE, sep = "\t"
-# )
+# check if Merged_snvs_GT.tsv exists
+output_file <- file.path(arguments$working_directory,
+                         paste0(arguments$merged_file, "_snvs_GT.tsv"))
+
+if (!file.exists(output_file)) {
+    gt <- gt_analysis(seq_len(arguments$runs),
+                      arguments$working_directory,
+                      arguments$merged_file)
+    
+    fwrite(gt, output_file, row.names = FALSE, quote = FALSE, sep = "\t")
+} else {
+    message("File already exists: ", output_file)
+    gt <- fread(output_file)
+}
+
 
 out_df_snvs_tp <- read_vcf_snvs_TP(arguments$vcf_path,
                                    arguments$caller,
@@ -103,7 +105,8 @@ gt_snvs = load_gt_report(arguments$vcf_path,
                          arguments$merged_file)$snvs
 
 pick_gt = load_gt_vcf(arguments$vcf_path,
-                      arguments$merged_file)
+                      arguments$merged_file,
+                      gt_snvs)
 
 out_df_snvs_fp <- read_vcf_snvs_FP(arguments$vcf_path,
                                    arguments$caller,

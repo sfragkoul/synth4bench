@@ -238,7 +238,30 @@ TP = sum(!is.na(df_cleaned$`Mutect2 REF`))
 FN = sum(is.na(df_cleaned$`Mutect2 REF`))
 recall = TP / (TP + FN)
 
-main = fread("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_snvs_TP.tsv")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #------------------------------------------------

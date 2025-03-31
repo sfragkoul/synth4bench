@@ -187,7 +187,7 @@ load_gt_report <- function(path, merged_file) {
     return(gt)
 }
 
-load_gt_vcf <- function(path, merged_file){
+load_gt_vcf <- function(path, merged_file, gt_snvs){
     #function to load Ground Truth vcf
     ground_truth_vcf <- read.vcfR( paste0(path, "/",merged_file, 
                                           "_ground_truth_norm.vcf"),
