@@ -1,6 +1,6 @@
 source("R/libraries.R")
 
-#folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/300_30_10"
+#folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/5000_500_10"
 #runs = c(1,2)
 #runs = c(1,2,3,4,5,6,7,8,9,10)
 #merged_file = "Merged"
@@ -115,11 +115,11 @@ gt_analysis <- function(runs, folder, merged_file) {
     
 }
 merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
-                        "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10",
+                        "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10",
                         "Merged")
 
 fwrite(
-    merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_snvs_GT.tsv"),
+    merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_snvs_GT.tsv"),
     row.names = FALSE,
     quote = FALSE, sep = "\t"
 )
@@ -157,10 +157,10 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
            )
 }
 
-df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
                 merged_gt)$merged_bnch
 
-# gatk = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+# gatk = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ),
 #                   merged_gt)$gatk_somatic
 
 clean_gatk <- function(df) {
@@ -242,28 +242,6 @@ recall = TP / (TP + FN)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #------------------------------------------------
 # load_vcf <- function(vcf){
 #     gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
@@ -274,5 +252,5 @@ recall = TP / (TP + FN)
 #     return(gatk_somatic)
 # }
 # 
-# gatk_somatic_vcf = read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_norm.vcf")
+# gatk_somatic_vcf = read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf")
 # gatk_somatic_vcf = load_vcf(gatk_somatic_vcf)
