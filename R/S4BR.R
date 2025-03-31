@@ -11,6 +11,7 @@
 
 
 #!/usr/bin/env Rscript
+message("Loading Libraries...")
 source("R/libraries.R")
 
 source("R/common_helpers.R")
@@ -18,7 +19,7 @@ source("R/indels_common_helpers.R")
 source("R/snvs_common_helpers.R")
 source("R/viz_common_helpers.R")
 
-source("R/gatk_helpers.R")
+source("R/gatk_common_helpers.R")
 source("R/indels_gatk_helpers.R")
 source("R/snvs_gatk_helpers.R")
 source("R/viz_gatk_helpers.R")

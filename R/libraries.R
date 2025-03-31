@@ -1,21 +1,20 @@
-library(data.table)
-library(stringr)
-library(vcfR)
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(stringr))
+suppressPackageStartupMessages(library(vcfR))
 
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(ggforce))
+suppressPackageStartupMessages(library(ggsci))
+suppressPackageStartupMessages(library(ggvenn))
+suppressPackageStartupMessages(library(patchwork))
 
-library(ggplot2)
-library(ggforce)
-library(ggsci)
-library(ggvenn)
-library(patchwork)
+suppressPackageStartupMessages(library(optparse))
 
-library(optparse)
+suppressPackageStartupMessages(library(GenomicAlignments))
+suppressPackageStartupMessages(library(Rsamtools))
+# suppressPackageStartupMessages(library(seqinr))
 
-library(GenomicAlignments)
-library(Rsamtools)
-# library(seqinr)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(colorspace))
 
-library(dplyr)
-library(colorspace)
-
-# library(GenomicRanges)
+# suppressPackageStartupMessages(library(GenomicRanges))
