@@ -62,7 +62,7 @@ arguments <- parse_args(OptionParser(option_list = options))
 arguments$vcf_path <- arguments$working_directory
 
 #SNVS TP-----------------------------------------------------------------------
-print("Begin SNVs TP Variant Analysis")
+print("Begin SNVs Variant Analysis")
 
 # check if Merged_snvs_GT.tsv exists
 output_file <- file.path(arguments$working_directory,
@@ -96,43 +96,43 @@ fwrite(
 )
 
 #SNVS FP & FN------------------------------------------------------------------
-print("Begin SNVs FP Variant Analysis")
-
-gt_all = load_gt_report(arguments$vcf_path,
-                        arguments$merged_file)$all
-
-gt_snvs = load_gt_report(arguments$vcf_path,
-                         arguments$merged_file)$snvs
-
-pick_gt = load_gt_vcf(arguments$vcf_path,
-                      arguments$merged_file,
-                      gt_snvs)
-
-out_df_snvs_fp <- read_vcf_snvs_FP(arguments$vcf_path,
-                                   arguments$caller,
-                                   arguments$merged_file,
-                                   pick_gt,
-                                   gt_all)
-
-fwrite(
-    out_df_snvs_fp, paste0(arguments$working_directory, "/",
-                           arguments$merged_file, "_",
-                           arguments$caller, "_snvs_FP.tsv"),
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
-
-print("Begin SNVs FN Variant Analysis")
-out_df_snvs_fn = read_vcf_snvs_FN(arguments$vcf_path,
-                                  arguments$caller,
-                                  arguments$merged_file,
-                                  pick_gt)
-
-fwrite(
-    out_df_snvs_fn, paste0(arguments$working_directory, "/",
-                               arguments$merged_file, "_",
-                               arguments$caller, "_snvs_FN.tsv"),
-    row.names = FALSE, quote = FALSE, sep = "\t"
-)
+# print("Begin SNVs FP Variant Analysis")
+# 
+# gt_all = load_gt_report(arguments$vcf_path,
+#                         arguments$merged_file)$all
+# 
+# gt_snvs = load_gt_report(arguments$vcf_path,
+#                          arguments$merged_file)$snvs
+# 
+# pick_gt = load_gt_vcf(arguments$vcf_path,
+#                       arguments$merged_file,
+#                       gt_snvs)
+# 
+# out_df_snvs_fp <- read_vcf_snvs_FP(arguments$vcf_path,
+#                                    arguments$caller,
+#                                    arguments$merged_file,
+#                                    pick_gt,
+#                                    gt_all)
+# 
+# fwrite(
+#     out_df_snvs_fp, paste0(arguments$working_directory, "/",
+#                            arguments$merged_file, "_",
+#                            arguments$caller, "_snvs_FP.tsv"),
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
+# 
+# print("Begin SNVs FN Variant Analysis")
+# out_df_snvs_fn = read_vcf_snvs_FN(arguments$vcf_path,
+#                                   arguments$caller,
+#                                   arguments$merged_file,
+#                                   pick_gt)
+# 
+# fwrite(
+#     out_df_snvs_fn, paste0(arguments$working_directory, "/",
+#                                arguments$merged_file, "_",
+#                                arguments$caller, "_snvs_FN.tsv"),
+#     row.names = FALSE, quote = FALSE, sep = "\t"
+# )
 
 #INDELs------------------------------------------------------------------
 # print("Begin INDELs Variant Analysis")

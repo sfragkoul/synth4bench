@@ -1,9 +1,5 @@
 source("R/libraries.R")
 
-#folder = "D:/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/coverage_test/5000_500_10"
-#runs = c(1,2)
-#runs = c(1,2,3,4,5,6,7,8,9,10)
-#merged_file = "Merged"
 #-----------------------------------------------------------------------------
 gt_analysis <- function(runs, folder, merged_file) {
     
@@ -118,11 +114,11 @@ merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
                         "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10",
                         "Merged")
 
-fwrite(
-    merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_snvs_GT.tsv"),
-    row.names = FALSE,
-    quote = FALSE, sep = "\t"
-)
+# fwrite(
+#     merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_snvs_GT.tsv"),
+#     row.names = FALSE,
+#     quote = FALSE, sep = "\t"
+# )
 #-----------------------------------------------------------------------------
 
 merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
@@ -131,6 +127,7 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
     gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
     gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+
     
     #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
@@ -149,6 +146,10 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
         "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
         "gt_PS",	"gt_SB",	"gt_GT_alleles"
     )
+
+    #after unlisting multiple variants in the same position, we must
+    # keep only unique FN POS
+    merged_bnch <- merged_bnch[, .SD[1], by = POS]
     
     return(
            list(
@@ -160,85 +161,80 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
 df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
                 merged_gt)$merged_bnch
 
-# gatk = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ),
-#                   merged_gt)$gatk_somatic
+
+# gatk_somatic = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ),
+#                    merged_gt)$gatk_somatic
+
+
 
 clean_gatk <- function(df) {
-    #function to produce the caller's reported variants in the desired format 
-    df2 = df[, c(
-        "POS",
-        
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
+    # Extract relevant columns
+    df2 <- df[, c(
+        "POS", "Ground Truth REF", "Ground Truth ALT", "Ground Truth DP", "Ground Truth AF",
+        "Mutect2 REF", "Mutect2 ALT", "Mutect2 DP", "Mutect2 AF"
     ), with = FALSE]
     
-    df2 = df2[, by = c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth DP",
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
-        
-    ), .(
-        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
-        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-        # "Mutect2 REF" = `Mutect2 REF` |> tstrsplit(",") |> unlist(),
-        # "Mutect2 ALT" = `Mutect2 ALT` |> tstrsplit(",") |> unlist(),
-        # "Mutect2 DP"  = `Mutect2 DP` |> tstrsplit(",") |> unlist() |> as.integer(),
-        # "Mutect2 AF"  = `Mutect2 AF` |> tstrsplit(",") |> unlist() |> as.numeric()
+    # Expand multiallelic GT sites into separate rows
+    df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
+        "Ground Truth ALT" = tstrsplit(`Ground Truth ALT`, ",") |> unlist(),
+        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",") |> unlist(),
+        "Mutect2 REF" = `Mutect2 REF`[1],
+        "Mutect2 ALT" = `Mutect2 ALT`[1],
+        "Mutect2 DP"  = `Mutect2 DP`[1],
+        "Mutect2 AF"  = `Mutect2 AF`[1]
     )]
     
-    mutect2_alt = str_split(df2$`Mutect2 ALT`, ",")
-    mutect2_af = str_split(df2$`Mutect2 AF`, ",")
-    
-    cln = mapply(
-        function(x, y, z) {
-            index = which(y == x)
-            return(c(y[index], z[index]))
-        },
+    # Match ALT alleles between GT and Mutect2
+    df2[, `:=` (
+        `ALT Match` = mapply(function(gt_alt, gatk_alt) {
+            if (is.na(gatk_alt)) return(FALSE)
+            return(gt_alt %in% unlist(str_split(gatk_alt, ",")))
+        }, `Ground Truth ALT`, `Mutect2 ALT`),
         
-        df2$`Ground Truth ALT`, mutect2_alt, mutect2_af
-    )
+        `AF Match` = mapply(function(gt_alt, gatk_alt, gatk_af) {
+            if (is.na(gatk_alt) | is.na(gatk_af)) return(NA)
+            alt_list <- str_split(gatk_alt, ",")[[1]]
+            af_list  <- str_split(gatk_af, ",")[[1]]
+            idx <- which(alt_list == gt_alt)
+            if (length(idx) == 0) return(NA)
+            return(af_list[[idx]])
+        }, `Ground Truth ALT`, `Mutect2 ALT`, `Mutect2 AF`)
+    )]
+    
+    # Keep only matched alleles
+    df2[, `Mutect2 ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
+    df2[, `Mutect2 AF`  := `AF Match`]
+    df2[, `Mutect2 REF` := ifelse(`ALT Match`, `Mutect2 REF`, NA)]
+    df2[, `Mutect2 DP`  := ifelse(`ALT Match`, `Mutect2 DP`, NA)]
+    
+    # Classify as TP or FN
+    df2[, type := ifelse(is.na(`Mutect2 ALT`), "FN", "TP")]
+    
+    # ΔAF: Caller AF - Ground Truth AF (numeric)
+    df2[, `AF Deviation ` := NA_real_]
+    df2[type == "TP", `AF Deviation` := as.numeric(`Mutect2 AF`) - as.numeric(`Ground Truth AF`)]
+    
+    # Final output
+    df2 <- df2[, .(
+        POS,
+        `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
+        `Mutect2 REF`, `Mutect2 ALT`, `Mutect2 DP`, `Mutect2 AF`,
+        type, `AF Deviation`
+    )]
     
     
-    df2$`Mutect2 ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`Mutect2 AF` = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
+    recall = sum(!is.na(df2$`Mutect2 REF`)) / 
+        (sum(!is.na(df2$`Mutect2 REF`)) + dim(df2)[1])
     
-    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 DP` = NA
-    df2[which(is.na(`Mutect2 AF`))]$`Mutect2 REF` = NA
-    
-    df2 = df2[, c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        "Mutect2 REF",
-        "Mutect2 ALT",
-        "Mutect2 DP",
-        "Mutect2 AF"
-    ), with = FALSE]
-    
-    return(df2)
-    
+    return(list(
+               "df2" = df2,
+               "recall" = recall))
 }
 
-df_cleaned = clean_gatk(df)
- 
-TP = sum(!is.na(df_cleaned$`Mutect2 REF`))
-FN = sum(is.na(df_cleaned$`Mutect2 REF`))
-recall = TP / (TP + FN)
 
 
+df_cleaned = clean_gatk(df)$df2
+recall = clean_gatk(df)$recall
 
 
 
