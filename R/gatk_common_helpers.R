@@ -51,7 +51,7 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
 
 clean_gatk <- function(df) {
     # Extract relevant columns
-    df2 <- df[, c(
+    df2 <- df$merged_bnch[, c(
         "POS", 
         
         "Ground Truth REF", 

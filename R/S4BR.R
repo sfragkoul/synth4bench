@@ -75,8 +75,8 @@ if (!file.exists(output_file)) {
     
     fwrite(gt, output_file, row.names = FALSE, quote = FALSE, sep = "\t")
 } else {
-    message("File already exists: ", output_file)
-    gt <- fread(output_file)
+   message("File already exists: ", output_file)
+   gt <- fread(output_file)
 }
 
 
@@ -84,7 +84,7 @@ if (!file.exists(output_file)) {
 out_snvs <- read_vcf_snvs_TP(arguments$vcf_path,
                                    arguments$caller,
                                    gt,
-                                   arguments$merged_file)$df2
+                                   arguments$merged_file)
 
 fwrite(
   out_snvs, paste0(arguments$working_directory,
