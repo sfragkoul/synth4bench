@@ -24,6 +24,7 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
     merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
+
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
         "Ground Truth DP", "Ground Truth AD", 
@@ -36,8 +37,15 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
         "gt_PS",	"gt_SB",	"gt_GT_alleles"
     )
     
-    return(merged_bnch)
+    #after unlisting multiple variants in the same position, we must
+    # keep only unique FN POS
+    merged_bnch <- merged_bnch[, .SD[1], by = POS]
     
+    return(
+        list(
+            "merged_bnch" = merged_bnch,
+            "gatk_somatic" = gatk_somatic)
+    )
 }
 
 
