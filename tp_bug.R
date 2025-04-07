@@ -170,8 +170,17 @@ df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5
 clean_gatk <- function(df) {
     # Extract relevant columns
     df2 <- df[, c(
-        "POS", "Ground Truth REF", "Ground Truth ALT", "Ground Truth DP", "Ground Truth AF",
-        "Mutect2 REF", "Mutect2 ALT", "Mutect2 DP", "Mutect2 AF"
+        "POS", 
+        
+        "Ground Truth REF", 
+        "Ground Truth ALT", 
+        "Ground Truth DP", 
+        "Ground Truth AF",
+        
+        "Mutect2 REF", 
+        "Mutect2 ALT", 
+        "Mutect2 DP", 
+        "Mutect2 AF"
     ), with = FALSE]
     
     # Expand multiallelic GT sites into separate rows
