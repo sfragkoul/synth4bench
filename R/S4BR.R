@@ -86,7 +86,7 @@ snvs <- read_vcf_snvs_TP(arguments$vcf_path,
                                    gt,
                                    arguments$merged_file)
 
-out_snvs = snvs$vcf_df
+out_snvs = snvs$df2
 recall = snvs$recall
 
 print(paste("Recall score for True Variants detection:", round(recall, 2)))

@@ -8,12 +8,7 @@ read_vcf_mutect2 <- function(path, gt, merged_file) {
     merge_gatk(gt) |>
     clean_gatk())
   
-  vcf_df = df$df2
-  recall = df$recall
-  
-  return(list(
-      "vcf_df" = vcf_df,
-      "recall" = recall))
+  return(df)
   
 }
 
