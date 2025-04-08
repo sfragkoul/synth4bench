@@ -117,7 +117,7 @@ clean_gatk <- function(df) {
     recall = sum(!is.na(df2$`Mutect2 REF`)) / dim(df2)[1]
     
     return(list(
-        "df2" = df2,
+        "vcf_snvs_cleaned" = df2,
         "recall" = recall))
 }
 
