@@ -4,11 +4,16 @@ read_vcf_mutect2 <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )
   
-  vcf_df = (vcf |>
+   df = (vcf |>
     merge_gatk(gt) |>
-    clean_gatk())$df2
+    clean_gatk())
   
-  return(vcf_df)
+  vcf_df = df$df2
+  recall = df$recall
+  
+  return(list(
+      "vcf_df" = vcf_df,
+      "recall" = recall))
   
 }
 

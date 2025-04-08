@@ -81,10 +81,16 @@ if (!file.exists(output_file)) {
 
 
 
-out_snvs <- read_vcf_snvs_TP(arguments$vcf_path,
+snvs <- read_vcf_snvs_TP(arguments$vcf_path,
                                    arguments$caller,
                                    gt,
                                    arguments$merged_file)
+
+out_snvs = snvs$vcf_df
+recall = snvs$recall
+
+print(paste("Recall score for True Variants detection:", round(recall, 2)))
+
 
 fwrite(
   out_snvs, paste0(arguments$working_directory,
