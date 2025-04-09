@@ -3,7 +3,7 @@
 
 plot_snvs_TP <- function(gt_snv_tp_comparison, vcf_path, gt_path, caller, merged_file) {
     
-    df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_", caller, "_snvs_TP.tsv"))
+    df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_", caller, "_snvs_TV.tsv"))
     
     vcf_GT <- read.vcfR(paste0(vcf_path, "/", merged_file, "_ground_truth_norm.vcf"), verbose = FALSE )
     
