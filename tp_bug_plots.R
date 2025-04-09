@@ -1,0 +1,260 @@
+source("R/libraries.R")
+
+#-----------------------------------------------------------------------------
+gt_analysis <- function(runs, folder, merged_file) {
+    
+    nt_runs = list()
+    #ground truth   variants from individual files
+    for(r in runs) {
+        #folder = "."
+        #merged_file = "Merged"
+        #process reports.tsv files for individual files
+        a <- paste0(folder, "/", r, "/", r, "_report.tsv") |>
+            readLines() |>
+            str_split(pattern = "\t", simplify = TRUE) |>
+            as.data.frame() |> 
+            setDT()
+        
+        a$V1 = NULL
+        # a$V3 = NULL
+        a$V5 = NULL
+        
+        colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
+        
+        a = melt(
+            a, id.vars = c("POS", "REF", "DP"),
+            variable.factor = FALSE, value.factor = FALSE,
+            variable.name = "Nt", value.name = "Count"
+        )
+        
+        a = a[which(Count != "")]
+        
+        a$POS = as.numeric(a$POS)
+        a$DP = as.numeric(a$DP)
+        
+        a$Nt = str_split_i(a$Count, "\\:", 1)
+        
+        a$Count = str_split_i(a$Count, "\\:", 2) |>
+            as.numeric()
+        
+        a$Freq = round(100 * a$Count / a$DP, digits = 6)
+        
+        a = a[order(POS, -Count)]
+        
+        a = a[which(REF != a$Nt & Count != 0)]
+        
+        b = a[which(Nt %in% c("A", "C", "G", "T")), ]
+        
+        nt_runs[[ as.character(r) ]] = b
+    }
+    
+    nt_runs = rbindlist(nt_runs, idcol = "Run")
+    
+    pos_of_interest = nt_runs[which(Freq == 100)]$POS |> unique()
+    
+    gt_runs = nt_runs[POS %in% pos_of_interest & Freq == "100"] #!!!NEW
+    
+    #same process reports.tsv files for Merged file
+    a <- paste0(folder, "/", merged_file , "_report.tsv") |> 
+        readLines() |>
+        str_split(pattern = "\t", simplify = TRUE) |> 
+        as.data.frame() |> 
+        setDT()
+    
+    a$V1 = NULL
+    # a$V3 = NULL
+    a$V5 = NULL
+    
+    colnames(a) = c("POS", "REF", "DP", paste0("Nt_", 1:(ncol(a) - 3)))
+    
+    a = melt(
+        a, id.vars = c("POS", "REF", "DP"),
+        variable.factor = FALSE, value.factor = FALSE,
+        variable.name = "Nt", value.name = "Count"
+    )
+    
+    a = a[which(Count != "")]
+    
+    a$POS = as.numeric(a$POS)
+    a$DP = as.numeric(a$DP)
+    
+    a$Nt = str_split_i(a$Count, "\\:", 1)
+    
+    a$Count = str_split_i(a$Count, "\\:", 2) |>
+        as.numeric()
+    
+    a$Freq = round(100 * a$Count / a$DP, digits = 6)
+    
+    a = a[order(POS, -Count)]
+    
+    a = a[which(REF != a$Nt & Count != 0)]
+    
+    b = a[which(Nt %in% c("A", "C", "G", "T")), ]
+    
+    
+    #merged_gt = b[which(POS %in% gt_runs$POS)]
+    merged_gt <- merge(b, gt_runs, by = c("POS", "REF", "Nt")) #ΝEW!!!!!!!
+    colnames(merged_gt) = c("POS", "REF", "ALT", "DP", "Count", "Freq",
+                             "Run", "DP Indiv", "Count Indiv", "Freq Indiv")
+    
+    merged_gt = merged_gt[order(POS)]
+    
+    merged_gt$Freq = merged_gt$Freq / 100
+    
+    # merged_gt1 = merged_gt[, by = .(POS, REF, DP), .(
+    #     Nt = paste(Nt, collapse = ","),
+    #     Count = paste(Count, collapse = ","),
+    #     Freq = paste(round(Freq, digits = 3), collapse = ",")
+    # )]
+    
+    return(merged_gt)
+    
+}
+merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
+                        "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10",
+                        "Merged")
+
+# fwrite(
+#     merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_snvs_GT.tsv"),
+#     row.names = FALSE,
+#     quote = FALSE, sep = "\t"
+# )
+#-----------------------------------------------------------------------------
+
+merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
+    #return cleaned vcf
+    gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
+    gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
+    gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+
+    
+    #Merge everything into a common file
+    merged_gt$POS = as.character(merged_gt$POS)
+    merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
+    merged_bnch$POS = as.numeric(merged_bnch$POS)
+    merged_bnch = merged_bnch[order(POS)]
+    #merged_bnch = merged_bnch[POS %in% merged_gt$POS, ]
+    colnames(merged_bnch) = c(
+        "POS",	"Ground Truth REF",	"Ground Truth ALT",
+        "Ground Truth DP", "Ground Truth AD", 
+        "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
+        "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
+        "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
+        "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
+        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
+        "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
+        "gt_PS",	"gt_SB",	"gt_GT_alleles"
+    )
+
+    #after unlisting multiple variants in the same position, we must
+    # keep only unique FN POS
+    merged_bnch <- merged_bnch[, .SD[1], by = POS]
+    
+    return(
+           list(
+               "merged_bnch" = merged_bnch,
+               "gatk_somatic" = gatk_somatic)
+           )
+}
+
+df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
+                merged_gt)$merged_bnch
+
+
+# gatk_somatic = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ),
+#                    merged_gt)$gatk_somatic
+
+
+
+clean_gatk <- function(df) {
+    # Extract relevant columns
+    df2 <- df[, c(
+        "POS", 
+        
+        "Ground Truth REF", 
+        "Ground Truth ALT", 
+        "Ground Truth DP", 
+        "Ground Truth AF",
+        
+        "Mutect2 REF", 
+        "Mutect2 ALT", 
+        "Mutect2 DP", 
+        "Mutect2 AF"
+    ), with = FALSE]
+    
+    # Expand multiallelic GT sites into separate rows
+    df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
+        "Ground Truth ALT" = tstrsplit(`Ground Truth ALT`, ",") |> unlist(),
+        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",") |> unlist(),
+        "Mutect2 REF" = `Mutect2 REF`[1],
+        "Mutect2 ALT" = `Mutect2 ALT`[1],
+        "Mutect2 DP"  = `Mutect2 DP`[1],
+        "Mutect2 AF"  = `Mutect2 AF`[1]
+    )]
+    
+    # Match ALT alleles between GT and Mutect2
+    df2[, `:=` (
+        `ALT Match` = mapply(function(gt_alt, gatk_alt) {
+            if (is.na(gatk_alt)) return(FALSE)
+            return(gt_alt %in% unlist(str_split(gatk_alt, ",")))
+        }, `Ground Truth ALT`, `Mutect2 ALT`),
+        
+        `AF Match` = mapply(function(gt_alt, gatk_alt, gatk_af) {
+            if (is.na(gatk_alt) | is.na(gatk_af)) return(NA)
+            alt_list <- str_split(gatk_alt, ",")[[1]]
+            af_list  <- str_split(gatk_af, ",")[[1]]
+            idx <- which(alt_list == gt_alt)
+            if (length(idx) == 0) return(NA)
+            return(af_list[[idx]])
+        }, `Ground Truth ALT`, `Mutect2 ALT`, `Mutect2 AF`)
+    )]
+    
+    # Keep only matched alleles
+    df2[, `Mutect2 ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
+    df2[, `Mutect2 AF`  := `AF Match`]
+    df2[, `Mutect2 REF` := ifelse(`ALT Match`, `Mutect2 REF`, NA)]
+    df2[, `Mutect2 DP`  := ifelse(`ALT Match`, `Mutect2 DP`, NA)]
+    
+    # Classify as TP or FN
+    df2[, type := ifelse(is.na(`Mutect2 ALT`), "FN", "TP")]
+    
+    # ΔAF: Caller AF - Ground Truth AF (numeric)
+    df2[, `AF Deviation ` := NA_real_]
+    df2[type == "TP", `AF Deviation` := as.numeric(`Mutect2 AF`) - as.numeric(`Ground Truth AF`)]
+    
+    # Final output
+    df2 <- df2[, .(
+        POS,
+        `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
+        `Mutect2 REF`, `Mutect2 ALT`, `Mutect2 DP`, `Mutect2 AF`,
+        type, `AF Deviation`
+    )]
+    
+    
+    recall = sum(!is.na(df2$`Mutect2 REF`)) / dim(df2)[1]
+    
+    return(list(
+               "df2" = df2,
+               "recall" = recall))
+}
+
+
+
+df_cleaned = clean_gatk(df)$df2
+recall = clean_gatk(df)$recall
+
+
+
+#------------------------------------------------
+# load_vcf <- function(vcf){
+#     gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+#     gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
+#     gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
+#     gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+# 
+#     return(gatk_somatic)
+# }
+# 
+# gatk_somatic_vcf = read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf")
+# gatk_somatic_vcf = load_vcf(gatk_somatic_vcf)
