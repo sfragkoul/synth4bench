@@ -17,10 +17,10 @@ message("Loading Libraries...")
 source("R/libraries.R")
 
 source("R/viz_common_helpers.R")
-
 source("R/viz_gatk_helpers.R")
+source("R/viz_Freebayes_helpers.R")
 
-source("R/helpers_freebayes.R")
+
 source("R/helpers_LoFreq.R")
 source("R/helpers_VarDict.R")
 source("R/helpers_VarScan.R")

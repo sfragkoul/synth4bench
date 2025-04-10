@@ -5,7 +5,7 @@ plot_snvs_TP_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
     out1 = bar_plots_freebayes(df)
     out2 = density_plot_freebayes(df)
     out3 = bubble_plots_freebayes(df)
-    out4 = venn_plot_freebayes(vcf_GT, vcf_caller)
+    #out4 = venn_plot_freebayes(vcf_GT, vcf_caller)
     
     multi2 = out2$groundtruth / out2$Freebayes &
         
@@ -23,20 +23,20 @@ plot_snvs_TP_freebayes <- function(df, vcf_GT, vcf_caller, merged_file) {
         )
     
     
-    ann2 = out3 + out4 +
-        
-        plot_layout(
-            widths = c(2, 1)
-        )
+    # ann2 = out3 + out4 +
+    #     
+    #     plot_layout(
+    #         widths = c(2, 1)
+    #     )
     
     
-    multi = ann1 / ann2 +
+    multi = ann1 / out3 +
         
         plot_layout(heights = c(1.5, 1)) + 
         plot_annotation(title = merged_file)
     
     
-    return(list(multi, out4))
+    return(multi)
 }
 
 bar_plots_freebayes <- function(q) {
