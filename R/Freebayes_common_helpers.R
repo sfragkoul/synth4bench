@@ -4,11 +4,11 @@ read_vcf_freebayes <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format   
   vcf <- read.vcfR( paste0(path, "/", merged_file, "_freebayes_norm.vcf"), verbose = FALSE )
   
-  vcf_df <- vcf |>
+  df <- (vcf |>
     merge_freebayes(gt) |>
-    clean_freebayes()
+    clean_freebayes())
   
-  return(vcf_df)
+  return(df)
   
 }
 
@@ -28,8 +28,8 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     merged_bnch = merged_bnch[order(POS)]
     
     colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth DP",
-        "Ground Truth ALT", "Ground Truth AD", "Ground Truth AF", 
+        "POS",	"Ground Truth REF",	"Ground Truth ALT",
+        "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
         
         "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
         
@@ -48,18 +48,18 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
         list(
             "merged_bnch" = merged_bnch,
             "freebayes_somatic" = freebayes_somatic)
-    )
+        )
     
 }
 
 
 clean_freebayes <- function(df) {
     ## Extract relevant columns
-    df2 <- df[, c(
-        "POS",
-        "Ground Truth REF", "Ground Truth ALT", "Ground Truth DP", "Ground Truth AF",
-        "Freebayes REF", "Freebayes ALT", "Freebayes DP", "Freebayes AO"
-    ), with = FALSE]
+    df2 <- df$merged_bnch[, c("POS", 
+                  "Ground Truth REF", "Ground Truth ALT", "Ground Truth DP", 
+                  "Ground Truth AF",
+                  "Freebayes REF", "Freebayes ALT", "Freebayes DP", 
+                  "Freebayes AO"), with = FALSE]
     
     ## Expand multiallelic ground-truth columns into separate rows
     df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
@@ -108,18 +108,18 @@ clean_freebayes <- function(df) {
     df2[type == "TP", `AF Deviation` := as.numeric(`Freebayes AF`) - as.numeric(`Ground Truth AF`)]
     
     ## Final output table (you can rearrange columns as needed)
-    final_table <- df2[, .(
+    df2 <- df2[, .(
         POS,
         `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
-        `Freebayes REF`, `Freebayes ALT`, `Freebayes DP`, `Freebayes AO`, `Freebayes AF`,
+        `Freebayes REF`, `Freebayes ALT`, `Freebayes DP`, `Freebayes AF`,
         type, `AF Deviation`
     )]
     
     ## Calculate recall (e.g. proportion of calls with a non-NA caller REF)
-    recall <- sum(!is.na(final_table$`Freebayes REF`)) / nrow(final_table)
+    recall <- sum(!is.na(df2$`Freebayes REF`)) / nrow(df2)
     
     return(list(
-        "vcf_snvs_cleaned" = final_table,
+        "vcf_snvs_cleaned" = df2,
         "recall" = recall
     ))
 }

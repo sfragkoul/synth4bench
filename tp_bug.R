@@ -111,150 +111,149 @@ gt_analysis <- function(runs, folder, merged_file) {
     
 }
 merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
-                        "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10",
+                        "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10",
                         "Merged")
 
-# fwrite(
-#     merged_gt, paste0("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_snvs_GT.tsv"),
-#     row.names = FALSE,
-#     quote = FALSE, sep = "\t"
-# )
+
 #-----------------------------------------------------------------------------
 
-merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
+merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     #return cleaned vcf
-    gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
-    gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
-    gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
-
+    freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    freebayes_s1  = freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
+    freebayesgatk_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
+    
+    freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
+    
     
     #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
-    merged_bnch = merge(merged_gt, gatk_somatic,  by = "POS", all.x = TRUE)
+    merged_bnch = merge(merged_gt, freebayes_somatic,  by = "POS", all.x = TRUE)
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
-    #merged_bnch = merged_bnch[POS %in% merged_gt$POS, ]
+    
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
-        "Ground Truth DP", "Ground Truth AD", 
-        "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
-        "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
-        "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-        "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-        "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-        "gt_PS",	"gt_SB",	"gt_GT_alleles"
+        "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
+        
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
+        
+        "Freebayes CHROM", "Freebayes ID", "Freebayes REF", "Freebayes ALT", 
+        "Freebayes QUAL", "Freebayes FILTER", "Freebayes key", 
+        "Freebayes Indiv", "Freebayes GT", "Freebayes GQ", "Freebayes GL", 
+        "Freebayes DP", "Freebayes RO", "Freebayes QR", "Freebayes AO", 
+        "Freebayes QA", "Freebayes alleles"
     )
-
+    
     #after unlisting multiple variants in the same position, we must
     # keep only unique FN POS
     merged_bnch <- merged_bnch[, .SD[1], by = POS]
     
-    return(
-           list(
-               "merged_bnch" = merged_bnch,
-               "gatk_somatic" = gatk_somatic)
-           )
+    return(merged_bnch)
+    
 }
 
-df = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ), 
-                merged_gt)$merged_bnch
+df = merge_freebayes(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Freebayes_norm.vcf", verbose = FALSE ), 
+                merged_gt)
 
+#df = merged_bnch$merged_bnch
+#freebayes_somatic = df$freebayes_somatic
 
-# gatk_somatic = merge_gatk(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf", verbose = FALSE ),
-#                    merged_gt)$gatk_somatic
-
-
-
-clean_gatk <- function(df) {
-    # Extract relevant columns
+#-----------------------------------------------------------------------------
+clean_freebayes <- function(df) {
+    ## Extract relevant columns
     df2 <- df[, c(
-        "POS", 
-        
-        "Ground Truth REF", 
-        "Ground Truth ALT", 
-        "Ground Truth DP", 
-        "Ground Truth AF",
-        
-        "Mutect2 REF", 
-        "Mutect2 ALT", 
-        "Mutect2 DP", 
-        "Mutect2 AF"
+        "POS",
+        "Ground Truth REF", "Ground Truth ALT", "Ground Truth DP", "Ground Truth AF",
+        "Freebayes REF", "Freebayes ALT", "Freebayes DP", "Freebayes AO"
     ), with = FALSE]
     
-    # Expand multiallelic GT sites into separate rows
+    ## Expand multiallelic ground-truth columns into separate rows
     df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
         "Ground Truth ALT" = tstrsplit(`Ground Truth ALT`, ",") |> unlist(),
-        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",") |> unlist(),
-        "Mutect2 REF" = `Mutect2 REF`[1],
-        "Mutect2 ALT" = `Mutect2 ALT`[1],
-        "Mutect2 DP"  = `Mutect2 DP`[1],
-        "Mutect2 AF"  = `Mutect2 AF`[1]
+        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",")  |> unlist(),
+        "Freebayes REF" = `Freebayes REF`[1],
+        "Freebayes ALT" = `Freebayes ALT`[1],
+        "Freebayes DP"  = `Freebayes DP`[1],
+        "Freebayes AO"  = `Freebayes AO`[1]
     )]
     
-    # Match ALT alleles between GT and Mutect2
+    ## Match ALT alleles between Ground Truth and Freebayes caller
     df2[, `:=` (
-        `ALT Match` = mapply(function(gt_alt, gatk_alt) {
-            if (is.na(gatk_alt)) return(FALSE)
-            return(gt_alt %in% unlist(str_split(gatk_alt, ",")))
-        }, `Ground Truth ALT`, `Mutect2 ALT`),
+        # Check if the Ground Truth ALT allele is present in the comma‐separated Freebayes ALT field
+        `ALT Match` = mapply(function(gt_alt, fb_alt) {
+            if (is.na(fb_alt)) return(FALSE)
+            return(gt_alt %in% unlist(str_split(fb_alt, ",")))
+        }, `Ground Truth ALT`, `Freebayes ALT`),
         
-        `AF Match` = mapply(function(gt_alt, gatk_alt, gatk_af) {
-            if (is.na(gatk_alt) | is.na(gatk_af)) return(NA)
-            alt_list <- str_split(gatk_alt, ",")[[1]]
-            af_list  <- str_split(gatk_af, ",")[[1]]
+        # For matching rows, get the AO value from the allele that matches the ground truth
+        `AO Match` = mapply(function(gt_alt, fb_alt, fb_ao) {
+            if (is.na(fb_alt) || is.na(fb_ao)) return(NA)
+            alt_list <- str_split(fb_alt, ",")[[1]]
+            ao_list  <- str_split(fb_ao, ",")[[1]]
             idx <- which(alt_list == gt_alt)
             if (length(idx) == 0) return(NA)
-            return(af_list[[idx]])
-        }, `Ground Truth ALT`, `Mutect2 ALT`, `Mutect2 AF`)
+            return(ao_list[[idx]])
+        }, `Ground Truth ALT`, `Freebayes ALT`, `Freebayes AO`)
     )]
     
-    # Keep only matched alleles
-    df2[, `Mutect2 ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
-    df2[, `Mutect2 AF`  := `AF Match`]
-    df2[, `Mutect2 REF` := ifelse(`ALT Match`, `Mutect2 REF`, NA)]
-    df2[, `Mutect2 DP`  := ifelse(`ALT Match`, `Mutect2 DP`, NA)]
+    ## Retain only matching alleles and adjust caller fields
+    df2[, `Freebayes ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
+    df2[, `Freebayes AO`  := `AO Match`]
+    df2[, `Freebayes REF` := ifelse(`ALT Match`, `Freebayes REF`, NA)]
+    df2[, `Freebayes DP`  := ifelse(`ALT Match`, `Freebayes DP`, NA)]
     
-    # Classify as TP or FN
-    df2[, type := ifelse(is.na(`Mutect2 ALT`), "FN", "TP")]
+    ## Compute Freebayes AF as AO/DP
+    # Note: this will be NA if either AO or DP is NA.
+    df2[, `Freebayes AF` := as.numeric(`Freebayes AO`) / as.numeric(`Freebayes DP`)]
     
-    # ΔAF: Caller AF - Ground Truth AF (numeric)
-    df2[, `AF Deviation ` := NA_real_]
-    df2[type == "TP", `AF Deviation` := as.numeric(`Mutect2 AF`) - as.numeric(`Ground Truth AF`)]
+    ## Classify as TP or FN based on matching ALT allele
+    df2[, type := ifelse(is.na(`Freebayes ALT`), "FN", "TP")]
     
-    # Final output
-    df2 <- df2[, .(
+    ## Compute the allele frequency deviation for true positives.
+    df2[, `AF Deviation` := NA_real_]
+    df2[type == "TP", `AF Deviation` := as.numeric(`Freebayes AF`) - as.numeric(`Ground Truth AF`)]
+    
+    ## Final output table (you can rearrange columns as needed)
+    final_table <- df2[, .(
         POS,
         `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
-        `Mutect2 REF`, `Mutect2 ALT`, `Mutect2 DP`, `Mutect2 AF`,
+        `Freebayes REF`, `Freebayes ALT`, `Freebayes DP`, `Freebayes AO`, `Freebayes AF`,
         type, `AF Deviation`
     )]
     
-    
-    recall = sum(!is.na(df2$`Mutect2 REF`)) / dim(df2)[1]
+    ## Calculate recall (e.g. proportion of calls with a non-NA caller REF)
+    recall <- sum(!is.na(final_table$`Freebayes REF`)) / nrow(final_table)
     
     return(list(
-               "df2" = df2,
-               "recall" = recall))
+        "vcf_snvs_cleaned" = final_table,
+        "recall" = recall
+    ))
 }
 
+clean_out = clean_freebayes(df)
+
+df_cleaned = clean_out$vcf_snvs_cleaned
+recall = clean_out$recall
 
 
-df_cleaned = clean_gatk(df)$df2
-recall = clean_gatk(df)$recall
+
+
+
+
+
 
 
 
 #------------------------------------------------
 # load_vcf <- function(vcf){
-#     gatk_s0  = gatk_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-#     gatk_s1  = gatk_somatic_vcf |> extract_gt_tidy() |> setDT()
-#     gatk_s21 = gatk_somatic_vcf |> extract_info_tidy() |> setDT()
-#     gatk_somatic = cbind(gatk_s0[gatk_s1$Key, ], gatk_s1)
+#     freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+#     freebayes_s1  = freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
+#     freebayes_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
+#     freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
 # 
-#     return(gatk_somatic)
+#     return(freebayes_somatic)
 # }
 # 
-# gatk_somatic_vcf = read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Mutect2_norm.vcf")
-# gatk_somatic_vcf = load_vcf(gatk_somatic_vcf)
+# freebayes_somatic_vcf = read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10/Merged_Freebayes_norm.vcf")
+# freebayes_somatic_vcf = load_vcf(freebayes_somatic_vcf)
