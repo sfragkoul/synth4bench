@@ -17,17 +17,16 @@ source("R/libraries.R")
 source("R/common_helpers.R")
 source("R/indels_common_helpers.R")
 source("R/snvs_common_helpers.R")
-source("R/viz_common_helpers.R")
+
 
 source("R/gatk_common_helpers.R")
 source("R/indels_gatk_helpers.R")
 source("R/snvs_gatk_helpers.R")
-source("R/viz_gatk_helpers.R")
+
 
 source("R/Freebayes_common_helpers.R")
 source("R/indels_Freebayes_helpers.R")
 source("R/snvs_Freebayes_helpers.R")
-source("R/viz_Freebayes_helpers.R")
 
 
 source("R/helpers_LoFreq.R")
