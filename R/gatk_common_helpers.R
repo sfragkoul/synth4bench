@@ -1,5 +1,5 @@
 
-#TP SNVS-----------------------------------------------------------------------
+#True Variants SNVS------------------------------------------------------------
 read_vcf_mutect2 <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )
@@ -27,14 +27,14 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
 
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
-        "Ground Truth DP", "Ground Truth AD", 
-        "Ground Truth AF", "Run", "DP Indiv", "Count Indiv", 
-        "Freq Indiv", "CHROM", "ID",	"Mutect2 REF",	
-        "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-        "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-        "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-        "gt_PS",	"gt_SB",	"gt_GT_alleles"
+        "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
+        
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
+        
+        "CHROM", "ID",	"Mutect2 REF",	"Mutect2 ALT", "Mutect2 QUAL",	
+        "Mutect2 FILTER", "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
+        "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD", "gt_GQ", "gt_GT",	
+        "gt_PGT", "gt_PID", "gt_PL","gt_PS", "gt_SB", "gt_GT_alleles"
     )
     
     #after unlisting multiple variants in the same position, we must
