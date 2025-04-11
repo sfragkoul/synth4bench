@@ -117,18 +117,17 @@ merged_gt = gt_analysis(c(1,2,3,4,5,6,7,8,9,10),
 
 #-----------------------------------------------------------------------------
 
-merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
+merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
     #return cleaned vcf
-    freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    freebayes_s1  = freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
-    freebayesgatk_s21 = freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
-    
-    freebayes_somatic = cbind(freebayes_s0[freebayes_s1$Key, ], freebayes_s1)
+    VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    VarDict_s1  = VarDict_somatic_vcf |> extract_gt_tidy() |> setDT()
+    VarDictgatk_s21 = VarDict_somatic_vcf |> extract_info_tidy() |> setDT()
+    VarDict_somatic = cbind(VarDict_s0[VarDict_s1$Key, ], VarDict_s1)
     
     
     #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
-    merged_bnch = merge(merged_gt, freebayes_somatic,  by = "POS", all.x = TRUE)
+    merged_bnch = merge(merged_gt, VarDict_somatic,  by = "POS", all.x = TRUE)
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
     
@@ -138,100 +137,104 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
         
         "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
         
-        "Freebayes CHROM", "Freebayes ID", "Freebayes REF", "Freebayes ALT", 
-        "Freebayes QUAL", "Freebayes FILTER", "Freebayes key", 
-        "Freebayes Indiv", "Freebayes GT", "Freebayes GQ", "Freebayes GL", 
-        "Freebayes DP", "Freebayes RO", "Freebayes QR", "Freebayes AO", 
-        "Freebayes QA", "Freebayes alleles"
+        "CHROM", "ID", "VarDict REF",	
+        "VarDict ALT", "VarDict QUAL",	"VarDict FILTER",
+        "key", "Indiv", "gt_GT", "VarDict DP", "gt_VD", "VarDict AD", 
+        "VarDict AF", "gt_RD", "gt_ALD", "gt_GT_alleles"
     )
     
     #after unlisting multiple variants in the same position, we must
     # keep only unique FN POS
     merged_bnch <- merged_bnch[, .SD[1], by = POS]
     
-    return(merged_bnch)
+    return(
+        list(
+            "merged_bnch" = merged_bnch,
+            "VarDict_somatic" = VarDict_somatic)
+    )
     
 }
 
-df = merge_freebayes(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Freebayes_norm.vcf", verbose = FALSE ), 
+df = merge_VarDict(read.vcfR("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_VarDict_norm.vcf", verbose = FALSE ), 
                 merged_gt)
 
 #df = merged_bnch$merged_bnch
 #freebayes_somatic = df$freebayes_somatic
 
 #-----------------------------------------------------------------------------
-clean_freebayes <- function(df) {
-    ## Extract relevant columns
-    df2 <- df[, c(
-        "POS",
-        "Ground Truth REF", "Ground Truth ALT", "Ground Truth DP", "Ground Truth AF",
-        "Freebayes REF", "Freebayes ALT", "Freebayes DP", "Freebayes AO"
+clean_VarDict <- function(df) {
+    # Extract relevant columns
+    df2 <- df$merged_bnch[, c(
+        "POS", 
+        
+        "Ground Truth REF", 
+        "Ground Truth ALT", 
+        "Ground Truth DP", 
+        "Ground Truth AF",
+        
+        "VarDict REF", 
+        "VarDict ALT", 
+        "VarDict DP", 
+        "VarDict AF"
     ), with = FALSE]
     
-    ## Expand multiallelic ground-truth columns into separate rows
+    # Expand multiallelic GT sites into separate rows
     df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
         "Ground Truth ALT" = tstrsplit(`Ground Truth ALT`, ",") |> unlist(),
-        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",")  |> unlist(),
-        "Freebayes REF" = `Freebayes REF`[1],
-        "Freebayes ALT" = `Freebayes ALT`[1],
-        "Freebayes DP"  = `Freebayes DP`[1],
-        "Freebayes AO"  = `Freebayes AO`[1]
+        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",") |> unlist(),
+        "VarDict REF" = `VarDict REF`[1],
+        "VarDict ALT" = `VarDict ALT`[1],
+        "VarDict DP"  = `VarDict DP`[1],
+        "VarDict AF"  = `VarDict AF`[1]
     )]
     
-    ## Match ALT alleles between Ground Truth and Freebayes caller
+    # Match ALT alleles between GT and VarDict
     df2[, `:=` (
-        # Check if the Ground Truth ALT allele is present in the comma‐separated Freebayes ALT field
-        `ALT Match` = mapply(function(gt_alt, fb_alt) {
-            if (is.na(fb_alt)) return(FALSE)
-            return(gt_alt %in% unlist(str_split(fb_alt, ",")))
-        }, `Ground Truth ALT`, `Freebayes ALT`),
+        `ALT Match` = mapply(function(gt_alt, gatk_alt) {
+            if (is.na(gatk_alt)) return(FALSE)
+            return(gt_alt %in% unlist(str_split(gatk_alt, ",")))
+        }, `Ground Truth ALT`, `VarDict ALT`),
         
-        # For matching rows, get the AO value from the allele that matches the ground truth
-        `AO Match` = mapply(function(gt_alt, fb_alt, fb_ao) {
-            if (is.na(fb_alt) || is.na(fb_ao)) return(NA)
-            alt_list <- str_split(fb_alt, ",")[[1]]
-            ao_list  <- str_split(fb_ao, ",")[[1]]
+        `AF Match` = mapply(function(gt_alt, gatk_alt, gatk_af) {
+            if (is.na(gatk_alt) | is.na(gatk_af)) return(NA)
+            alt_list <- str_split(gatk_alt, ",")[[1]]
+            af_list  <- str_split(gatk_af, ",")[[1]]
             idx <- which(alt_list == gt_alt)
             if (length(idx) == 0) return(NA)
-            return(ao_list[[idx]])
-        }, `Ground Truth ALT`, `Freebayes ALT`, `Freebayes AO`)
+            return(af_list[[idx]])
+        }, `Ground Truth ALT`, `VarDict ALT`, `VarDict AF`)
     )]
     
-    ## Retain only matching alleles and adjust caller fields
-    df2[, `Freebayes ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
-    df2[, `Freebayes AO`  := `AO Match`]
-    df2[, `Freebayes REF` := ifelse(`ALT Match`, `Freebayes REF`, NA)]
-    df2[, `Freebayes DP`  := ifelse(`ALT Match`, `Freebayes DP`, NA)]
+    # Keep only matched alleles
+    df2[, `VarDict ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
+    df2[, `VarDict AF`  := `AF Match`]
+    df2[, `VarDict REF` := ifelse(`ALT Match`, `VarDict REF`, NA)]
+    df2[, `VarDict DP`  := ifelse(`ALT Match`, `VarDict DP`, NA)]
     
-    ## Compute Freebayes AF as AO/DP
-    # Note: this will be NA if either AO or DP is NA.
-    df2[, `Freebayes AF` := as.numeric(`Freebayes AO`) / as.numeric(`Freebayes DP`)]
+    # Classify as TP or FN
+    df2[, type := ifelse(is.na(`VarDict ALT`), "FN", "TP")]
     
-    ## Classify as TP or FN based on matching ALT allele
-    df2[, type := ifelse(is.na(`Freebayes ALT`), "FN", "TP")]
+    # ΔAF: Caller AF - Ground Truth AF (numeric)
+    df2[, `AF Deviation ` := NA_real_]
+    df2[type == "TP", `AF Deviation` := as.numeric(`VarDict AF`) - as.numeric(`Ground Truth AF`)]
     
-    ## Compute the allele frequency deviation for true positives.
-    df2[, `AF Deviation` := NA_real_]
-    df2[type == "TP", `AF Deviation` := as.numeric(`Freebayes AF`) - as.numeric(`Ground Truth AF`)]
-    
-    ## Final output table (you can rearrange columns as needed)
-    final_table <- df2[, .(
+    # Final output
+    df2 <- df2[, .(
         POS,
         `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
-        `Freebayes REF`, `Freebayes ALT`, `Freebayes DP`, `Freebayes AO`, `Freebayes AF`,
+        `VarDict REF`, `VarDict ALT`, `VarDict DP`, `VarDict AF`,
         type, `AF Deviation`
     )]
     
-    ## Calculate recall (e.g. proportion of calls with a non-NA caller REF)
-    recall <- sum(!is.na(final_table$`Freebayes REF`)) / nrow(final_table)
+    
+    recall = sum(!is.na(df2$`VarDict REF`)) / nrow(df2)
     
     return(list(
-        "vcf_snvs_cleaned" = final_table,
-        "recall" = recall
-    ))
+        "vcf_snvs_cleaned" = df2,
+        "recall" = recall))
 }
 
-clean_out = clean_freebayes(df)
+clean_out = clean_VarDict(df)
 
 df_cleaned = clean_out$vcf_snvs_cleaned
 recall = clean_out$recall

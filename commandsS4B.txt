@@ -96,7 +96,8 @@ Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/co
  Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
  Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
  
- 
+Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
  
  
  
