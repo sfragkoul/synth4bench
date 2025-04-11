@@ -18,23 +18,23 @@ source("R/common_helpers.R")
 source("R/indels_common_helpers.R")
 source("R/snvs_common_helpers.R")
 
-source("R/gatk_common_helpers.R")
+source("R/common_helpers_gatk.R")
 source("R/indels_gatk_helpers.R")
 source("R/snvs_gatk_helpers.R")
 
-source("R/Freebayes_common_helpers.R")
+source("R/common_helpers_Freebayes.R")
 source("R/indels_Freebayes_helpers.R")
 source("R/snvs_Freebayes_helpers.R")
 
-source("R/VarDict_common_helpers.R")
+source("R/common_helpers_VarDict.R")
 source("R/indels_VarDict_helpers.R")
 source("R/snvs_VarDict_helpers.R")
 
-source("R/VarScan_common_helpers.R")
+source("R/common_helpers_VarScan.R")
 source("R/indels_VarScan_helpers.R")
 source("R/snvs_VarScan_helpers.R")
 
-source("R/LoFreq_common_helpers.R")
+source("R/common_helpers_LoFreq.R")
 source("R/indels_LoFreq_helpers.R")
 source("R/snvs_LoFreq_helpers.R")
 
