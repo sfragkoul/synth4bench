@@ -18,7 +18,6 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
     VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
     VarScan_s2 = VarScan_s2[,c( "DP", "Pvalue", "AF" )]
-    
     VarScan_s0 = VarScan_s0[which(VarScan_s2$AF>0.0)]
     VarScan_s2 = VarScan_s2[which(VarScan_s2$AF>0.0)]
     
@@ -36,90 +35,98 @@ merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
     merged_bnch = merged_bnch[order(POS)]
     
     colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth DP",
-        "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID", "VarScan REF",	
+        "POS",	"Ground Truth REF",	"Ground Truth ALT",
+        "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
+        
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
+        
+        "CHROM", "ID", "VarScan REF",	
         "VarScan ALT", "VarScan QUAL",	"VarScan FILTER", "VarScan DP", "Pvalue","VarScan AF"
     )
     
-    return(merged_bnch)
+    #after unlisting multiple variants in the same position, we must
+    # keep only unique FN POS
+    merged_bnch <- merged_bnch[, .SD[1], by = POS]
+    
+    return(
+        list(
+            "merged_bnch" = merged_bnch,
+            "VarScan_somatic" = VarScan_somatic)
+    )
     
 }
 
 
 clean_VarScan <- function(df) {
-    #function to produce the caller's reported variants in the desired format 
-    df2 = df[, c(
-        "POS",
-        
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
-    ), with = FALSE]
-    
-    
-    
-    df2 = df2[, by = c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth DP",
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
-        
-    ), .(
-        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
-        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-    )]
-
-
-
-    VarScan_alt = str_split(df2$`VarScan ALT`, ",")
-    VarScan_af = str_split(df2$`VarScan AF`, ",")
-
-
-    cln = mapply(
-        function(x, y, z) {
-
-            index = which(y == x)
-
-            return(
-                c(y[index], z[index])
-            )
-
-        },
-
-        df2$`Ground Truth ALT`, VarScan_alt, VarScan_af
-    )
-
-
-    df2$`VarScan ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`VarScan AF`  = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
-    
-    df2[which(is.na(`VarScan AF`))]$`VarScan DP` = NA
-    df2[which(is.na(`VarScan AF`))]$`VarScan REF` = NA
-    
-    df2 = df2[, c(
+    # Extract relevant columns
+    df2 <- df$merged_bnch[, c(
         "POS", 
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
+        
+        "Ground Truth REF", 
+        "Ground Truth ALT", 
+        "Ground Truth DP", 
         "Ground Truth AF",
+        
         "VarScan REF", 
         "VarScan ALT", 
-        "VarScan DP",
+        "VarScan DP", 
         "VarScan AF"
     ), with = FALSE]
-
-    return(df2)
     
+    # Expand multiallelic GT sites into separate rows
+    df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
+        "Ground Truth ALT" = tstrsplit(`Ground Truth ALT`, ",") |> unlist(),
+        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",") |> unlist(),
+        "VarScan REF" = `VarScan REF`[1],
+        "VarScan ALT" = `VarScan ALT`[1],
+        "VarScan DP"  = `VarScan DP`[1],
+        "VarScan AF"  = `VarScan AF`[1]
+    )]
+    
+    # Match ALT alleles between GT and VarScan
+    df2[, `:=` (
+        `ALT Match` = mapply(function(gt_alt, gatk_alt) {
+            if (is.na(gatk_alt)) return(FALSE)
+            return(gt_alt %in% unlist(str_split(gatk_alt, ",")))
+        }, `Ground Truth ALT`, `VarScan ALT`),
+        
+        `AF Match` = mapply(function(gt_alt, gatk_alt, gatk_af) {
+            if (is.na(gatk_alt) | is.na(gatk_af)) return(NA)
+            alt_list <- str_split(gatk_alt, ",")[[1]]
+            af_list  <- str_split(gatk_af, ",")[[1]]
+            idx <- which(alt_list == gt_alt)
+            if (length(idx) == 0) return(NA)
+            return(af_list[[idx]])
+        }, `Ground Truth ALT`, `VarScan ALT`, `VarScan AF`)
+    )]
+    
+    # Keep only matched alleles
+    df2[, `VarScan ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
+    df2[, `VarScan AF`  := `AF Match`]
+    df2[, `VarScan REF` := ifelse(`ALT Match`, `VarScan REF`, NA)]
+    df2[, `VarScan DP`  := ifelse(`ALT Match`, `VarScan DP`, NA)]
+    
+    # Classify as TP or FN
+    df2[, type := ifelse(is.na(`VarScan ALT`), "FN", "TP")]
+    
+    # ΔAF: Caller AF - Ground Truth AF (numeric)
+    df2[, `AF Deviation ` := NA_real_]
+    df2[type == "TP", `AF Deviation` := as.numeric(`VarScan AF`) - as.numeric(`Ground Truth AF`)]
+    
+    # Final output
+    df2 <- df2[, .(
+        POS,
+        `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
+        `VarScan REF`, `VarScan ALT`, `VarScan DP`, `VarScan AF`,
+        type, `AF Deviation`
+    )]
+    
+    
+    recall = sum(!is.na(df2$`VarScan REF`)) / nrow(df2)
+    
+    return(list(
+        "vcf_snvs_cleaned" = df2,
+        "recall" = recall))
 }
 
 load_VarScan_vcf <- function(path, merged_file){
