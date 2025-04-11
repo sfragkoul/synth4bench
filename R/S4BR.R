@@ -32,8 +32,10 @@ source("R/VarDict_common_helpers.R")
 source("R/indels_VarDict_helpers.R")
 source("R/snvs_VarDict_helpers.R")
 
+source("R/VarScan_common_helpers.R")
+source("R/indels_VarScan_helpers.R")
+source("R/snvs_VarScan_helpers.R")
 
-source("R/helpers_VarScan.R")
 source("R/helpers_LoFreq.R")
 
 #Parse arguments from command line
