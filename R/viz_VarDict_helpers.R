@@ -1,24 +1,5 @@
-#'A script, written in R, where all the appropriate functions for 
-#'the analysis of VarDict are located.
-#'
-#'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
-#'
-#'
 
-#TP SNVS-----------------------------------------------------------------------
-read_vcf_VarDict <- function(path, gt, merged_file) {
-  #takes two files and produce a caller vcf file in a certain format 
-  vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarDict_norm.vcf"), verbose = FALSE )
-  
-  vcf_df = vcf |>
-    merge_VarDict(gt) |>
-    clean_VarDict()
-  
-  return(vcf_df)
-  
-}
-
-
+#SNVS--------------------------------------------------------------------------
 plot_snvs_TP_VarDict <- function(df, vcf_GT, vcf_caller, merged_file){
     #plotting function
     out1 = bar_plots_VarDict(df)
@@ -54,114 +35,6 @@ plot_snvs_TP_VarDict <- function(df, vcf_GT, vcf_caller, merged_file){
     
     return(list(multi, out4))
 }
-
-merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
-    #return cleaned vcf
-    VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    VarDict_s1  = VarDict_somatic_vcf |> extract_gt_tidy() |> setDT()
-    VarDictgatk_s21 = VarDict_somatic_vcf |> extract_info_tidy() |> setDT()
-    
-    VarDict_somatic = cbind(VarDict_s0[VarDict_s1$Key, ], VarDict_s1)
-    
-    
-    #Merge everything into a common file
-    merged_gt$POS = as.character(merged_gt$POS)
-    
-    merged_bnch = merge(merged_gt, VarDict_somatic,  by = "POS", all.x = TRUE)
-    
-    merged_bnch$POS = as.numeric(merged_bnch$POS)
-    
-    merged_bnch = merged_bnch[order(POS)]
-    
-    colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth DP",
-        "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID", "VarDict REF",	
-        "VarDict ALT", "VarDict QUAL",	"VarDict FILTER",
-        "key", "Indiv", "gt_GT", "VarDict DP", "gt_VD", "VarDict AD", 
-        "VarDict AF", "gt_RD", "gt_ALD", "gt_GT_alleles"
-    )
-    
-    return(merged_bnch)
-    
-}
-
-
-clean_VarDict <- function(df) {
-    #function to produce the caller's reported variants in the desired format 
-    df2 = df[, c(
-        "POS",
-        
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        
-        "VarDict REF", 
-        "VarDict ALT", 
-        "VarDict DP",
-        "VarDict AF"
-    ), with = FALSE]
-    
-    
-    
-    df2 = df2[, by = c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth DP",
-        "VarDict REF", 
-        "VarDict ALT", 
-        "VarDict DP",
-        "VarDict AF"
-        
-    ), .(
-        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
-        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-    )]
-
-
-
-    VarDict_alt = str_split(df2$`VarDict ALT`, ",")
-    VarDict_af = str_split(df2$`VarDict AF`, ",")
-
-
-    cln = mapply(
-        function(x, y, z) {
-
-            index = which(y == x)
-
-            return(
-                c(y[index], z[index])
-            )
-
-        },
-
-        df2$`Ground Truth ALT`, VarDict_alt, VarDict_af
-    )
-
-
-    df2$`VarDict ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`VarDict AF`  = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
-    
-    df2[which(is.na(`VarDict AF`))]$`VarDict DP` = NA
-    df2[which(is.na(`VarDict AF`))]$`VarDict REF` = NA
-    
-    df2 = df2[, c(
-        "POS", 
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        "VarDict REF", 
-        "VarDict ALT", 
-        "VarDict DP",
-        "VarDict AF"
-    ), with = FALSE]
-
-    return(df2)
-    
-}
-
 
 bar_plots_VarDict <- function(q) {
     #function to produce variants' barplots for coverage and AF
@@ -288,7 +161,6 @@ bar_plots_VarDict <- function(q) {
     
 }
 
-
 density_plot_VarDict <- function(q) {
     #function to produce AF density plots
     q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
@@ -379,7 +251,6 @@ density_plot_VarDict <- function(q) {
     
 }
 
-
 bubble_plots_VarDict <- function(q) {
     #function to produce SNVs bubble plot
     # q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
@@ -461,7 +332,6 @@ bubble_plots_VarDict <- function(q) {
     
 }
 
-
 venn_plot_VarDict <- function(q, p) {
     #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
@@ -489,62 +359,7 @@ venn_plot_VarDict <- function(q, p) {
     return(gr)
 }
 
-
-
 #FP & FN SNVS------------------------------------------------------------------
-
-load_VarDict_vcf <- function(path, merged_file){
-    #function to load caller vcf
-    VarDict_somatic_vcf <- read.vcfR( paste0(path, "/",merged_file, 
-                                             "_VarDict_norm.vcf"), verbose = FALSE )
-    VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #VarDict_s1  = VarDict_somatic_vcf |> extract_gt_tidy() |> setDT()
-    VarDict_s2 = VarDict_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarDict_s2 = VarDict_s2[,c( "DP", "AF" )]
-    VarDict_somatic = cbind(VarDict_s0, VarDict_s2)
-    return(VarDict_somatic)
-}
-
-fp_snvs_VarDict <- function(VarDict_somatic_snvs, pick_gt, gt_all){
-    #find VarDict FP variants
-    fp_var = define_fp(VarDict_somatic_snvs, pick_gt)
-    fp_var$AF = as.numeric(fp_var$AF)
-    colnames(fp_var) = c("CHROM", "POS","ID", "VarDict REF",	
-                         "VarDict ALT", "VarDict QUAL",	"VarDict FILTER",
-                         "VarDict DP", "VarDict AF", "mut")
-    
-    #find DP of FP variants'  location in GT
-    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
-    tmp = tmp[nchar(tmp$REF) == nchar(tmp$ALT)]
-    a = unique(tmp, by = "POS")
-    #to include the presence multiple variants in a POS
-    index = match(fp_var$POS, a$POS)
-    fp_var$`Ground Truth DP` = a[index]$DP
-    fp_var$`DP Percentage` = fp_var$`VarDict DP`/fp_var$`Ground Truth DP`
-    fp_var$type = "FP"
-    return(fp_var)
-}
-
-final_fp_snvs_VarDict<- function(path, merged_file, pick_gt, gt_all){
-    
-    VarDict_somatic <- load_VarDict_vcf(path, merged_file)
-    VarDict_somatic_snvs <-select_snvs(VarDict_somatic)
-    fp_var = fp_snvs_VarDict(VarDict_somatic_snvs, pick_gt, gt_all)
-    
-    return(fp_var)
-}
-
-final_fn_snvs_VarDict<- function(path, merged_file, pick_gt){
-    
-    VarDict_somatic <- load_VarDict_vcf(path, merged_file)
-    VarDict_somatic_snvs <-select_snvs(VarDict_somatic)
-    fn_var = define_fn(VarDict_somatic_snvs, pick_gt)
-    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
-    
-    return(fn_var)
-}
-
 fp_violin_plots_VarDict <- function(q) {
     #function to produce variants' barplots for coverage and AF
     #q[which(q$`VarDict ALT` == "")]$`VarDict ALT` = NA
@@ -679,92 +494,6 @@ plot_snvs_FP_VarDict <- function(df, merged_file) {
 }
 
 #INDELS------------------------------------------------------------------------
-categorize_fns_VarDict <- function(caller, fn_var) {
-    #function to identify FN categories
-    
-    caller$POS = as.numeric(caller$POS)
-    fn_var$POS = as.numeric(fn_var$POS)
-    colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
-                         "Count", "Ground Truth AF","mut","type")
-    #Same POS
-    same_POS <- merge(fn_var, caller, by = c("POS"))
-    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
-    
-    #Same POS & REF
-    same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
-    # Update only rows where POS and REF match
-    fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
-           category := "diff ALT"]
-    
-    return(fn_var)
-}
-
-categorize_fps_VarDict <- function(pick_gt_stdz, fp_indels_VarDict) {
-    #function to identify FP categories
-    pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
-    fp_indels_VarDict$POS = as.numeric(fp_indels_VarDict$POS)
-    
-    colnames(fp_indels_VarDict) = c("CHROM", "POS", "ID", "REF", 
-                                    "ALT", "VarDict QUAL", "VarDict FILTER", "VarDict DP", 
-                                    "VarDict AF", "mut", "Ground Truth DP","DP Percentage", "type")
-    #Same POS
-    same_POS <- merge(fp_indels_VarDict, pick_gt_stdz, by = c("POS"))
-    fp_indels_VarDict[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
-    
-    #Same POS & REF
-    same_POS_REF <- merge(fp_indels_VarDict, pick_gt_stdz, by = c("POS", "REF"))
-    # Update only rows where POS and REF match
-    fp_indels_VarDict[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
-                      category := "diff ALT"]
-    
-    return(fp_indels_VarDict)
-}
-
-
-final_tp_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
-    #function to identify TP indels
-    VarDict_somatic_indels <- load_VarDict_vcf(path, merged_file) |> select_indels()
-    tp_var = define_tp(VarDict_somatic_indels, pick_gt_stdz)
-    return(tp_var)
-}
-
-final_fn_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
-    #function to identify FN indels
-    VarDict_somatic_indels <- load_VarDict_vcf(path, merged_file) |> select_indels()
-    fn_var = define_fn(VarDict_somatic_indels, pick_gt_stdz)
-    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
-    return(fn_var)
-}
-
-final_fp_indels_VarDict <- function(path, merged_file, pick_gt, gt_all){
-    #function to identify FP indels
-    VarDict_somatic_indels <- load_VarDict_vcf(path, merged_file) |> select_indels()
-    fp_var = fp_snvs_VarDict(VarDict_somatic_indels, pick_gt, gt_all)
-    return(fp_var)
-}
-
-
-call_fn_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
-    #function to output categorized FN indels
-    fn_indels_VarDict = final_fn_indels_VarDict(path, merged_file, pick_gt_stdz)
-    VarDict_indels = load_VarDict_vcf(path, merged_file) |> select_indels()
-    fn_indels_VarDict_categories = categorize_fns_VarDict(VarDict_indels, fn_indels_VarDict)
-    
-    return(fn_indels_VarDict_categories)
-}
-
-call_fp_indels_VarDict <- function(path, merged_file, pick_gt_stdz){
-    #function to output categorized FP indels
-    gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
-    fp_indels_VarDict = final_fp_indels_VarDict(path, merged_file, pick_gt_stdz, gt_all)
-    fp_indels_VarDict_categories = categorize_fps_VarDict(pick_gt_stdz, fp_indels_VarDict)
-    
-    return(fp_indels_VarDict_categories)
-}
-
-
-
 circular_plot_VarDict <- function(path, merged_file, caller){
     #Load data
     tp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_TP.tsv"), sep = "\t")

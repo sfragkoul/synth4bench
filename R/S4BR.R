@@ -28,10 +28,13 @@ source("R/Freebayes_common_helpers.R")
 source("R/indels_Freebayes_helpers.R")
 source("R/snvs_Freebayes_helpers.R")
 
+source("R/VarDict_common_helpers.R")
+source("R/indels_VarDict_helpers.R")
+source("R/snvs_VarDict_helpers.R")
 
-source("R/helpers_LoFreq.R")
-source("R/helpers_VarDict.R")
+
 source("R/helpers_VarScan.R")
+source("R/helpers_LoFreq.R")
 
 #Parse arguments from command line
 options <- list(
