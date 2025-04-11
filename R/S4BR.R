@@ -18,11 +18,9 @@ source("R/common_helpers.R")
 source("R/indels_common_helpers.R")
 source("R/snvs_common_helpers.R")
 
-
 source("R/gatk_common_helpers.R")
 source("R/indels_gatk_helpers.R")
 source("R/snvs_gatk_helpers.R")
-
 
 source("R/Freebayes_common_helpers.R")
 source("R/indels_Freebayes_helpers.R")
@@ -36,7 +34,9 @@ source("R/VarScan_common_helpers.R")
 source("R/indels_VarScan_helpers.R")
 source("R/snvs_VarScan_helpers.R")
 
-source("R/helpers_LoFreq.R")
+source("R/LoFreq_common_helpers.R")
+source("R/indels_LoFreq_helpers.R")
+source("R/snvs_LoFreq_helpers.R")
 
 #Parse arguments from command line
 options <- list(

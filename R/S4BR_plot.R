@@ -21,9 +21,7 @@ source("R/viz_gatk_helpers.R")
 source("R/viz_Freebayes_helpers.R")
 source("R/viz_VarDict_helpers.R")
 source("R/viz_VarScan_helpers.R")
-
-source("R/helpers_LoFreq.R")
-
+source("R/viz_LoFreq_helpers.R")
 
 #Parse arguments from command line
 options <- list(
