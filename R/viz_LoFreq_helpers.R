@@ -4,7 +4,7 @@ plot_snvs_TP_LoFreq <- function(df, vcf_GT, vcf_caller, merged_file){
     out1 = bar_plots_LoFreq(df)
     out2 = density_plot_LoFreq(df)
     out3 = bubble_plots_LoFreq(df)
-    out4 = venn_plot_LoFreq(vcf_GT, vcf_caller)
+    #out4 = venn_plot_LoFreq(vcf_GT, vcf_caller)
     
     multi2 = out2$groundtruth / out2$LoFreq &
         
@@ -22,19 +22,19 @@ plot_snvs_TP_LoFreq <- function(df, vcf_GT, vcf_caller, merged_file){
         )
     
     
-    ann2 = out3 + out4 +
-        
-        plot_layout(
-            widths = c(2, 1)
-        )
+    # ann2 = out3 + out4 +
+    #     
+    #     plot_layout(
+    #         widths = c(2, 1)
+    #     )
     
-    multi = ann1 / ann2 +
+    multi = ann1 / out3 +
         
         plot_layout(heights = c(1.5, 1)) + 
         plot_annotation(title = merged_file)
     
     
-    return(list(multi, out4))
+    return(multi)
 }
 
 bar_plots_LoFreq <- function(q) {

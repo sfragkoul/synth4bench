@@ -3,11 +3,11 @@ read_vcf_LoFreq <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_LoFreq_norm.vcf"), verbose = FALSE )
   
-  vcf_df = vcf |>
+  df = (vcf |>
     merge_LoFreq(gt) |>
-    clean_LoFreq()
+    clean_LoFreq())
   
-  return(vcf_df)
+  return(df)
   
 }
 
@@ -17,107 +17,107 @@ merge_LoFreq <- function(LoFreq_somatic_vcf, merged_gt) {
     #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()
     LoFreq_s2 = LoFreq_somatic_vcf |> extract_info_tidy() |> setDT()
     LoFreq_s2 = LoFreq_s2[,c( "DP", "AF" )]
-    
     LoFreq_somatic = cbind(LoFreq_s0, LoFreq_s2)
     
     #Merge everything into a common file
     merged_gt$POS = as.character(merged_gt$POS)
-    
     merged_bnch = merge(merged_gt, LoFreq_somatic,  by = "POS", all.x = TRUE)
-    
     merged_bnch$POS = as.numeric(merged_bnch$POS)
-    
     merged_bnch = merged_bnch[order(POS)]
     
     colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth DP",
-        "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID",	"LoFreq REF",	
+        "POS",	"Ground Truth REF",	"Ground Truth ALT",
+        "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
+        
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv",  
+        
+        "CHROM", "ID",	"LoFreq REF",	
         "LoFreq ALT", "LoFreq QUAL", "LoFreq FILTER", 
         "LoFreq DP", "LoFreq AF"
     )
     
-    return(merged_bnch)
+    #after unlisting multiple variants in the same position, we must
+    # keep only unique FN POS
+    merged_bnch <- merged_bnch[, .SD[1], by = POS]
+    
+    return(
+        list(
+            "merged_bnch" = merged_bnch,
+            "LoFreq_somatic" = LoFreq_somatic)
+    )
     
 }
 
 clean_LoFreq <- function(df) {
-    #function to produce the caller's reported variants in the desired format 
-    df2 = df[, c(
-        "POS",
+    # Extract relevant columns
+    df2 <- df$merged_bnch[, c(
+        "POS", 
         
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
+        "Ground Truth REF", 
+        "Ground Truth ALT", 
+        "Ground Truth DP", 
         "Ground Truth AF",
         
-        "LoFreq REF",
-        "LoFreq ALT",
-        "LoFreq DP",
+        "LoFreq REF", 
+        "LoFreq ALT", 
+        "LoFreq DP", 
         "LoFreq AF"
     ), with = FALSE]
     
-    
-    
-    df2 = df2[, by = c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth DP",
-        "LoFreq REF",
-        "LoFreq ALT",
-        "LoFreq DP",
-        "LoFreq AF"
-
-    ), .(
-        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
-        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-        # "LoFreq REF" = `LoFreq REF` |> tstrsplit(",") |> unlist(),
-        # "LoFreq ALT" = `LoFreq ALT` |> tstrsplit(",") |> unlist(),
-        # "LoFreq DP"  = `LoFreq DP` |> tstrsplit(",") |> unlist() |> as.integer(),
-        # "LoFreq AF"  = `LoFreq AF` |> tstrsplit(",") |> unlist() |> as.numeric()
+    # Expand multiallelic GT sites into separate rows
+    df2 <- df2[, by = .(POS, `Ground Truth REF`, `Ground Truth DP`), .(
+        "Ground Truth ALT" = tstrsplit(`Ground Truth ALT`, ",") |> unlist(),
+        "Ground Truth AF"  = tstrsplit(`Ground Truth AF`, ",") |> unlist(),
+        "LoFreq REF" = `LoFreq REF`[1],
+        "LoFreq ALT" = `LoFreq ALT`[1],
+        "LoFreq DP"  = `LoFreq DP`[1],
+        "LoFreq AF"  = `LoFreq AF`[1]
     )]
-
-
-
-    LoFreq_alt = str_split(df2$`LoFreq ALT`, ",")
-    LoFreq_af = str_split(df2$`LoFreq AF`, ",")
-
-
-    cln = mapply(
-        function(x, y, z) {
-
-            index = which(y == x)
-
-            return(
-                c(y[index], z[index])
-            )
-
-        },
-
-        df2$`Ground Truth ALT`, LoFreq_alt, LoFreq_af
-    )
-
-
-    df2$`LoFreq ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`LoFreq AF` = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
-
-    df2[which(is.na(`LoFreq AF`))]$`LoFreq DP` = NA
-    df2[which(is.na(`LoFreq AF`))]$`LoFreq REF` = NA
-
-    df2 = df2[, c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        "LoFreq REF",
-        "LoFreq ALT",
-        "LoFreq DP",
-        "LoFreq AF"
-    ), with = FALSE]
     
-    return(df2)
+    # Match ALT alleles between GT and LoFreq
+    df2[, `:=` (
+        `ALT Match` = mapply(function(gt_alt, LoFreq_alt) {
+            if (is.na(LoFreq_alt)) return(FALSE)
+            return(gt_alt %in% unlist(str_split(LoFreq_alt, ",")))
+        }, `Ground Truth ALT`, `LoFreq ALT`),
+        
+        `AF Match` = mapply(function(gt_alt, LoFreq_alt, LoFreq_af) {
+            if (is.na(LoFreq_alt) | is.na(LoFreq_af)) return(NA)
+            alt_list <- str_split(LoFreq_alt, ",")[[1]]
+            af_list  <- str_split(LoFreq_af, ",")[[1]]
+            idx <- which(alt_list == gt_alt)
+            if (length(idx) == 0) return(NA)
+            return(af_list[[idx]])
+        }, `Ground Truth ALT`, `LoFreq ALT`, `LoFreq AF`)
+    )]
     
+    # Keep only matched alleles
+    df2[, `LoFreq ALT` := ifelse(`ALT Match`, `Ground Truth ALT`, NA)]
+    df2[, `LoFreq AF`  := `AF Match`]
+    df2[, `LoFreq REF` := ifelse(`ALT Match`, `LoFreq REF`, NA)]
+    df2[, `LoFreq DP`  := ifelse(`ALT Match`, `LoFreq DP`, NA)]
+    
+    # Classify as TP or FN
+    df2[, type := ifelse(is.na(`LoFreq ALT`), "FN", "TP")]
+    
+    # ΔAF: Caller AF - Ground Truth AF (numeric)
+    df2[, `AF Deviation ` := NA_real_]
+    df2[type == "TP", `AF Deviation` := as.numeric(`LoFreq AF`) - as.numeric(`Ground Truth AF`)]
+    
+    # Final output
+    df2 <- df2[, .(
+        POS,
+        `Ground Truth REF`, `Ground Truth ALT`, `Ground Truth DP`, `Ground Truth AF`,
+        `LoFreq REF`, `LoFreq ALT`, `LoFreq DP`, `LoFreq AF`,
+        type, `AF Deviation`
+    )]
+    
+    
+    recall = sum(!is.na(df2$`LoFreq REF`)) / nrow(df2)
+    
+    return(list(
+        "vcf_snvs_cleaned" = df2,
+        "recall" = recall))
 }
 
 load_LoFreq_vcf <- function(path, merged_file){
