@@ -101,8 +101,6 @@ Once you have generated the scripts, you should review them to ensure the parame
    - **Run the Synthesis Script**:
 
     bash synth_generation_run.sh
-
-This will display the available options and details for the `S4BR.R` script.
    
    - **Run the Variant Calling Script**:
 
