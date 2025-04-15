@@ -1,206 +1,39 @@
+#!/bin/bash
 
-##############################
-# Commands for coverage_test folders
-##############################
+# Name of the final log file; remove it if it already exists
+FINAL_LOG="final_results.txt"
+rm -f "$FINAL_LOG"
 
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+# Define arrays for directories and variant callers
+directories=(
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10"
+  "/mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10"
+)
 
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+callers=("Mutect2" "Freebayes" "VarDict" "VarScan" "LoFreq")
 
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+# Loop over each directory and each caller
+for dir in "${directories[@]}"; do
+  for caller in "${callers[@]}"; do
+    # Log the current run details
+    echo "========================================================" >> "$FINAL_LOG"
+    echo "Folder: $dir | Caller: $caller" >> "$FINAL_LOG"
+    echo "--------------------------------------------------------" >> "$FINAL_LOG"
 
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+    # Run the first R script command; redirect both stdout and stderr to the log file
+    Rscript R/S4BR.R -c "$caller" -r 10 -w "$dir" -m Merged >> "$FINAL_LOG" 2>&1
 
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+    # Run the plot R script command; also redirect output
+    Rscript R/S4BR_plot.R -c "$caller" -w "$dir" -m Merged >> "$FINAL_LOG" 2>&1
 
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10 -m Merged
-
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/1000_100_10 -m Merged
-
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/3000_300_10 -m Merged
-
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10 -m Merged
-
-
-##############################
-# Commands for read_length folders
-##############################
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50 -m Merged
-
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_75 -m Merged
-
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_100 -m Merged
-
-
-# Folder: /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300
-# Mutect2
-Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-
-# Freebayes
-Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-
-# VarDict
-Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-
-# VarScan
-Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-
-# LoFreq
-Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_300 -m Merged
-
+    # Optional: add a newline to separate runs
+    echo "" >> "$FINAL_LOG"
+  done
+done
