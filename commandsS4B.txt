@@ -54,9 +54,6 @@ vcflib vcfleftalign -r /mnt/d/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP5
 
 
 
-
-
-
 printf "bcftools norm /results/Merged_freebayes_norm.vcf"
 printf " --output /results/Merged_freebayes_norm_new_new.vcf"
 printf " --output-type v"
@@ -69,11 +66,6 @@ printf "\n \n"
 
 
 
-
-
-
-
-
  bcftools norm 
  --output-type v  
  -m - --check-ref s 
@@ -82,26 +74,19 @@ printf "\n \n"
  /mnt/c/Users/sfragkoul/Desktop/synth4bench/results/Merged_freebayes_norm_new.vcf
  
  
- 
- 
- docker run --rm -ti mgibio/bam-readcount:1.0.1 --help
- 
  #----------------------------------------------------------
  
- cd /mnt/c/Users/sfragkoul/Desktop/synth4bench
+cd /mnt/c/Users/sfragkoul/Desktop/synth4bench
  
 Rscript R/S4BR.R -c Mutect2 -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
 Rscript R/S4BR_plot.R -c Mutect2 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
  
- Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
- Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+Rscript R/S4BR.R -c Freebayes -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+Rscript R/S4BR_plot.R -c Freebayes -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
  
 Rscript R/S4BR.R -c VarDict -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
 Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
- 
- 
- 
- 
+
  
 #----------------------------------------------------------
 #Docker test
