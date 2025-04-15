@@ -103,4 +103,9 @@ docker pull mgibio/bam-readcount:1.0.1
 docker run --rm -ti mgibio/bam-readcount:1.0.1 --help
 
  
- 
+ docker run 
+--rm 
+-v $(pwd):$(pwd) 
+-w $(pwd) mgibio/bam-readcount:1.0.1  
+-f testing/TP53/TP53.fasta 
+testing/TP53/read_length/1000_100/Merged_auto.sorted.bam > testing/TP53/read_length/1000_100/Merged_auto.sorted_report.tsv
