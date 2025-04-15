@@ -242,12 +242,6 @@ recall = clean_out$recall
 
 
 
-
-
-
-
-
-
 #------------------------------------------------
 # load_vcf <- function(vcf){
 #     freebayes_s0  = freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()

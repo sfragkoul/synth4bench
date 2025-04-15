@@ -84,7 +84,7 @@ printf "\n \n"
  
  
  
- 
+ docker run --rm -ti mgibio/bam-readcount:1.0.1 --help
  
  #----------------------------------------------------------
  
@@ -103,9 +103,19 @@ Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/co
  
  
  
+#----------------------------------------------------------
+#Docker test
  
- 
- 
- 
+conda deactivate
+docker pull ubuntu:latest
+docker pull mgibio/bam-readcount
+docker images
+docker run --rm -ti mgibio/bam-readcount bash --help
+docker run --rm -ti ubuntu bash
+docker run --rm -ti ubuntu date
+docker ps
+docker pull mgibio/bam-readcount:1.0.1
+docker run --rm -ti mgibio/bam-readcount:1.0.1 --help
+
  
  

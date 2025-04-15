@@ -70,7 +70,7 @@ options <- list(
 arguments <- parse_args(OptionParser(option_list = options))
 arguments$vcf_path <- arguments$working_directory
 
-#SNVS Treu Variants------------------------------------------------------------
+#SNVS True Variants------------------------------------------------------------
 print("Begin SNVs True Variant Analysis")
 
 # check if Merged_snvs_GT.tsv exists
