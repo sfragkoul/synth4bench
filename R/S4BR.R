@@ -114,11 +114,11 @@ arguments$vcf_path <- arguments$working_directory
 #SNVS FP & FN------------------------------------------------------------------
 print("Begin SNVs FP Variant Analysis")
 
-gt_all <- load_gt_report(arguments$vcf_path,
-                        arguments$merged_file)$all
+gt_load <- load_gt_report(arguments$vcf_path,
+                         arguments$merged_file)
 
-gt_snvs <- load_gt_report(arguments$vcf_path,
-                         arguments$merged_file)$snvs
+gt_all <- gt_load$all
+gt_snvs <- gt_load$snvs
 
 pick_gt <- load_gt_vcf(arguments$vcf_path,
                       arguments$merged_file,

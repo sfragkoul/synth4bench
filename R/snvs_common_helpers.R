@@ -170,7 +170,7 @@ load_gt_report <- function(path, merged_file) {
     # select SNVs
     a_snvs = a[which(ALT %in% c("A", "C", "G", "T")), ]
     #filter DEPTH>2
-    a_snvs = a_snvs[which(a_snvs$Count >2), ]
+    #a_snvs = a_snvs[which(a_snvs$Count >2), ]
     
     
     gt = list(
