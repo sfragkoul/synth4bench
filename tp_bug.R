@@ -168,3 +168,45 @@ fp_var$`Ground Truth DP` = a[index]$DP
 fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
 fp_var$type = "FP"
 
+
+
+#venn method-------------------------------------------------------------------
+
+    vcf_GT = gt_all[, c("POS", "REF", "ALT")]
+    vcf_GT$scenario = "GT"
+    
+    vcf_gatk = Mutect2_somatic_snvs[,c("POS", "REF", "ALT")]
+    vcf_gatk$scenario = "GATK"
+    
+    x = rbind(vcf_GT, vcf_gatk)
+    y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
+    
+    y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
+    
+    y = split(y, y$scenario)
+    
+    y = list(
+        'Ground Truth' = y$GT$mut,
+        'GATK'         = y$GATK$mut
+    )
+    
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
+        
+        coord_equal(clip = "off")
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
