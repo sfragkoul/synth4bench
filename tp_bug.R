@@ -50,7 +50,6 @@ load_gt_report <- function(path, merged_file) {
     #a_snvs = a_snvs[which(a_snvs$Count >2), ]
     
     
-    
     gt = list(
         all = a,
         snvs = a_snvs
@@ -140,8 +139,6 @@ define_tp <- function(caller, gt){
     return(tp_var)
 }
 
-
-
 `%ni%` <- Negate(`%in%`) 
 
 noise_snvs_gatk <- function(path, merged_file){
@@ -160,14 +157,27 @@ noise_snvs_gatk <- function(path, merged_file){
 
 noise_gatk = noise_snvs_gatk(path, merged_file)
 
+variants_noise_snvs_gatk <- function(noise_gatk, gt_snvs){
+    
+    fp_var = define_fp(noise_gatk, gt_snvs)
+    fn_var = define_fn(noise_gatk, gt_snvs)
+    tp_var = define_tp(noise_gatk, gt_snvs)
+    
+    return(list(
+        "fp" = fp_var,
+        "fn" = fn_var,
+        "tp" = tp_var)
+        )
+}
 
-fp_var = define_fp(noise_gatk, gt_snvs)
 
-fn_var = define_fn(noise_gatk, gt_snvs)
+noise_gatk = noise_snvs_gatk(path, merged_file)
 
-tp_var = define_tp(noise_gatk, gt_snvs)
+variants <- variants_noise_snvs_gatk(noise_gatk, gt_snvs)
 
-
+fp = variants$fp
+fn = variants$fn
+tp = variants$tp
 
 
 
