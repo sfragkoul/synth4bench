@@ -96,7 +96,10 @@ gt_analysis <- function(runs, folder, merged_file) {
     merged_gt = merged_gt[order(POS)]
     
     merged_gt$Freq = merged_gt$Freq / 100
-
+    
+    merged_gt$mut = paste(merged_gt$POS, 
+                          merged_gt$REF, 
+                          merged_gt$ALT, sep = ":")
     
     return(merged_gt)
     
@@ -214,7 +217,7 @@ select_snvs <- function(df){
     return(snvs)
 }
 
-noise_variants <- function(path, caller, merged_file, gt_load) {
+noise_variants <- function(path, caller, merged_file, gt_load, gt_tv) {
     
     if(caller == "Freebayes") {
         
@@ -222,7 +225,7 @@ noise_variants <- function(path, caller, merged_file, gt_load) {
         
     } else if (caller == "Mutect2") {
         
-        fn_var <- noise_snvs_gatk(path, merged_file, gt_load)
+        fn_var <- noise_snvs_gatk(path, merged_file, gt_load, gt_tv)
         
     } else if (caller == "LoFreq") {
         

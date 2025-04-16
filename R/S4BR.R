@@ -71,58 +71,59 @@ arguments <- parse_args(OptionParser(option_list = options))
 arguments$vcf_path <- arguments$working_directory
 
 #SNVS True Variants------------------------------------------------------------
-# print("Begin SNVs True Variant Analysis")
-# 
-# # check if Merged_snvs_GT.tsv exists
-# output_file <- file.path(arguments$working_directory,
-#                          paste0(arguments$merged_file, "_snvs_TV.tsv"))
-# 
-# if (!file.exists(output_file)) {
-#     gt <- gt_analysis(seq_len(arguments$runs),
-#                       arguments$working_directory,
-#                       arguments$merged_file)
-#     
-#     fwrite(gt, output_file, row.names = FALSE, quote = FALSE, sep = "\t")
-# } else {
-#    message("File already exists: ", output_file)
-#    gt <- fread(output_file)
-# }
-# 
-# 
-# 
-# snvs <- read_vcf_snvs_TP(arguments$vcf_path,
-#                                    arguments$caller,
-#                                    gt,
-#                                    arguments$merged_file)
-# 
-# out_snvs = snvs$vcf_snvs_cleaned
-# recall = snvs$recall
-# 
-# print(paste("Recall score for True Variants detection:", round(recall, 2)))
-# 
-# 
-# fwrite(
-#   out_snvs, paste0(arguments$working_directory,
-#                          "/",
-#                          arguments$merged_file,
-#                          "_",
-#                          arguments$caller, "_snvs_TV.tsv"),
-# 
-#   row.names = FALSE, quote = FALSE, sep = "\t"
-# )
+print("Begin SNVs True Variant Analysis")
 
-#SNVS Noise variants-----------------------------------------------------------
-print("Begin SNVs FP Variant Analysis")
+# check if Merged_snvs_GT.tsv exists
+output_file <- file.path(arguments$working_directory,
+                         paste0(arguments$merged_file, "_snvs_TV.tsv"))
+
+if (!file.exists(output_file)) {
+    gt_tv <- gt_analysis(seq_len(arguments$runs),
+                      arguments$working_directory,
+                      arguments$merged_file)
+
+    fwrite(gt_tv, output_file, row.names = FALSE, quote = FALSE, sep = "\t")
+} else {
+   message("File already exists: ", output_file)
+    gt_tv <- fread(output_file)
+}
+
+
+
+snvs <- read_vcf_snvs_TP(arguments$vcf_path,
+                                   arguments$caller,
+                                   gt_tv,
+                                   arguments$merged_file)
+
+out_snvs = snvs$vcf_snvs_cleaned
+recall = snvs$recall
+
+print(paste("Recall score for True Variants detection:", round(recall, 2)))
+
+
+fwrite(
+  out_snvs, paste0(arguments$working_directory,
+                         "/",
+                         arguments$merged_file,
+                         "_",
+                         arguments$caller, "_snvs_TV.tsv"),
+
+  row.names = FALSE, quote = FALSE, sep = "\t"
+)
+
+#SNVs Noise variants-----------------------------------------------------------
+print("Begin SNVs Noise Variant Analysis")
 
 gt_load <- load_gt_report(arguments$vcf_path,
                          arguments$merged_file)$snvs
-
-
+# All-TV=noise
+gt_load <- gt_load[!mut %in% gt_tv$mut]
 
 noise_snvs <- noise_variants(arguments$vcf_path,
                                    arguments$caller,
                                    arguments$merged_file,
-                                   gt_load)
+                                   gt_load,
+                                   gt_tv)
 
 out_noise_snvs = rbind(noise_snvs$tp, noise_snvs$fp, noise_snvs$fn)
 out_noise_snvs$POS = as.numeric(out_noise_snvs$POS)

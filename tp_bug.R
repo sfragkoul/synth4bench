@@ -1,7 +1,15 @@
 source("R/libraries.R")
 
-path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
+path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10"
 merged_file <- "Merged"
+
+output_file <- file.path(path,
+                         paste0(merged_file, "_snvs_TV.tsv"))
+
+gt <- fread(output_file)
+gt$mut = paste(gt$POS, 
+               gt$REF, 
+               gt$ALT, sep = ":")
 #------------------------------------------------------------------------------
 load_gt_report <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
@@ -61,7 +69,8 @@ load_gt_report <- function(path, merged_file) {
 gt_snvs <- load_gt_report(path,
                           merged_file)$snvs
 
-
+# All-TV=noise
+gt_snvs <- gt_snvs[!mut %in% gt$mut]
 #------------------------------------------------------------------------------
 #load functions
 load_gatk_vcf <- function(path, merged_file){
@@ -122,13 +131,10 @@ noise_snvs_gatk <- function(path, merged_file){
     Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
     colnames(Mutect2_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
     Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)######
-    
+    Mutect2_somatic_snvs <- Mutect2_somatic_snvs[!mut %in% gt$mut]
     return(Mutect2_somatic_snvs)
 }
 
-
-
-noise_gatk = noise_snvs_gatk(path, merged_file)
 
 variants_noise_snvs_gatk <- function(noise_gatk, gt_snvs){
     
@@ -163,32 +169,32 @@ all_noise = all_noise[order(POS)]
 
 #venn method-------------------------------------------------------------------
 
-    # vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
-    # vcf_GT$scenario = "GT"
-    # 
-    # vcf_gatk = noise_gatk[,c("POS", "REF", "ALT")]
-    # vcf_gatk$scenario = "GATK"
-    # 
-    # x = rbind(vcf_GT, vcf_gatk)
-    # y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
-    # 
-    # y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
-    # 
-    # y = split(y, y$scenario)
-    # 
-    # y = list(
-    #     'Ground Truth' = y$GT$mut,
-    #     'GATK'         = y$GATK$mut
-    # )
-    # 
-    # gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
-    #     
-    #     coord_equal(clip = "off")
-    
+    vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
+    vcf_GT$scenario = "GT"
 
-    
-    
-    
+    vcf_gatk = noise_gatk[,c("POS", "REF", "ALT")]
+    vcf_gatk$scenario = "GATK"
+
+    x = rbind(vcf_GT, vcf_gatk)
+    y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
+
+    y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
+
+    y = split(y, y$scenario)
+
+    y = list(
+        'Ground Truth' = y$GT$mut,
+        'GATK'         = y$GATK$mut
+    )
+
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
+
+        coord_equal(clip = "off")
+
+    gr
+
+
+
 
 
 
