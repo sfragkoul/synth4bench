@@ -111,42 +111,29 @@ arguments$vcf_path <- arguments$working_directory
 #   row.names = FALSE, quote = FALSE, sep = "\t"
 # )
 
-#SNVS FP & FN------------------------------------------------------------------
+#SNVS Noise variants-----------------------------------------------------------
 print("Begin SNVs FP Variant Analysis")
 
 gt_load <- load_gt_report(arguments$vcf_path,
                          arguments$merged_file)
 
 
-pick_gt <- load_gt_vcf(arguments$vcf_path,
-                      arguments$merged_file,
-                      gt_load$snvs)
 
-out_df_snvs_fp <- read_vcf_snvs_FP(arguments$vcf_path,
+noise_snvs <- noise_variants(arguments$vcf_path,
                                    arguments$caller,
                                    arguments$merged_file,
-                                   pick_gt,
-                                   gt_load$all)
+                                   gt_load)
+
+out_noise_snvs = rbind(noise_snvs$tp, noise_snvs$fp, noise_snvs$fn)
 
 fwrite(
-    out_df_snvs_fp, paste0(arguments$working_directory, "/",
+    out_noise_snvs, paste0(arguments$working_directory, "/",
                            arguments$merged_file, "_",
-                           arguments$caller, "_snvs_FP.tsv"),
+                           arguments$caller, "_snvs_Noise.tsv"),
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
-# print("Begin SNVs FN Variant Analysis")
-# out_df_snvs_fn = read_vcf_snvs_FN(arguments$vcf_path,
-#                                   arguments$caller,
-#                                   arguments$merged_file,
-#                                   pick_gt)
-# 
-# fwrite(
-#     out_df_snvs_fn, paste0(arguments$working_directory, "/",
-#                                arguments$merged_file, "_",
-#                                arguments$caller, "_snvs_FN.tsv"),
-#     row.names = FALSE, quote = FALSE, sep = "\t"
-# )
+
 
 #INDELs------------------------------------------------------------------
 # print("Begin INDELs Variant Analysis")

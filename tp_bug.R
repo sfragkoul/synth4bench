@@ -61,25 +61,6 @@ load_gt_report <- function(path, merged_file) {
 gt_snvs <- load_gt_report(path,
                           merged_file)$snvs
 
-#------------------------------------------------------------------------------
-# load_gt_vcf <- function(path, merged_file, gt_snvs){
-#     #function to load Ground Truth vcf
-#     ground_truth_vcf <- read.vcfR( paste0(path, "/",merged_file, 
-#                                           "_ground_truth_norm.vcf"),
-#                                    verbose = FALSE )
-#     
-#     ground_truth_vcf  = ground_truth_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-#     
-#     pick_gt = gt_snvs[which(gt_snvs$POS %in% ground_truth_vcf$POS)]
-#     pick_gt$mut = paste(pick_gt$POS, 
-#                         pick_gt$REF, 
-#                         pick_gt$ALT, sep = ":")
-#     return(pick_gt)
-# }
-# 
-# pick_gt <- load_gt_vcf(path,
-#                        merged_file,
-#                        gt_load$snvs)
 
 #------------------------------------------------------------------------------
 #load functions
@@ -187,27 +168,27 @@ tp = variants$tp
 
 #venn method-------------------------------------------------------------------
 
-    vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
-    vcf_GT$scenario = "GT"
-    
-    vcf_gatk = noise_gatk[,c("POS", "REF", "ALT")]
-    vcf_gatk$scenario = "GATK"
-    
-    x = rbind(vcf_GT, vcf_gatk)
-    y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
-    
-    y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
-    
-    y = split(y, y$scenario)
-    
-    y = list(
-        'Ground Truth' = y$GT$mut,
-        'GATK'         = y$GATK$mut
-    )
-    
-    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
-        
-        coord_equal(clip = "off")
+    # vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
+    # vcf_GT$scenario = "GT"
+    # 
+    # vcf_gatk = noise_gatk[,c("POS", "REF", "ALT")]
+    # vcf_gatk$scenario = "GATK"
+    # 
+    # x = rbind(vcf_GT, vcf_gatk)
+    # y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
+    # 
+    # y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
+    # 
+    # y = split(y, y$scenario)
+    # 
+    # y = list(
+    #     'Ground Truth' = y$GT$mut,
+    #     'GATK'         = y$GATK$mut
+    # )
+    # 
+    # gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
+    #     
+    #     coord_equal(clip = "off")
     
 
     
