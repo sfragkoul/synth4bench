@@ -87,14 +87,6 @@ select_snvs <- function(df){
 }
 
 #################################################
-# fp_snvs_gatk <- function(Mutect2_somatic_snvs, gt_snvs){#term snvs is redundant
-#     #find MUtect2 FP variants
-#     fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
-#     # fp_var$AF = as.numeric(fp_var$AF)######################################
-#     fp_var$type = "FP"
-#     return(fp_var)
-# }
-
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
@@ -160,9 +152,12 @@ fp = variants$fp
 fn = variants$fn
 tp = variants$tp
 
+all_noise = rbind(variants$tp,
+                  variants$fp,
+                  variants$fn)
 
-
-
+all_noise$POS = as.numeric(all_noise$POS)
+all_noise = all_noise[order(POS)]
 
 
 

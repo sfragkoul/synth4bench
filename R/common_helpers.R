@@ -315,7 +315,7 @@ define_fp <- function(caller, gt){
 define_fn <- function(caller, gt){
     #FN Variants
     fn_var = gt[which(gt$mut %ni% caller$mut)]
-    fn_var = fn_var[,c("POS", "REF",  "ALT",  "DP", "AD", "Freq","mut" )]#####
+    fn_var = fn_var[, c("POS", "REF", "ALT", "DP", "AD", "Freq", "mut")]#####
     colnames(fn_var) = c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )#####
     fn_var$type = "FN"
     

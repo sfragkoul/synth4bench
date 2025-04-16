@@ -167,6 +167,14 @@ load_gt_report <- function(path, merged_file) {
     
     a = a[which(REF != a$ALT & Count != 0)]
     
+    a$mut = paste(a$POS, #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  a$REF, 
+                  a$ALT, sep = ":")
+    
+    colnames(a) = c("POS", "REF", "DP","ALT", "AD", "Freq", "mut")################
+    
+    
+    
     # select SNVs
     a_snvs = a[which(ALT %in% c("A", "C", "G", "T")), ]
     #filter DEPTH>2

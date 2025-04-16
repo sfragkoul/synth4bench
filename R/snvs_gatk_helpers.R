@@ -7,6 +7,7 @@ noise_snvs_gatk <- function(path, merged_file, gt_load){
     Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
     colnames(Mutect2_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
     Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)######
+    
     fp_var = define_fp(Mutect2_somatic_snvs, gt_load)
     fn_var = define_fn(Mutect2_somatic_snvs, gt_load)
     tp_var = define_tp(Mutect2_somatic_snvs, gt_load)

@@ -115,7 +115,7 @@ arguments$vcf_path <- arguments$working_directory
 print("Begin SNVs FP Variant Analysis")
 
 gt_load <- load_gt_report(arguments$vcf_path,
-                         arguments$merged_file)
+                         arguments$merged_file)$snvs
 
 
 
@@ -125,6 +125,8 @@ noise_snvs <- noise_variants(arguments$vcf_path,
                                    gt_load)
 
 out_noise_snvs = rbind(noise_snvs$tp, noise_snvs$fp, noise_snvs$fn)
+out_noise_snvs$POS = as.numeric(out_noise_snvs$POS)
+out_noise_snvs = out_noise_snvs[order(POS)]
 
 fwrite(
     out_noise_snvs, paste0(arguments$working_directory, "/",
