@@ -55,10 +55,9 @@ load_gt_report <- function(path, merged_file) {
     return(gt)
 }
 
-gt_load <- load_gt_report(path,
-                          merged_file)
-gt_all<- gt_load$all
-gt_snvs<- gt_load$snvs
+gt_snvs <- load_gt_report(path,
+                          merged_file)$snvs
+
 #------------------------------------------------------------------------------
 # load_gt_vcf <- function(path, merged_file, gt_snvs){
 #     #function to load Ground Truth vcf
@@ -80,6 +79,7 @@ gt_snvs<- gt_load$snvs
 #                        gt_load$snvs)
 
 #------------------------------------------------------------------------------
+#load functions
 load_gatk_vcf <- function(path, merged_file){
     #function to load caller vcf
     Mutect2_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
@@ -131,7 +131,6 @@ define_fp <- function(caller, gt){
     return(fp_var)
 }
 
-
 `%ni%` <- Negate(`%in%`) 
 
 final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
@@ -143,6 +142,10 @@ final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
     return(fp_var)
 }
 
+
+
+
+#see how vars are treated
 Mutect2_somatic <- load_gatk_vcf(path, merged_file)
 Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
 Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP" , "mut" )]
