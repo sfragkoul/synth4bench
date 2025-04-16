@@ -77,6 +77,7 @@ print("Begin SNVs True Variant Analysis")
 output_file <- file.path(arguments$working_directory,
                          paste0(arguments$merged_file, "_snvs_TV.tsv"))
 
+
 if (!file.exists(output_file)) {
     gt_tv <- gt_analysis(seq_len(arguments$runs),
                       arguments$working_directory,
@@ -95,14 +96,12 @@ snvs <- read_vcf_snvs_TP(arguments$vcf_path,
                                    gt_tv,
                                    arguments$merged_file)
 
-out_snvs = snvs$vcf_snvs_cleaned
-recall = snvs$recall
 
-print(paste("Recall score for True Variants detection:", round(recall, 2)))
+print(paste("Recall score for True Variants detection:", round(snvs$recall, 2)))
 
 
 fwrite(
-  out_snvs, paste0(arguments$working_directory,
+    snvs$vcf_snvs_cleaned, paste0(arguments$working_directory,
                          "/",
                          arguments$merged_file,
                          "_",
@@ -128,6 +127,9 @@ noise_snvs <- noise_variants(arguments$vcf_path,
 out_noise_snvs = rbind(noise_snvs$tp, noise_snvs$fp, noise_snvs$fn)
 out_noise_snvs$POS = as.numeric(out_noise_snvs$POS)
 out_noise_snvs = out_noise_snvs[order(POS)]
+
+print(paste("Recall score for Noise detection:", round(noise_snvs$noise_recall, 2)))
+print(paste("Precision score for Noise detection:", round(noise_snvs$noise_precision, 2)))
 
 fwrite(
     out_noise_snvs, paste0(arguments$working_directory, "/",

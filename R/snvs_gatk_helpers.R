@@ -12,10 +12,15 @@ noise_snvs_gatk <- function(path, merged_file, gt_load, gt_tv){
     fp_var = define_fp(Mutect2_somatic_snvs, gt_load)
     fn_var = define_fn(Mutect2_somatic_snvs, gt_load)
     tp_var = define_tp(Mutect2_somatic_snvs, gt_load)
+
+    recall = nrow(tp_var)/(nrow(tp_var) + nrow(fn_var))
+    precision = nrow(tp_var)/(nrow(tp_var) + nrow(fp_var))
     
     return(list(
         "fp" = fp_var,
         "fn" = fn_var,
-        "tp" = tp_var)
+        "tp" = tp_var,
+        "noise_recall" = recall,
+        "noise_precision" = precision)
     )
 }

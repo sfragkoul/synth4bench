@@ -29,7 +29,7 @@ merge_gatk <- function(gatk_somatic_vcf, merged_gt) {
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
         "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
         
-        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", "mut",
         
         "CHROM", "ID",	"Mutect2 REF",	"Mutect2 ALT", "Mutect2 QUAL",	
         "Mutect2 FILTER", "key", "Indiv", "Mutect2 AD", "Mutect2 AF",

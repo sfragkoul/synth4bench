@@ -142,10 +142,15 @@ variants_noise_snvs_gatk <- function(noise_gatk, gt_snvs){
     fn_var = define_fn(noise_gatk, gt_snvs)
     tp_var = define_tp(noise_gatk, gt_snvs)
     
+    recall = nrows(tp_var)/(tp_var + fn_var)
+    precision = nrows(tp_var)/(tp_var + fp_var)
+    
     return(list(
         "fp" = fp_var,
         "fn" = fn_var,
-        "tp" = tp_var)
+        "tp" = tp_var),
+        "recall" = recall,
+        "precision" = precision
         )
 }
 
