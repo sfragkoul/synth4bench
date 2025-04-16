@@ -1,6 +1,6 @@
 source("R/libraries.R")
 
-path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10"
+path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
 merged_file <- "Merged"
 #------------------------------------------------------------------------------
 load_gt_report <- function(path, merged_file) {
@@ -102,24 +102,10 @@ select_snvs <- function(df){
     return(snvs)
 }
 
-fp_snvs_gatk <- function(Mutect2_somatic_snvs, gt_all){#term snvs is redundant
+fp_snvs_gatk <- function(Mutect2_somatic_snvs, gt_snvs){#term snvs is redundant
     #find MUtect2 FP variants
-    fp_var = define_fp(Mutect2_somatic_snvs, pick_gt)
-    fp_var$gt_AF = as.numeric(fp_var$gt_AF)
-    colnames(fp_var) = c("CHROM", "POS","ID", "Mutect2 REF",	
-                         "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-                         "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-                         "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-                         "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-                         "gt_PS",	"gt_SB",	"gt_GT_alleles", "mut")
-    
-    #find DP of FP variants'  location in GT
-    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
-    a = unique(tmp, by = "POS")
-    #to include the presence multiple variants in a POS
-    index = match(fp_var$POS, a$POS)
-    fp_var$`Ground Truth DP` = a[index]$DP
-    fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
+    fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
+    fp_var$AF = as.numeric(fp_var$AF)
     fp_var$type = "FP"
     return(fp_var)
 }
@@ -133,49 +119,35 @@ define_fp <- function(caller, gt){
 
 `%ni%` <- Negate(`%in%`) 
 
-final_fp_snvs_gatk <- function(path, merged_file, pick_gt, gt_all){
+final_fp_snvs_gatk <- function(path, merged_file, gt_snvs){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-    fp_var <- fp_snvs_gatk(Mutect2_somatic_snvs, pick_gt, gt_all)
+    fp_var <- fp_snvs_gatk(Mutect2_somatic_snvs, gt_snvs)
     
     return(fp_var)
 }
 
+fp_gatk <- final_fp_snvs_gatk(path, merged_file, gt_snvs)
 
 
 
 #see how vars are treated
 Mutect2_somatic <- load_gatk_vcf(path, merged_file)
 Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP" , "mut" )]
+Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP" , "gt_AF" ,"mut" )]
+colnames(Mutect2_somatic_snvs) <- c("POS", "REF", "ALT", "DP" , "AF","mut" )
+rm(Mutect2_somatic)
 
-fp_var = define_fp(Mutect2_somatic_snvs, gt_all)
-
-
-
-fp_var$gt_AF = as.numeric(fp_var$gt_AF)
-colnames(fp_var) = c("CHROM", "POS","ID", "Mutect2 REF",	
-                     "Mutect2 ALT", "Mutect2 QUAL",	"Mutect2 FILTER",
-                     "key", "Indiv", "Mutect2 AD", "Mutect2 AF",
-                     "Mutect2 DP", "gt_F1R2", "gt_F2R1", "gt_FAD",	
-                     "gt_GQ", "gt_GT",	"gt_PGT",	"gt_PID",	"gt_PL",
-                     "gt_PS",	"gt_SB",	"gt_GT_alleles", "mut")
-
-#find DP of FP variants'  location in GT
-tmp = gt_all[which(POS %in% unique(fp_var$POS))]
-a = unique(tmp, by = "POS")
-#to include the presence multiple variants in a POS
-index = match(fp_var$POS, a$POS)
-fp_var$`Ground Truth DP` = a[index]$DP
-fp_var$`DP Percentage` = fp_var$`Mutect2 DP`/fp_var$`Ground Truth DP`
+fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
+fp_var$AF = as.numeric(fp_var$AF)
 fp_var$type = "FP"
 
 
 
 #venn method-------------------------------------------------------------------
 
-    vcf_GT = gt_all[, c("POS", "REF", "ALT")]
+    vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
     vcf_GT$scenario = "GT"
     
     vcf_gatk = Mutect2_somatic_snvs[,c("POS", "REF", "ALT")]
