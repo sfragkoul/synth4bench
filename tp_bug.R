@@ -144,7 +144,7 @@ define_tp <- function(caller, gt){
 
 `%ni%` <- Negate(`%in%`) 
 
-final_fp_snvs_gatk <- function(path, merged_file, gt_snvs){
+noise_snvs_gatk <- function(path, merged_file){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
@@ -152,43 +152,20 @@ final_fp_snvs_gatk <- function(path, merged_file, gt_snvs){
     Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
     colnames(Mutect2_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
     Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)######
-    fp_var <- define_fp(Mutect2_somatic_snvs, gt_snvs)###################
     
-    return(fp_var)
+    return(Mutect2_somatic_snvs)
 }
 
-fp_gatk <- final_fp_snvs_gatk(path, merged_file, gt_snvs)
 
 
-
-#see how vars are treated
-Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-Mutect2_somatic_snvs[, AD := as.numeric(sapply(strsplit(gt_AD, ","), function(x) x[2]))]
-Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
-colnames(Mutect2_somatic_snvs) <- c("POS", "REF", "ALT", "DP" , "AD", "AF","mut" )
-Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)
-rm(Mutect2_somatic)
+noise_gatk = noise_snvs_gatk(path, merged_file)
 
 
+fp_var = define_fp(noise_gatk, gt_snvs)
 
-fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
+fn_var = define_fn(noise_gatk, gt_snvs)
 
-fn_var = define_fn(Mutect2_somatic_snvs, gt_snvs)
-
-tp_var = define_tp(Mutect2_somatic_snvs, gt_snvs)
-
-
-
-
-
-
-
-
-
-
-
-
+tp_var = define_tp(noise_gatk, gt_snvs)
 
 
 
@@ -203,7 +180,7 @@ tp_var = define_tp(Mutect2_somatic_snvs, gt_snvs)
     vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
     vcf_GT$scenario = "GT"
     
-    vcf_gatk = Mutect2_somatic_snvs[,c("POS", "REF", "ALT")]
+    vcf_gatk = noise_gatk[,c("POS", "REF", "ALT")]
     vcf_gatk$scenario = "GATK"
     
     x = rbind(vcf_GT, vcf_gatk)
