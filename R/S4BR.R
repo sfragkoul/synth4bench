@@ -111,7 +111,7 @@ fwrite(
 )
 
 #SNVs Noise variants-----------------------------------------------------------
-print("Begin SNVs Noise Variant Analysis")
+print("Begin SNVs Noise Analysis")
 
 gt_load <- load_gt_report(arguments$vcf_path,
                          arguments$merged_file)$snvs
