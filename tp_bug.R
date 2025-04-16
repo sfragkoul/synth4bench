@@ -41,10 +41,14 @@ load_gt_report <- function(path, merged_file) {
                   a$REF, 
                   a$ALT, sep = ":")
     
+    colnames(a) = c("POS", "REF", "DP","ALT", "AD", "Freq", "mut")################
+    
+    
     # select SNVs
     a_snvs = a[which(ALT %in% c("A", "C", "G", "T")), ]
     #filter DEPTH>2
     #a_snvs = a_snvs[which(a_snvs$Count >2), ]
+    
     
     
     gt = list(
@@ -102,20 +106,39 @@ select_snvs <- function(df){
     return(snvs)
 }
 
-fp_snvs_gatk <- function(Mutect2_somatic_snvs, gt_snvs){#term snvs is redundant
-    #find MUtect2 FP variants
-    fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
-    fp_var$AF = as.numeric(fp_var$AF)
-    fp_var$type = "FP"
-    return(fp_var)
-}
+#################################################
+# fp_snvs_gatk <- function(Mutect2_somatic_snvs, gt_snvs){#term snvs is redundant
+#     #find MUtect2 FP variants
+#     fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
+#     # fp_var$AF = as.numeric(fp_var$AF)######################################
+#     fp_var$type = "FP"
+#     return(fp_var)
+# }
 
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
+    fp_var$type = "FP"#################################
     
     return(fp_var)
 }
+
+define_fn <- function(caller, gt){
+    #FN Variants
+    fn_var = gt[which(gt$mut %ni% caller$mut)]
+    fn_var$type = "FN"
+    
+    return(fn_var)
+}
+
+define_tp <- function(caller, gt){
+    #FN Variants
+    tp_var = caller[which(caller$mut %in% gt$mut)]
+    tp_var$type = "TP"
+    return(tp_var)
+}
+
+
 
 `%ni%` <- Negate(`%in%`) 
 
@@ -123,7 +146,11 @@ final_fp_snvs_gatk <- function(path, merged_file, gt_snvs){
     
     Mutect2_somatic <- load_gatk_vcf(path, merged_file)
     Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-    fp_var <- fp_snvs_gatk(Mutect2_somatic_snvs, gt_snvs)
+    Mutect2_somatic_snvs[, AD := as.numeric(sapply(strsplit(gt_AD, ","), function(x) x[2]))]#######
+    Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
+    colnames(Mutect2_somatic_snvs) <- c("POS", "REF", "ALT", "DP" , "AD", "AF","mut" )
+    Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)######
+    fp_var <- define_fp(Mutect2_somatic_snvs, gt_snvs)###################
     
     return(fp_var)
 }
@@ -135,13 +162,37 @@ fp_gatk <- final_fp_snvs_gatk(path, merged_file, gt_snvs)
 #see how vars are treated
 Mutect2_somatic <- load_gatk_vcf(path, merged_file)
 Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP" , "gt_AF" ,"mut" )]
-colnames(Mutect2_somatic_snvs) <- c("POS", "REF", "ALT", "DP" , "AF","mut" )
+Mutect2_somatic_snvs[, AD := as.numeric(sapply(strsplit(gt_AD, ","), function(x) x[2]))]
+Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
+colnames(Mutect2_somatic_snvs) <- c("POS", "REF", "ALT", "DP" , "AD", "AF","mut" )
+Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)
 rm(Mutect2_somatic)
 
+
+
 fp_var = define_fp(Mutect2_somatic_snvs, gt_snvs)
-fp_var$AF = as.numeric(fp_var$AF)
-fp_var$type = "FP"
+
+fn_var = define_fn(Mutect2_somatic_snvs, gt_snvs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -170,6 +221,9 @@ fp_var$type = "FP"
         coord_equal(clip = "off")
     
 
+    
+    
+    
 
 
 
