@@ -1,15 +1,34 @@
 source("R/libraries.R")
 
-path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/5000_500_10"
+path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
 merged_file <- "Merged"
 
 output_file <- file.path(path,
                          paste0(merged_file, "_snvs_TV.tsv"))
 
 gt <- fread(output_file)
-gt$mut = paste(gt$POS, 
-               gt$REF, 
-               gt$ALT, sep = ":")
+
+# 1) define exactly which to collapse and which to keep
+merge_cols <- c("Run", "DP Indiv", "Count Indiv")
+other_cols <- setdiff(names(gt), c("mut", merge_cols))
+
+# 2) do the group‑by/collapse
+gt <- gt[ , {
+    # a) grab the first value of each "other" column
+    consts    <- .SD[1, other_cols, with = FALSE]
+    # b) collapse each of the merge_cols into "x,y,..." strings
+    collapsed <- as.list(sapply(merge_cols, function(col) 
+        paste(.SD[[col]], collapse = ",")))
+    names(collapsed) <- merge_cols
+    # c) combine them, and add mut at the end
+    c(consts, collapsed, mut = mut[1])
+},
+by = mut
+]
+
+gt$mut=NULL
+
+
 #------------------------------------------------------------------------------
 load_gt_report <- function(path, merged_file) {
     #function to load Ground Truth bam-report 

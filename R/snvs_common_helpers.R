@@ -101,6 +101,26 @@ gt_analysis <- function(runs, folder, merged_file) {
                           merged_gt$REF, 
                           merged_gt$ALT, sep = ":")
     
+    #find and merge TVs that are duplicates from multiple Run files
+    #define exactly which to collapse and which to keep
+    merge_cols <- c("Run", "DP Indiv", "Count Indiv")
+    other_cols <- setdiff(names(merged_gt), c("mut", merge_cols))
+    
+    merged_gt <- merged_gt[ , {
+        #grab the first value of each "other" column
+        consts    <- .SD[1, other_cols, with = FALSE]
+        #collapse each of the merge_cols into "x,y,..." strings
+        collapsed <- as.list(sapply(merge_cols, function(col) 
+            paste(.SD[[col]], collapse = ",")))
+        names(collapsed) <- merge_cols
+        # combine them, and add mut at the end
+        c(consts, collapsed, mut = mut[1])
+    },
+    by = mut
+    ]
+    #remove second column of mut
+    merged_gt$mut=NULL
+    
     return(merged_gt)
     
 }
