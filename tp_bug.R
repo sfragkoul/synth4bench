@@ -8,6 +8,7 @@ output_file <- file.path(path,
 
 gt <- fread(output_file)
 
+
 #------------------------------------------------------------------------------
 load_gt_report <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
