@@ -30,7 +30,7 @@ merge_VarDict <- function(VarDict_somatic_vcf, merged_gt) {
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
         "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
         
-        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", "mut",
         
         "CHROM", "ID", "VarDict REF",	
         "VarDict ALT", "VarDict QUAL",	"VarDict FILTER",
