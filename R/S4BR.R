@@ -97,9 +97,6 @@ snvs <- read_vcf_snvs_TP(arguments$vcf_path,
                                    arguments$merged_file)
 
 
-#print(paste("Recall score for True Variants detection:", round(snvs$recall, 3)))
-
-
 fwrite(
     snvs$vcf_snvs_cleaned, paste0(arguments$working_directory,
                          "/",
@@ -128,8 +125,6 @@ out_noise_snvs = rbind(noise_snvs$tp, noise_snvs$fp, noise_snvs$fn)
 out_noise_snvs$POS = as.numeric(out_noise_snvs$POS)
 out_noise_snvs = out_noise_snvs[order(POS)]
 
-# print(paste("Recall score for Noise detection:", round(noise_snvs$noise_recall, 3)))
-# print(paste("Precision score for Noise detection:", round(noise_snvs$noise_precision, 3)))
 
 fwrite(
     out_noise_snvs, paste0(arguments$working_directory, "/",
