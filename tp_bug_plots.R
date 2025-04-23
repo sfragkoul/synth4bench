@@ -6,7 +6,7 @@ gt_comparison <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
 caller <- "Mutect2"
 merged_file <- "Merged"
 
-plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
+plot_snvs_TP <- function(gt_comparison, caller, merged_file) {
     
     # Construct file path
     file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_Noise.tsv")
@@ -23,27 +23,27 @@ plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
     if (nrow(df) == 0) {
         warning(paste("File is empty:", file_path))
         # Return a placeholder plot or NULL
-        return(ggplot() + labs(title = paste("No FN snvs data for", caller), x = NULL, y = NULL))
+        return(ggplot() + labs(title = paste("No FP snvs data for", caller), x = NULL, y = NULL))
     }
     
     
-    df_fn <- df[df$type == "FN", ]
+    df_tp <- df[df$type == "TP", ]
     
     
     # Generate subplots if the file is not empty
-    fn_plot1 <- fn_dp_barplot(df_fn, caller)
-    fn_plot2 <- fn_af_barplot(df_fn, caller)
+    tp_plot1 <- tp_dp_barplot(df_tp, caller)
+    tp_plot2 <- tp_af_barplot(df_tp, caller)
     
     # Combine the subplots
-    fn_plot <- fn_plot1 + fn_plot2 +
+    tp_plot <- tp_plot1 + tp_plot2 +
         plot_layout(
             widths = c(1, 1)
         )
     
-    return(fn_plot)
+    return(fp_plot)
 }
 
-fn_dp_barplot <- function(q, caller){
+tp_dp_barplot <- function(q, caller){
     #FP DP plot
     df = q[, c(
         "POS", 
@@ -91,7 +91,7 @@ fn_dp_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " FN Variants"))
+            labels = c(paste0(caller, " TP Variants"))
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -122,9 +122,7 @@ fn_dp_barplot <- function(q, caller){
     
 }
 
-
-
-fn_af_barplot <- function(q, caller){
+tp_af_barplot <- function(q, caller){
     #FP AF plot
     df = q[, c(
         "POS",
@@ -172,7 +170,7 @@ fn_af_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " FN Variants"))
+            labels = c(paste0(caller, " TP Variants"))
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
