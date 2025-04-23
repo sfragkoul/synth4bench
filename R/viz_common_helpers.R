@@ -423,7 +423,6 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
 }
 
 #TP
-
 plot_snvs_TP <- function(gt_comparison, caller, merged_file) {
     
     # Construct file path
