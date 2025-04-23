@@ -138,6 +138,21 @@ fwrite(
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
+#write stats in a txt file
+stats <- data.frame(
+    recall            = snvs$recall,
+    noise_recall      = noise_snvs$noise_recall,
+    noise_precision   = noise_snvs$noise_precision
+)
+
+
+write.table(stats,
+            file      = paste0(arguments$working_directory, "/",
+                               arguments$merged_file, "_",
+                               arguments$caller, "_snvs_stats.txt"),
+            sep       = "\t",
+            row.names = FALSE,
+            quote     = FALSE)
 
 
 #INDELs------------------------------------------------------------------
