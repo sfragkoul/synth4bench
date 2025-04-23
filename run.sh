@@ -22,16 +22,12 @@ callers=("Mutect2" "Freebayes" "VarDict" "VarScan" "LoFreq")
 # Loop over each directory and each caller
 for dir in "${directories[@]}"; do
   for caller in "${callers[@]}"; do
-    # Log the current run details
-    echo "========================================================" >> "$FINAL_LOG"
-    echo "Folder: $dir | Caller: $caller" >> "$FINAL_LOG"
-    echo "--------------------------------------------------------" >> "$FINAL_LOG"
 
     # Run the first R script command; redirect both stdout and stderr to the log file
-    Rscript R/S4BR.R -c "$caller" -r 10 -w "$dir" -m Merged >> "$FINAL_LOG" 2>&1
+    Rscript R/S4BR.R -c "$caller" -r 10 -w "$dir" -m Merged 
 
     # Run the plot R script command; also redirect output
-    Rscript R/S4BR_plot.R -c "$caller" -w "$dir" -m Merged >> "$FINAL_LOG" 2>&1
+    Rscript R/S4BR_plot.R -c "$caller" -w "$dir" -m Merged 
 
     # Optional: add a newline to separate runs
     echo "" >> "$FINAL_LOG"
