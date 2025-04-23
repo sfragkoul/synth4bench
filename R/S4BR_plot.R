@@ -90,37 +90,37 @@ ggsave(
 # )
 
 # #SNVs FP & FN------------------------------------------------------------------
-# print("Plotting SNVs FP Variants")
-# plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
-#                               arguments$caller,
-#                               arguments$merged_file)
-# 
-# ggsave(
-#     plot = plots_snvs_FP, filename = paste0(arguments$gt_comparison,
-#                                                  "/Plots/",
-#                                                  arguments$merged_file, "_",
-#                                                  arguments$caller,
-#                                                  "_snvs_FP.png"),
-#     width = 16, height = 12, units = "in", dpi = 600
-# )
-# 
-# 
-# print("Plotting SNVs FN Variants")
-# plots_snvs_FN <- plot_snvs_FN(arguments$gt_comparison,
-#                               arguments$caller,
-#                               arguments$merged_file)
-# 
-# ggsave(
-#     plot = plots_snvs_FN, filename = paste0(arguments$gt_comparison,
-#                                             "/Plots/",
-#                                             arguments$merged_file, "_",
-#                                             arguments$caller,
-#                                             "_snvs_FN.png"),
-#     width = 16, height = 12, units = "in", dpi = 600
-# )
-# 
-# 
-# 
+print("Plotting SNVs FP Variants")
+plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
+                              arguments$caller,
+                              arguments$merged_file)
+
+ggsave(
+    plot = plots_snvs_FP, filename = paste0(arguments$gt_comparison,
+                                                 "/Plots/",
+                                                 arguments$merged_file, "_",
+                                                 arguments$caller,
+                                                 "_snvs_FP.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
+
+
+print("Plotting SNVs FN Variants")
+plots_snvs_FN <- plot_snvs_FN(arguments$gt_comparison,
+                              arguments$caller,
+                              arguments$merged_file)
+
+ggsave(
+    plot = plots_snvs_FN, filename = paste0(arguments$gt_comparison,
+                                            "/Plots/",
+                                            arguments$merged_file, "_",
+                                            arguments$caller,
+                                            "_snvs_FN.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
+
+
+
 # #INDELs TP & FP & FN-----------------------------------------------------------
 # print("Plotting TP & FP & FN INDELs")
 # indel_plots <- plot_indels(arguments$gt_comparison,
