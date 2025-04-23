@@ -1,5 +1,4 @@
 
-#True Variants SNVS------------------------------------------------------------
 read_vcf_freebayes <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format   
   vcf <- read.vcfR( paste0(path, "/", merged_file, "_freebayes_norm.vcf"), verbose = FALSE )
@@ -26,12 +25,11 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     merged_bnch = merge(merged_gt, freebayes_somatic,  by = "POS", all.x = TRUE)
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
-    
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
         "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
         
-        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", 
+        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", "mut",
         
         "Freebayes CHROM", "Freebayes ID", "Freebayes REF", "Freebayes ALT", 
         "Freebayes QUAL", "Freebayes FILTER", "Freebayes key", 
@@ -132,7 +130,7 @@ load_Freebayes_vcf <- function(path, merged_file){
     Freebayes_s0  = Freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #Freebayes_s1  = Freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
     Freebayes_s2 = Freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
-    Freebayes_s2 = Freebayes_s2[,c( "DP", "AF" )]
+    Freebayes_s2 = Freebayes_s2[,c( "DP", "AO", "AF" )]
     Freebayes_somatic = cbind(Freebayes_s0, Freebayes_s2)
     return(Freebayes_somatic)
 }

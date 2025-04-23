@@ -241,7 +241,7 @@ noise_variants <- function(path, caller, merged_file, gt_load, gt_tv) {
     
     if(caller == "Freebayes") {
         
-        fn_var <- final_fn_snvs_Freebayes(path, merged_file, gt_load)
+        fn_var <- noise_snvs_Freebayes(path, merged_file, gt_load, gt_tv)
         
     } else if (caller == "Mutect2") {
         
@@ -249,15 +249,15 @@ noise_variants <- function(path, caller, merged_file, gt_load, gt_tv) {
         
     } else if (caller == "LoFreq") {
         
-        fn_var <- final_fn_snvs_LoFreq(path, merged_file, gt_load)
+        fn_var <- final_fn_snvs_LoFreq(path, merged_file, gt_load, gt_tv)
         
     } else if (caller == "VarDict") {
         
-        fn_var <- final_fn_snvs_VarDict(path, merged_file, gt_load)
+        fn_var <- final_fn_snvs_VarDict(path, merged_file, gt_load, gt_tv)
         
     } else if (caller == "VarScan") {
         
-        fn_var <- final_fn_snvs_VarScan(path, merged_file, gt_load)
+        fn_var <- final_fn_snvs_VarScan(path, merged_file, gt_load, gt_tv)
         
     }
     

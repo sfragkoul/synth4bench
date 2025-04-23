@@ -307,7 +307,7 @@ explore_mut_pos <- function(runs, folder, caller) {
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
-    fp_var$type = "FP"#################################
+    fp_var$type = "FP"
     
     return(fp_var)
 }
@@ -315,8 +315,8 @@ define_fp <- function(caller, gt){
 define_fn <- function(caller, gt){
     #FN Variants
     fn_var = gt[which(gt$mut %ni% caller$mut)]
-    fn_var = fn_var[, c("POS", "REF", "ALT", "DP", "AD", "Freq", "mut")]#####
-    colnames(fn_var) = c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )#####
+    fn_var = fn_var[, c("POS", "REF", "ALT", "DP", "AD", "Freq", "mut")]
+    colnames(fn_var) = c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
     fn_var$type = "FN"
     
     return(fn_var)

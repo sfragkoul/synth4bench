@@ -142,10 +142,10 @@ stats <- data.frame(
 
 
 write.table(stats,
-            file      = paste0(arguments$working_directory, "/",
+            file = paste0(arguments$working_directory, "/",
                                arguments$merged_file, "_",
                                arguments$caller, "_snvs_stats.txt"),
-            sep       = "\t",
+            sep = "\t",
             row.names = FALSE,
             quote     = FALSE)
 

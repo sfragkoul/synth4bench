@@ -1,15 +1,13 @@
 source("R/libraries.R")
-
+#load GT-----------------------------------------------------------------------
 path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
 merged_file <- "Merged"
 
 output_file <- file.path(path,
                          paste0(merged_file, "_snvs_TV.tsv"))
 
-gt <- fread(output_file)
+gt_tv <- fread(output_file)
 
-
-#------------------------------------------------------------------------------
 load_gt_report <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
     a <- paste0(path, "/", merged_file, "_report.tsv") |>
@@ -65,25 +63,12 @@ load_gt_report <- function(path, merged_file) {
     return(gt)
 }
 
-gt_snvs <- load_gt_report(path,
+gt_load <- load_gt_report(path,
                           merged_file)$snvs
 
 # All-TV=noise
-gt_snvs <- gt_snvs[!mut %in% gt$mut]
-#------------------------------------------------------------------------------
-#load functions
-load_gatk_vcf <- function(path, merged_file){
-    #function to load caller vcf
-    Mutect2_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                             "_Mutect2_norm.vcf"), verbose = FALSE )
-    
-    Mutect2_s0  = Mutect2_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    Mutect2_s1  = Mutect2_somatic_vcf |> extract_gt_tidy() |> setDT()
-    Mutect2gatk_s21 = Mutect2_somatic_vcf |> extract_info_tidy() |> setDT()
-    Mutect2_somatic = cbind(Mutect2_s0[Mutect2_s1$Key, ], Mutect2_s1)
-    return(Mutect2_somatic)
-}
-
+gt_load <- gt_load[!mut %in% gt_tv$mut]
+#load common functions---------------------------------------------------------
 select_snvs <- function(df){
     # select SNVs from caller based on length of REF and ALT
     snvs = df[nchar(df$REF) == nchar(df$ALT)]
@@ -93,81 +78,79 @@ select_snvs <- function(df){
     
     return(snvs)
 }
-
-#################################################
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
-    fp_var$type = "FP"#################################
+    fp_var$type = "FP"
     
     return(fp_var)
 }
-
 define_fn <- function(caller, gt){
     #FN Variants
     fn_var = gt[which(gt$mut %ni% caller$mut)]
-    fn_var = fn_var[,c("POS", "REF",  "ALT",  "DP", "AD", "Freq","mut" )]#####
-    colnames(fn_var) = c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )#####
+    fn_var = fn_var[,c("POS", "REF",  "ALT",  "DP", "AD", "Freq","mut" )]
+    colnames(fn_var) = c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
     fn_var$type = "FN"
     
     return(fn_var)
 }
-
 define_tp <- function(caller, gt){
     #FN Variants
     tp_var = caller[which(caller$mut %in% gt$mut)]
     tp_var$type = "TP"
     return(tp_var)
 }
-
 `%ni%` <- Negate(`%in%`) 
 
-noise_snvs_gatk <- function(path, merged_file){
-    
-    Mutect2_somatic <- load_gatk_vcf(path, merged_file)
-    Mutect2_somatic_snvs <-select_snvs(Mutect2_somatic)
-    Mutect2_somatic_snvs[, AD := as.numeric(sapply(strsplit(gt_AD, ","), function(x) x[2]))]#######
-    Mutect2_somatic_snvs <- Mutect2_somatic_snvs[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
-    colnames(Mutect2_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
-    Mutect2_somatic_snvs$AF = as.numeric(Mutect2_somatic_snvs$AF)######
-    Mutect2_somatic_snvs <- Mutect2_somatic_snvs[!mut %in% gt$mut]
-    return(Mutect2_somatic_snvs)
+
+#load caller functions---------------------------------------------------------
+load_Freebayes_vcf <- function(path, merged_file){
+    #function to load caller vcf
+    Freebayes_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
+                                               "_freebayes_norm.vcf"), verbose = FALSE )
+    Freebayes_s0  = Freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    #Freebayes_s1  = Freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
+    Freebayes_s2 = Freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
+    Freebayes_s2 = Freebayes_s2[,c( "DP", "AO", "AF" )]
+    Freebayes_somatic = cbind(Freebayes_s0, Freebayes_s2)
+    return(Freebayes_somatic)
 }
 
 
-variants_noise_snvs_gatk <- function(noise_gatk, gt_snvs){
+#build caller noise function---------------------------------------------------
+noise_snvs_Freebayes <- function(path, merged_file, gt_load, gt_tv){
     
-    fp_var = define_fp(noise_gatk, gt_snvs)
-    fn_var = define_fn(noise_gatk, gt_snvs)
-    tp_var = define_tp(noise_gatk, gt_snvs)
+    Freebayes_somatic <- load_Freebayes_vcf(path, merged_file)
+    Freebayes_somatic_snvs <-select_snvs(Freebayes_somatic)
+    Freebayes_somatic_snvs <- Freebayes_somatic_snvs[,c("POS", "REF", "ALT", "DP", "AO", "AF" ,"mut" )]
+    colnames(Freebayes_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
+    Freebayes_somatic_snvs$AF = as.numeric(Freebayes_somatic_snvs$AF)
+    Freebayes_somatic_snvs <- Freebayes_somatic_snvs[!mut %in% gt_tv$mut]
     
-    recall = nrows(tp_var)/(tp_var + fn_var)
-    precision = nrows(tp_var)/(tp_var + fp_var)
+    fp_var = define_fp(Freebayes_somatic_snvs, gt_load)
+    fn_var = define_fn(Freebayes_somatic_snvs, gt_load)
+    tp_var = define_tp(Freebayes_somatic_snvs, gt_load)
+    
+    recall = nrow(tp_var)/(nrow(tp_var) + nrow(fn_var))
+    precision = nrow(tp_var)/(nrow(tp_var) + nrow(fp_var))
     
     return(list(
         "fp" = fp_var,
         "fn" = fn_var,
-        "tp" = tp_var),
-        "recall" = recall,
-        "precision" = precision
-        )
+        "tp" = tp_var,
+        "noise_recall" = recall,
+        "noise_precision" = precision)
+    )
 }
 
 
-noise_gatk = noise_snvs_gatk(path, merged_file)
 
-variants <- variants_noise_snvs_gatk(noise_gatk, gt_snvs)
+# test function ---------------------------------------------------------------
 
-fp = variants$fp
-fn = variants$fn
-tp = variants$tp
+noise = noise_snvs_Freebayes(path, merged_file, gt_load, gt_tv)
 
-all_noise = rbind(variants$tp,
-                  variants$fp,
-                  variants$fn)
-
-all_noise$POS = as.numeric(all_noise$POS)
-all_noise = all_noise[order(POS)]
+print(noise$noise_recall)
+print(noise$noise_precision)
 
 
 
@@ -176,10 +159,10 @@ all_noise = all_noise[order(POS)]
     vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
     vcf_GT$scenario = "GT"
 
-    vcf_gatk = noise_gatk[,c("POS", "REF", "ALT")]
-    vcf_gatk$scenario = "GATK"
+    vcf_Freebayes = noise_Freebayes[,c("POS", "REF", "ALT")]
+    vcf_Freebayes$scenario = "Freebayes"
 
-    x = rbind(vcf_GT, vcf_gatk)
+    x = rbind(vcf_GT, vcf_Freebayes)
     y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
 
     y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
@@ -188,7 +171,7 @@ all_noise = all_noise[order(POS)]
 
     y = list(
         'Ground Truth' = y$GT$mut,
-        'GATK'         = y$GATK$mut
+        'Freebayes'         = y$Freebayes$mut
     )
 
     gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +

@@ -1,5 +1,4 @@
 
-#True Variants SNVS------------------------------------------------------------
 read_vcf_mutect2 <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_Mutect2_norm.vcf"), verbose = FALSE )

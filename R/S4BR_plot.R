@@ -93,7 +93,7 @@ ggsave(
                                                  "/Plots/",
                                                  arguments$merged_file, "_",
                                                  arguments$caller,
-                                                 "_snvs_FP.png"),
+                                                 "_snvs_Noise_FP.png"),
     width = 16, height = 12, units = "in", dpi = 600
 )
 
@@ -108,7 +108,7 @@ ggsave(
                                             "/Plots/",
                                             arguments$merged_file, "_",
                                             arguments$caller,
-                                            "_snvs_FN.png"),
+                                            "_snvs_Noise_FN.png"),
     width = 16, height = 12, units = "in", dpi = 600
 )
 
@@ -122,7 +122,7 @@ ggsave(
                                             "/Plots/",
                                             arguments$merged_file, "_",
                                             arguments$caller,
-                                            "_snvs_TP.png"),
+                                            "_snvs_Noise_TP.png"),
     width = 16, height = 12, units = "in", dpi = 600
 )
 

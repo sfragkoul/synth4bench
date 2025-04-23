@@ -85,7 +85,7 @@ fn_dp_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " FN Variants"))
+            labels = c(paste0(caller, " Noise FN Variants"))
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -163,7 +163,7 @@ fn_af_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " FN Variants"))
+            labels = c(paste0(caller, " Noise FN Variants"))
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
@@ -205,15 +205,22 @@ plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
     # Read the file
     df <- fread(file_path)
     
-    # Check if the file is empty
-    if (nrow(df) == 0) {
-        warning(paste("File is empty:", file_path))
-        # Return a placeholder plot or NULL
-        return(ggplot() + labs(title = paste("No FN snvs data for", caller), x = NULL, y = NULL))
-    }
-    
     
     df_fn <- df[df$type == "FN", ]
+    
+    # Check if any false positives are present
+    if (nrow(df_fn) == 0) {
+        warning(paste("No FN SNVs data for", caller))
+        # Return a placeholder plot indicating no FP SNVs
+        return(
+            ggplot() +
+                labs(
+                    title = paste("No FN SNVs for", caller),
+                    x = NULL,
+                    y = NULL
+                )
+        )
+    }
     
     
     # Generate subplots if the file is not empty
@@ -278,7 +285,7 @@ fp_dp_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " FP Variants"))
+            labels = c(paste0(caller, " Noise FP Variants"))
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -356,7 +363,7 @@ fp_af_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " FP Variants"))
+            labels = c(paste0(caller, " Noise FP Variants"))
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
@@ -398,15 +405,22 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
     # Read the file
     df <- fread(file_path)
     
-    # Check if the file is empty
-    if (nrow(df) == 0) {
-        warning(paste("File is empty:", file_path))
-        # Return a placeholder plot or NULL
-        return(ggplot() + labs(title = paste("No FP snvs data for", caller), x = NULL, y = NULL))
-    }
-    
     
     df_fp <- df[df$type == "FP", ]
+    
+    # Check if any false positives are present
+    if (nrow(df_fp) == 0) {
+        warning(paste("No FP SNVs data for", caller))
+        # Return a placeholder plot indicating no FP SNVs
+        return(
+            ggplot() +
+                labs(
+                    title = paste("No FP SNVs for", caller),
+                    x = NULL,
+                    y = NULL
+                )
+        )
+    }
     
     
     # Generate subplots if the file is not empty
@@ -435,17 +449,21 @@ plot_snvs_TP <- function(gt_comparison, caller, merged_file) {
     
     # Read the file
     df <- fread(file_path)
-    
-    # Check if the file is empty
-    if (nrow(df) == 0) {
-        warning(paste("File is empty:", file_path))
-        # Return a placeholder plot or NULL
-        return(ggplot() + labs(title = paste("No FP snvs data for", caller), x = NULL, y = NULL))
-    }
-    
-    
     df_tp <- df[df$type == "TP", ]
     
+    # Check if any false positives are present
+    if (nrow(df_tp) == 0) {
+        warning(paste("No TP SNVs data for", caller))
+        # Return a placeholder plot indicating no FP SNVs
+        return(
+            ggplot() +
+                labs(
+                    title = paste("No TP SNVs for", caller),
+                    x = NULL,
+                    y = NULL
+                )
+        )
+    }
     
     # Generate subplots if the file is not empty
     tp_plot1 <- tp_dp_barplot(df_tp, caller)
@@ -507,7 +525,7 @@ tp_dp_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " TP Variants"))
+            labels = c(paste0(caller, " Noise TP Variants"))
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -585,7 +603,7 @@ tp_af_barplot <- function(q, caller){
         ) +
         
         scale_x_discrete(
-            labels = c(paste0(caller, " TP Variants"))
+            labels = c(paste0(caller, " Noise TP Variants"))
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
