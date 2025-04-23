@@ -1,12 +1,15 @@
 source("R/libraries.R")
 
-df = fread("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_snvs_TV.tsv", verbose = FALSE) 
+#df = fread("C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10/Merged_Mutect2_snvs_TV.tsv", verbose = FALSE) 
 
+gt_comparison <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
+caller <- "Mutect2"
+merged_file <- "Merged"
 
 plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
     
     # Construct file path
-    file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_FN.tsv")
+    file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_Noise.tsv")
     
     # Check if file exists
     if (!file.exists(file_path)) {
@@ -23,9 +26,13 @@ plot_snvs_FN <- function(gt_comparison, caller, merged_file) {
         return(ggplot() + labs(title = paste("No FN snvs data for", caller), x = NULL, y = NULL))
     }
     
+    
+    df_fn <- df[df$type == "FN", ]
+    
+    
     # Generate subplots if the file is not empty
-    fn_plot1 <- fn_dp_barplot(df, caller)
-    fn_plot2 <- fn_af_barplot(df, caller)
+    fn_plot1 <- fn_dp_barplot(df_fn, caller)
+    fn_plot2 <- fn_af_barplot(df_fn, caller)
     
     # Combine the subplots
     fn_plot <- fn_plot1 + fn_plot2 +
@@ -40,7 +47,7 @@ fn_dp_barplot <- function(q, caller){
     #FP DP plot
     df = q[, c(
         "POS", 
-        "Ground Truth DP"
+        "AD"
     ), with = FALSE] |>
         unique() |>
         melt(id.vars = "POS", variable.factor = FALSE, value.factor = FALSE)
@@ -79,7 +86,7 @@ fn_dp_barplot <- function(q, caller){
         
         scale_fill_manual(
             values = c(
-                "Ground Truth DP" = color
+                "AD" = color
             )
         ) +
         
@@ -109,17 +116,19 @@ fn_dp_barplot <- function(q, caller){
         ) +
         
         labs(
-            y = "Coverage (No. of reads)"
+            y = "Allele Depth (No. of reads)"
         )
     return(o3)
     
 }
 
+
+
 fn_af_barplot <- function(q, caller){
     #FP AF plot
     df = q[, c(
         "POS",
-        "Ground Truth AF"
+        "AF"
     ), with = FALSE] |>
         unique() |>
         
@@ -158,7 +167,7 @@ fn_af_barplot <- function(q, caller){
         
         scale_fill_manual(
             values = c(
-                "Ground Truth AF" = color
+                "AF" = color
             )
         ) +
         
@@ -192,3 +201,4 @@ fn_af_barplot <- function(q, caller){
     return(o4)
     
 }
+

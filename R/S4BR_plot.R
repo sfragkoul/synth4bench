@@ -64,45 +64,38 @@ arguments$gt_path <- arguments$working_directory
 
 
 #SNVs TP-----------------------------------------------------------------------
-print("Plotting SNVs TP Variants")
-plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
-                          arguments$vcf_path,
-                          arguments$gt_path,
-                          arguments$caller,
-                          arguments$merged_file)
-
-dir.create(paste0(arguments$working_directory, "/Plots"))
-
-ggsave(
-  plot = plots_snvs_TP, filename = paste0(arguments$working_directory,
-                                       "/Plots/Poster_",
-                                       arguments$caller,
-                                       "_snvs_TV.png"),
-  width = 16, height = 12, units = "in", dpi = 600
-)
-
+# print("Plotting SNVs TP Variants")
+# plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
+#                           arguments$vcf_path,
+#                           arguments$gt_path,
+#                           arguments$caller,
+#                           arguments$merged_file)
+# 
+# dir.create(paste0(arguments$working_directory, "/Plots"))
+# 
 # ggsave(
-#   plot = plots_snvs_TP[[2]], filename = paste0(arguments$working_directory,
-#                                        "/Plots/Venn_all_Variants_",
+#   plot = plots_snvs_TP, filename = paste0(arguments$working_directory,
+#                                        "/Plots/Poster_",
 #                                        arguments$caller,
-#                                        ".png"),
-#   width = 8, height = 8, units = "in", dpi = 600
+#                                        "_snvs_TV.png"),
+#   width = 16, height = 12, units = "in", dpi = 600
 # )
+
 
 # #SNVs FP & FN------------------------------------------------------------------
 print("Plotting SNVs FP Variants")
-plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
-                              arguments$caller,
-                              arguments$merged_file)
-
-ggsave(
-    plot = plots_snvs_FP, filename = paste0(arguments$gt_comparison,
-                                                 "/Plots/",
-                                                 arguments$merged_file, "_",
-                                                 arguments$caller,
-                                                 "_snvs_FP.png"),
-    width = 16, height = 12, units = "in", dpi = 600
-)
+# plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
+#                               arguments$caller,
+#                               arguments$merged_file)
+# 
+# ggsave(
+#     plot = plots_snvs_FP, filename = paste0(arguments$gt_comparison,
+#                                                  "/Plots/",
+#                                                  arguments$merged_file, "_",
+#                                                  arguments$caller,
+#                                                  "_snvs_FP.png"),
+#     width = 16, height = 12, units = "in", dpi = 600
+# )
 
 
 print("Plotting SNVs FN Variants")
