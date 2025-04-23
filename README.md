@@ -30,11 +30,11 @@
 
 <div align='justify'> Our framework focuses on addressing the challenge of variant calling, particularly for variants at low frequencies (≤10%). The main goal is to develop a reliable and consistent method for identifying genetic lesions, specifically in the context of cancer-associated genomic alterations. The absence of a ground truth, which refers to a reliable reference dataset with known variants, makes benchmarking and evaluating variant calling algorithms difficult. To overcome this challenge, the following steps are outlined in the framework:
 
-1. Synth Data Generation: Synthetic genomics data is generated based on the *TP53* gene using the NEATv3.3 simulator in order to create synthetic datasets that mimic real cancer genome data. The "Ground Truth" is established by creating 10 individual datasets (each one of the same characteristics) containing Single Nucleotide Polymorphisms (SNPs) and Insertions/Deletions (INDELs). The genomic regions where variants accure with 100% Allele Frequency are chosen. The reason behind this choice is to avoid variants that are related to errors and products of noise. Then all these datasets are merged into one single file and the allele frequency is again measured at these genomic regions of interest.
+1. **Synth Data Generation**: Synthetic genomics data is generated using the NEATv3.3 simulator in order to create datasets that mimic real genome data that plays the role of Ground Truth.
 
-2. Benchmarking Variant Callers: Somatic variant callers are evaluated using this synthetic Ground Truth dataset. GATK-Mutect2, Freebayes, VarDict, VarScan2 and LoFreq variant callers are assessed for their performance on our synthetic ground truth dataset. Their impact at low frequencies (≤10%) is explored, as these are particularly challenging to detect accurately.
+2. **Benchmarking Variant Callers**: Five somatic variant callers (i.e. GATK-Mutect2, Freebayes, VarDict, VarScan2 and LoFreq) are evaluated using our synthetic Ground Truth dataset.
 
-The framework's overall aim is to provide a robust framework for evaluating the performance of tumor-only somatic variant calling algorithms by using synthetic datasets. By having a reliable ground truth, we can thoroughly test and improve the accuracy of variant calling algorithms for cancer genomics applications. This framework represents an essential step towards more precise and effective identification of genetic lesions associated with cancer and other diseases. </div>
+ </div>
 
 ## Data Download
 All data are open and available in [Zenodo](https://zenodo.org/records/10683211). For specific instructions please see our [**UserGuide**](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#data-download).
