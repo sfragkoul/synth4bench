@@ -1,5 +1,5 @@
 
-#TP ---------------------------------------------------------------------------
+#TVs ---------------------------------------------------------------------------
 gt_analysis <- function(runs, folder, merged_file) {
     
     nt_runs = list()
@@ -153,7 +153,7 @@ read_vcf_snvs_TP <- function(path, caller, gt, merged_file) {
 }
 
 
-#FP & FN ----------------------------------------------------------------------
+#Noise= ----------------------------------------------------------------------
 
 load_gt_report <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
@@ -253,7 +253,7 @@ noise_variants <- function(path, caller, merged_file, gt_load, gt_tv) {
         
     } else if (caller == "VarDict") {
         
-        fn_var <- final_fn_snvs_VarDict(path, merged_file, gt_load, gt_tv)
+        fn_var <- noise_snvs_VarDict(path, merged_file, gt_load, gt_tv)
         
     } else if (caller == "VarScan") {
         

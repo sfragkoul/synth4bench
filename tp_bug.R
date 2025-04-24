@@ -104,32 +104,32 @@ define_tp <- function(caller, gt){
 
 
 #load caller functions---------------------------------------------------------
-load_Freebayes_vcf <- function(path, merged_file){
+load_VarDict_vcf <- function(path, merged_file){
     #function to load caller vcf
-    Freebayes_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                               "_freebayes_norm.vcf"), verbose = FALSE )
-    Freebayes_s0  = Freebayes_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #Freebayes_s1  = Freebayes_somatic_vcf |> extract_gt_tidy() |> setDT()
-    Freebayes_s2 = Freebayes_somatic_vcf |> extract_info_tidy() |> setDT()
-    Freebayes_s2 = Freebayes_s2[,c( "DP", "AO", "AF" )]
-    Freebayes_somatic = cbind(Freebayes_s0, Freebayes_s2)
-    return(Freebayes_somatic)
+    VarDict_somatic_vcf <- read.vcfR( paste0(path, "/",merged_file, 
+                                             "_VarDict_norm.vcf"), verbose = FALSE )
+    VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    #VarDict_s1  = VarDict_somatic_vcf |> extract_gt_tidy() |> setDT()
+    VarDict_s2 = VarDict_somatic_vcf |> extract_info_tidy() |> setDT()
+    VarDict_s2 = VarDict_s2[,c( "DP", "VD", "AF")]
+    VarDict_somatic = cbind(VarDict_s0, VarDict_s2)
+    return(VarDict_somatic)
 }
 
 
 #build caller noise function---------------------------------------------------
-noise_snvs_Freebayes <- function(path, merged_file, gt_load, gt_tv){
+noise_snvs_VarDict <- function(path, merged_file, gt_load, gt_tv){
     
-    Freebayes_somatic <- load_Freebayes_vcf(path, merged_file)
-    Freebayes_somatic_snvs <-select_snvs(Freebayes_somatic)
-    Freebayes_somatic_snvs <- Freebayes_somatic_snvs[,c("POS", "REF", "ALT", "DP", "AO", "AF" ,"mut" )]
-    colnames(Freebayes_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
-    Freebayes_somatic_snvs$AF = as.numeric(Freebayes_somatic_snvs$AF)
-    Freebayes_somatic_snvs <- Freebayes_somatic_snvs[!mut %in% gt_tv$mut]
+    VarDict_somatic <- load_VarDict_vcf(path, merged_file)
+    VarDict_somatic_snvs <-select_snvs(VarDict_somatic)
+    VarDict_somatic_snvs <- VarDict_somatic_snvs[,c("POS", "REF", "ALT", "DP", "VD", "AF" ,"mut" )]
+    colnames(VarDict_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
+    VarDict_somatic_snvs$AF = as.numeric(VarDict_somatic_snvs$AF)######
+    VarDict_somatic_snvs <- VarDict_somatic_snvs[!mut %in% gt_tv$mut]
     
-    fp_var = define_fp(Freebayes_somatic_snvs, gt_load)
-    fn_var = define_fn(Freebayes_somatic_snvs, gt_load)
-    tp_var = define_tp(Freebayes_somatic_snvs, gt_load)
+    fp_var = define_fp(VarDict_somatic_snvs, gt_load)
+    fn_var = define_fn(VarDict_somatic_snvs, gt_load)
+    tp_var = define_tp(VarDict_somatic_snvs, gt_load)
     
     recall = nrow(tp_var)/(nrow(tp_var) + nrow(fn_var))
     precision = nrow(tp_var)/(nrow(tp_var) + nrow(fp_var))
@@ -147,7 +147,7 @@ noise_snvs_Freebayes <- function(path, merged_file, gt_load, gt_tv){
 
 # test function ---------------------------------------------------------------
 
-noise = noise_snvs_Freebayes(path, merged_file, gt_load, gt_tv)
+noise = noise_snvs_VarDict(path, merged_file, gt_load, gt_tv)
 
 print(noise$noise_recall)
 print(noise$noise_precision)
@@ -155,30 +155,30 @@ print(noise$noise_precision)
 
 
 #venn method-------------------------------------------------------------------
-
-    vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
-    vcf_GT$scenario = "GT"
-
-    vcf_Freebayes = noise_Freebayes[,c("POS", "REF", "ALT")]
-    vcf_Freebayes$scenario = "Freebayes"
-
-    x = rbind(vcf_GT, vcf_Freebayes)
-    y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
-
-    y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
-
-    y = split(y, y$scenario)
-
-    y = list(
-        'Ground Truth' = y$GT$mut,
-        'Freebayes'         = y$Freebayes$mut
-    )
-
-    gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
-
-        coord_equal(clip = "off")
-
-    gr
+# 
+#     vcf_GT = gt_snvs[, c("POS", "REF", "ALT")]
+#     vcf_GT$scenario = "GT"
+# 
+#     vcf_Freebayes = noise_Freebayes[,c("POS", "REF", "ALT")]
+#     vcf_Freebayes$scenario = "Freebayes"
+# 
+#     x = rbind(vcf_GT, vcf_Freebayes)
+#     y = x[, c("POS", "REF", "ALT", "scenario"), with = FALSE]
+# 
+#     y$mut = paste( y$POS, y$REF, y$ALT, sep = ":")
+# 
+#     y = split(y, y$scenario)
+# 
+#     y = list(
+#         'Ground Truth' = y$GT$mut,
+#         'Freebayes'         = y$Freebayes$mut
+#     )
+# 
+#     gr = ggvenn(y, fill_color = c("#43ae8d", "#ae4364")) +
+# 
+#         coord_equal(clip = "off")
+# 
+#     gr
 
 
 

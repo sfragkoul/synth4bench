@@ -1,5 +1,4 @@
 
-#True Variants SNVS------------------------------------------------------------
 read_vcf_VarDict <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarDict_norm.vcf"), verbose = FALSE )
@@ -129,7 +128,7 @@ load_VarDict_vcf <- function(path, merged_file){
     VarDict_s0  = VarDict_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #VarDict_s1  = VarDict_somatic_vcf |> extract_gt_tidy() |> setDT()
     VarDict_s2 = VarDict_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarDict_s2 = VarDict_s2[,c( "DP", "AF" )]
+    VarDict_s2 = VarDict_s2[,c( "DP", "VD", "AF")]
     VarDict_somatic = cbind(VarDict_s0, VarDict_s2)
     return(VarDict_somatic)
 }
