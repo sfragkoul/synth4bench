@@ -66,8 +66,6 @@ arguments$gt_path <- arguments$working_directory
 #SNVs -------------------------------------------------------------------------
 print("Plotting SNVs TP Variants")
 plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
-                          arguments$vcf_path,
-                          arguments$gt_path,
                           arguments$caller,
                           arguments$merged_file)
 

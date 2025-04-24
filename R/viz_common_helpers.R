@@ -1,7 +1,7 @@
 
 #TP SNVS-----------------------------------------------------------------------
 
-plot_snvs_TP <- function(gt_snv_tp_comparison, vcf_path, gt_path, caller, merged_file) {
+plot_snvs_TP <- function(gt_snv_tp_comparison, caller, merged_file) {
     
     df = fread(paste0(gt_snv_tp_comparison, "/", merged_file, "_", caller, "_snvs_TV.tsv"))
     
