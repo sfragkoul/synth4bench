@@ -356,9 +356,11 @@ venn_plot_gatk <- function(q, p) {
 #INDELs------------------------------------------------------------------------
 circular_plot_gatk <- function(path, merged_file, caller){
     #Load data
-    tp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_TP.tsv"), sep = "\t")
-    fp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_FP.tsv"), sep = "\t")
-    fn = fread(paste0(path, "/", merged_file, "_", caller, "_indels_FN.tsv"), sep = "\t")
+    all=fread(paste0(path, "/", merged_file, "_", caller, "_indels.tsv"))
+    
+    tp = all[which(all$type=="TP"),]
+    fp = all[which(all$type=="FP"),]
+    fn = all[which(all$type=="FN"),]
     
     tp = tp[, .(POS, REF, ALT, type)]
     tp$REF_len <- str_length(tp$REF)

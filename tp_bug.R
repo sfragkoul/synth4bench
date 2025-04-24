@@ -5,11 +5,6 @@ source("R/libraries.R")
 path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10"
 merged_file <- "Merged"
 
-# output_file <- file.path(path,
-#                          paste0(merged_file, "_snvs_TV.tsv"))
-# 
-# gt_tv <- fread(output_file)
-
 load_gt_report_indels <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
     a <- paste0(path, "/", merged_file, "_report.tsv") |>
@@ -84,9 +79,6 @@ gt_stdz_indels <- function(path, merged_file){
 
 pick_gt_stdz <- gt_stdz_indels(path, merged_file)
 
-
-
-
 #load common functions---------------------------------------------------------
 select_indels <- function(df){
     #function to select indels from caller based on length of REF and ALT
@@ -97,8 +89,6 @@ select_indels <- function(df){
     
     return(indels)
 }
-
-
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
@@ -121,8 +111,6 @@ define_tp <- function(caller, gt){
     tp_var$type = "TP"
     return(tp_var)
 }
-
-
 
 #load caller functions---------------------------------------------------------
 load_gatk_vcf <- function(path, merged_file){
