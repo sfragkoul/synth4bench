@@ -70,7 +70,7 @@ options <- list(
 arguments <- parse_args(OptionParser(option_list = options))
 arguments$vcf_path <- arguments$working_directory
 
-#SNVS True Variants------------------------------------------------------------
+#SNVS -------------------------------------------------------------------------
 print("Begin SNVs True Variant Analysis")
 
 # check if Merged_snvs_GT.tsv exists
@@ -107,7 +107,6 @@ fwrite(
   row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
-#SNVs Noise variants-----------------------------------------------------------
 print("Begin SNVs Noise Analysis")
 
 gt_load <- load_gt_report(arguments$vcf_path,
@@ -133,9 +132,9 @@ fwrite(
     row.names = FALSE, quote = FALSE, sep = "\t"
 )
 
-#write stats in a txt file
+#write snvs stats in a txt file
 stats <- data.frame(
-    recall            = snvs$recall,
+    true_variants_recall            = snvs$recall,
     noise_recall      = noise_snvs$noise_recall,
     noise_precision   = noise_snvs$noise_precision
 )
