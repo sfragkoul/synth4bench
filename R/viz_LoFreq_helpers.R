@@ -1,38 +1,17 @@
-#'A script, written in R, where all the appropriate functions for 
-#'the analysis of VarScan are located.
-#'
-#'
-#'Authors: Nikos Pechlivanis(github:npechl), Stella Fragkouli(github:sfragkoul)
-#'
-#'
-
-#TP SNVS-----------------------------------------------------------------------
-read_vcf_VarScan <- function(path, gt, merged_file) {
-  #takes two files and produce a caller vcf file in a certain format 
-  vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarScan_norm.vcf"), verbose = FALSE )
-  
-  vcf_df = vcf |>
-    merge_VarScan(gt) |>
-    clean_VarScan()
-  
-  return(vcf_df)
-  
-}
-
-
-plot_snvs_TP_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
+#SNVS--------------------------------------------------------------------------
+plot_snvs_TP_LoFreq <- function(df, merged_file){
     #plotting function
-    out1 = bar_plots_VarScan(df)
-    out2 = density_plot_VarScan(df)
-    out3 = bubble_plots_VarScan(df)
-    out4 = venn_plot_VarScan(vcf_GT, vcf_caller)
+    out1 = bar_plots_LoFreq(df)
+    out2 = density_plot_LoFreq(df)
+    out3 = bubble_plots_LoFreq(df)
+    #out4 = venn_plot_LoFreq(vcf_GT, vcf_caller)
     
-    multi2 = out2$groundtruth / out2$VarScan &
+    multi2 = out2$groundtruth / out2$LoFreq &
         
         theme(
             plot.margin = margin(10, 10, 10, 10)
         )
-
+    
     
     ann1 = (out1$coverage + theme(plot.margin = margin(r = 50))) + 
         (out1$allele + theme(plot.margin = margin(r = 50))) + 
@@ -42,141 +21,32 @@ plot_snvs_TP_VarScan <- function(df, vcf_GT, vcf_caller, merged_file){
             widths = c(1, 1, 3)
         )
     
-    ann2 = out3 + out4 +
-        
-        plot_layout(
-            widths = c(2, 1)
-        )
     
-    multi = ann1 / ann2 +
+    # ann2 = out3 + out4 +
+    #     
+    #     plot_layout(
+    #         widths = c(2, 1)
+    #     )
+    
+    multi = ann1 / out3 +
         
         plot_layout(heights = c(1.5, 1)) + 
         plot_annotation(title = merged_file)
     
-    return(list(multi, out4))
+    
+    return(multi)
 }
 
-
-merge_VarScan <- function(VarScan_somatic_vcf, merged_gt) {
-    #return cleaned vcf
-    VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
-    VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarScan_s2 = VarScan_s2[,c( "DP", "Pvalue", "AF" )]
-    
-    VarScan_s0 = VarScan_s0[which(VarScan_s2$AF>0.0)]
-    VarScan_s2 = VarScan_s2[which(VarScan_s2$AF>0.0)]
-    
-    
-    VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
-    
-    
-    #Merge everything into a common file
-    merged_gt$POS = as.character(merged_gt$POS)
-    
-    merged_bnch = merge(merged_gt, VarScan_somatic,  by = "POS", all.x = TRUE)
-    
-    merged_bnch$POS = as.numeric(merged_bnch$POS)
-    
-    merged_bnch = merged_bnch[order(POS)]
-    
-    colnames(merged_bnch) = c(
-        "POS",	"Ground Truth REF",	"Ground Truth DP",
-        "Ground Truth ALT", "Ground Truth AD", 
-        "Ground Truth AF", "CHROM", "ID", "VarScan REF",	
-        "VarScan ALT", "VarScan QUAL",	"VarScan FILTER", "VarScan DP", "Pvalue","VarScan AF"
-    )
-    
-    return(merged_bnch)
-    
-}
-
-
-clean_VarScan <- function(df) {
-    #function to produce the caller's reported variants in the desired format 
-    df2 = df[, c(
-        "POS",
-        
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
-    ), with = FALSE]
-    
-    
-    
-    df2 = df2[, by = c(
-        "POS",
-        "Ground Truth REF",
-        "Ground Truth DP",
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
-        
-    ), .(
-        "Ground Truth ALT" = `Ground Truth ALT` |> tstrsplit(",") |> unlist(),
-        "Ground Truth AF"  = `Ground Truth AF` |> tstrsplit(",") |> unlist()
-    )]
-
-
-
-    VarScan_alt = str_split(df2$`VarScan ALT`, ",")
-    VarScan_af = str_split(df2$`VarScan AF`, ",")
-
-
-    cln = mapply(
-        function(x, y, z) {
-
-            index = which(y == x)
-
-            return(
-                c(y[index], z[index])
-            )
-
-        },
-
-        df2$`Ground Truth ALT`, VarScan_alt, VarScan_af
-    )
-
-
-    df2$`VarScan ALT` = cln |> lapply(function(x) { return(x [1]) }) |> unlist()
-    df2$`VarScan AF`  = cln |> lapply(function(x) { return(x [2]) }) |> unlist()
-    
-    df2[which(is.na(`VarScan AF`))]$`VarScan DP` = NA
-    df2[which(is.na(`VarScan AF`))]$`VarScan REF` = NA
-    
-    df2 = df2[, c(
-        "POS", 
-        "Ground Truth REF",
-        "Ground Truth ALT",
-        "Ground Truth DP",
-        "Ground Truth AF",
-        "VarScan REF", 
-        "VarScan ALT", 
-        "VarScan DP",
-        "VarScan AF"
-    ), with = FALSE]
-
-    return(df2)
-    
-}
-
-
-bar_plots_VarScan <- function(q) {
+bar_plots_LoFreq <- function(q) {
     #function to produce variants' barplots for coverage and AF
-    q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
     
-    #DP plot
+    # plot 1 ------------------------
+    
     df = q[, c(
         "POS", 
         "Ground Truth DP",
-        "VarScan DP"
+        "LoFreq DP"
     ), with = FALSE] |>
         unique() |>
         
@@ -194,13 +64,13 @@ bar_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth DP" = "#43ae8d",
-                "VarScan DP"      = "#439aae"
+                "LoFreq DP"      = "#c974ba"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth DP", "VarScan DP"),
-            labels = c("Ground Truth", "VarScan")
+            breaks = c("Ground Truth DP", "LoFreq DP"),
+            labels = c("Ground Truth", "LoFreq")
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -228,11 +98,12 @@ bar_plots_VarScan <- function(q) {
         )
     
     
-    #AF plot
+    # plot 2 ---------------------
+    
     df = q[, c(
         "POS",
         "Ground Truth AF",
-        "VarScan AF"
+        "LoFreq AF"
     ), with = FALSE] |>
         unique() |>
         
@@ -250,13 +121,13 @@ bar_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth AF" = "#43ae8d",
-                "VarScan AF"      = "#439aae"
+                "LoFreq AF"      = "#c974ba"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth AF", "VarScan AF"),
-            labels = c("Ground Truth", "VarScan")
+            breaks = c("Ground Truth AF", "LoFreq AF"),
+            labels = c("Ground Truth", "LoFreq")
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
@@ -283,6 +154,8 @@ bar_plots_VarScan <- function(q) {
             y = "Allele Frequency"
         )
     
+    # return -------------
+    
     return(
         list(
             "coverage" = o1,
@@ -292,22 +165,20 @@ bar_plots_VarScan <- function(q) {
     
 }
 
-
-density_plot_VarScan <- function(q) {
+density_plot_LoFreq <- function(q) {
     #function to produce AF density plots
-    q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
     
     df = q[, c(
         "POS", 
         "Ground Truth AF",
         "Ground Truth ALT",
-        "VarScan ALT",
-        "VarScan AF"
+        "LoFreq ALT",
+        "LoFreq AF"
     ), with = FALSE] |>
         unique()
     
     #Ground Truth AF density plot
-    
     o1 = ggplot(data = df[, 1:3], aes(x = `Ground Truth AF`)) +
         
         geom_density(aes(color = `Ground Truth ALT`, fill = `Ground Truth ALT`),
@@ -339,11 +210,10 @@ density_plot_VarScan <- function(q) {
         
         labs(y = "Ground Truth (density)")
     
-    #Caller AF density plot
-    
-    o2 = ggplot(data = df[which(!is.na(`VarScan ALT`)), c(1, 4, 5)], aes(x = `VarScan AF`)) +
+    #Caler AF density plot
+    o2 = ggplot(data = df[which(!is.na(`LoFreq ALT`)), c(1, 4, 5)], aes(x = `LoFreq AF`)) +
         
-        geom_density(aes(color = `VarScan ALT`, fill = `VarScan ALT`),
+        geom_density(aes(color = `LoFreq ALT`, fill = `LoFreq ALT`),
                      alpha = .5) +
         
         scale_x_continuous(expand = c(0, 0), breaks = c(.25, .5, .75, 1), limits = c(0, 1), labels = scales::percent) +
@@ -352,7 +222,7 @@ density_plot_VarScan <- function(q) {
         scale_fill_npg() +
         scale_color_npg() +
         
-        facet_wrap(vars(`VarScan ALT`), nrow = 1) +
+        facet_wrap(vars(`LoFreq ALT`), nrow = 1) +
         
         theme_minimal() +
         
@@ -371,25 +241,22 @@ density_plot_VarScan <- function(q) {
         
         labs(
             x = "Allele Frequency",
-            y = "VarScan (density)"
+            y = "LoFreq (density)"
         )
     
     return(
         list(
             "groundtruth" = o1,
-            "VarScan" = o2
+            "LoFreq" = o2
         )
     )
     
 }
 
-
-bubble_plots_VarScan <- function(q) {
+bubble_plots_LoFreq <- function(q) {
     #function to produce SNVs bubble plot
-    # q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
-    
-    
-    q1 = q[which(q$`VarScan ALT` != "")]
+    # q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
+    q1 = q[which(q$`LoFreq ALT` != "")]
     
     
     o = ggplot() +
@@ -402,7 +269,7 @@ bubble_plots_VarScan <- function(q) {
         
         geom_point(
             data = q1,
-            aes(x = POS, y = `VarScan ALT`, size = `VarScan AF`, fill = "VarScan"),
+            aes(x = POS, y = `LoFreq ALT`, size = `LoFreq AF`, fill = "LoFreq"),
             position = position_nudge(y = -.15), shape = 21, stroke = .25
         ) +
         
@@ -420,7 +287,7 @@ bubble_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth" = "#43ae8d",
-                "VarScan"      = "#439aae"
+                "LoFreq"      = "#c974ba"
             ),
             
             guide = guide_legend(
@@ -465,16 +332,15 @@ bubble_plots_VarScan <- function(q) {
     
 }
 
-
-venn_plot_VarScan <- function(q, p) {
+venn_plot_LoFreq <- function(q, p) {
     #function to produce Venn plot for each caller
     vcf_GT = vcfR::getFIX(q) |> as.data.frame() |> setDT()
     vcf_GT$scenario = "GT"
     
-    vcf_VarScan = vcfR::getFIX(p) |> as.data.frame() |> setDT()
-    vcf_VarScan$scenario = "VarScan"
+    vcf_LoFreq = vcfR::getFIX(p) |> as.data.frame() |> setDT()
+    vcf_LoFreq$scenario = "LoFreq"
     
-    x = rbind(vcf_GT, vcf_VarScan)
+    x = rbind(vcf_GT, vcf_LoFreq)
     y = x[, c("CHROM", "POS", "REF", "ALT", "scenario"), with = FALSE]
     
     y$mut = paste(y$CHROM, y$POS, y$REF, y$ALT, sep = ":")
@@ -483,10 +349,10 @@ venn_plot_VarScan <- function(q, p) {
     
     y = list(
         'Ground Truth' = y$GT$mut,
-        'VarScan'         = y$VarScan$mut
+        'LoFreq'         = y$LoFreq$mut
     )
     
-    gr = ggvenn(y, fill_color = c("#43ae8d", "#439aae")) +
+    gr = ggvenn(y, fill_color = c("#43ae8d", "#c974ba")) +
         
         coord_equal(clip = "off")
     
@@ -494,71 +360,18 @@ venn_plot_VarScan <- function(q, p) {
 }
 
 #FP & FN SNVS------------------------------------------------------------------
-
-load_VarScan_vcf <- function(path, merged_file){
-    #function to load caller vcf
-    VarScan_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                             "_VarScan_norm.vcf"), verbose = FALSE )
-    VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
-    VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarScan_s2 = VarScan_s2[,c( "DP", "AF" )]
-    VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
-    return(VarScan_somatic)
-}
-
-fp_snvs_VarScan <- function(VarScan_somatic_snvs, pick_gt, gt_all){
-    #find VarScan FP variants
-    fp_var = define_fp(VarScan_somatic_snvs, pick_gt)
-    fp_var$AF = as.numeric(fp_var$AF)
-    colnames(fp_var) = c("CHROM", "POS","ID", "VarScan REF",	
-                         "VarScan ALT", "VarScan QUAL",	"VarScan FILTER",
-                         "VarScan DP", "VarScan AF", "mut")
-    
-    #find DP of FP variants'  location in GT
-    tmp = gt_all[which(POS %in% unique(fp_var$POS))]
-    tmp = tmp[nchar(tmp$REF) == nchar(tmp$ALT)]
-    a = unique(tmp, by = "POS")
-    #to include the presence multiple variants in a POS
-    index = match(fp_var$POS, a$POS)
-    fp_var$`Ground Truth DP` = a[index]$DP
-    fp_var$`DP Percentage` = fp_var$`VarScan DP`/fp_var$`Ground Truth DP`
-    fp_var$type = "FP"
-    return(fp_var)
-}
-
-final_fp_snvs_VarScan <- function(path, merged_file, pick_gt, gt_all){
-    
-    VarScan_somatic <- load_VarScan_vcf(path, merged_file)
-    VarScan_somatic_snvs <-select_snvs(VarScan_somatic)
-    fp_var = fp_snvs_VarScan(VarScan_somatic_snvs, pick_gt, gt_all)
-    
-    return(fp_var)
-}
-
-final_fn_snvs_VarScan <- function(path, merged_file, pick_gt){
-    
-    VarScan_somatic <- load_VarScan_vcf(path, merged_file)
-    VarScan_somatic_snvs <-select_snvs(VarScan_somatic)
-    fn_var = define_fn(VarScan_somatic_snvs, pick_gt)
-    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
-    
-    return(fn_var)
-}
-
-fp_violin_plots_VarScan <- function(q) {
+fp_violin_plots_LoFreq <- function(q) {
     #function to produce variants' barplots for coverage and AF
-    #q[which(q$`VarScan ALT` == "")]$`VarScan ALT` = NA
+    #q[which(q$`LoFreq ALT` == "")]$`LoFreq ALT` = NA
     q$POS = as.numeric(q$POS)
     q$`Ground Truth DP` = as.numeric(q$`Ground Truth DP`)
-    q$`VarScan DP` = as.numeric(q$`VarScan DP`)
+    q$`LoFreq DP` = as.numeric(q$`LoFreq DP`)
     
     #DP plot
     df = q[, c(
         "POS", 
         "Ground Truth DP",
-        "VarScan DP"
+        "LoFreq DP"
     ), with = FALSE] |>
         unique() |>
         
@@ -576,13 +389,13 @@ fp_violin_plots_VarScan <- function(q) {
         scale_fill_manual(
             values = c(
                 "Ground Truth DP" = "#43ae8d",
-                "VarScan DP"      = "#439aae"
+                "LoFreq DP"      = "#c974ba"
             )
         ) +
         
         scale_x_discrete(
-            breaks = c("Ground Truth DP", "VarScan DP"),
-            labels = c("Ground Truth", "VarScan")
+            breaks = c("Ground Truth DP", "LoFreq DP"),
+            labels = c("Ground Truth", "LoFreq")
         ) +
         
         scale_y_continuous(labels = scales::comma) +
@@ -610,11 +423,11 @@ fp_violin_plots_VarScan <- function(q) {
         )
 }
 
-fp_af_barplot_VarScan  <- function(q){
+fp_af_barplot_LoFreq <- function(q){
     #FP AF plot
     df = q[, c(
         "POS",
-        "VarScan AF"
+        "LoFreq AF"
     ), with = FALSE] |>
         unique() |>
         
@@ -632,12 +445,12 @@ fp_af_barplot_VarScan  <- function(q){
         scale_fill_manual(
             values = c(
                 #"Ground Truth AF" = "#43ae8d",
-                "VarScan AF"      = "#439aae"
+                "LoFreq AF"      = "#c974ba"
             )
         ) +
         
         scale_x_discrete(
-            labels = c("VarScan FP Variants")
+            labels = c("LoFreq FP Variants")
         ) +
         
         scale_y_continuous(labels = scales::percent, trans = "log10") +
@@ -667,10 +480,10 @@ fp_af_barplot_VarScan  <- function(q){
     
 }
 
-plot_snvs_FP_VarScan <- function(df, merged_file) {
+plot_snvs_FP_LoFreq <- function(df, merged_file) {
     #plotting function
-    out1 = fp_violin_plots_VarScan(df)
-    out2 = fp_af_barplot_VarScan(df)
+    out1 = fp_violin_plots_LoFreq(df)
+    out2 = fp_af_barplot_LoFreq(df)
     
     multi = out1 + out2 +
         
@@ -680,101 +493,14 @@ plot_snvs_FP_VarScan <- function(df, merged_file) {
     return(multi)
 }
 
-
-
 #INDELS------------------------------------------------------------------------
-
-categorize_fns_VarScan <- function(caller, fn_var) {
-    #function to identify FN categories
-    
-    caller$POS = as.numeric(caller$POS)
-    fn_var$POS = as.numeric(fn_var$POS)
-    colnames(fn_var) = c("POS","REF", "Ground Truth DP",  "ALT",
-                         "Count", "Ground Truth AF","mut","type")
-    #Same POS
-    same_POS <- merge(fn_var, caller, by = c("POS"))
-    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
-    
-    #Same POS & REF
-    same_POS_REF <- merge(fn_var, caller, by = c("POS", "REF"))
-    # Update only rows where POS and REF match
-    fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
-           category := "diff ALT"]
-    
-    return(fn_var)
-}
-
-categorize_fps_VarScan <- function(pick_gt_stdz, fp_indels_VarScan) {
-    #function to identify FP categories
-    pick_gt_stdz$POS = as.numeric(pick_gt_stdz$POS)
-    fp_indels_VarScan$POS = as.numeric(fp_indels_VarScan$POS)
-    
-    colnames(fp_indels_VarScan) = c("CHROM", "POS", "ID", "REF", 
-                                    "ALT", "VarScan QUAL", "VarScan FILTER", "VarScan DP", 
-                                    "VarScan AF", "mut", "Ground Truth DP","DP Percentage", "type")
-    #Same POS
-    same_POS <- merge(fp_indels_VarScan, pick_gt_stdz, by = c("POS"))
-    fp_indels_VarScan[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
-    
-    #Same POS & REF
-    same_POS_REF <- merge(fp_indels_VarScan, pick_gt_stdz, by = c("POS", "REF"))
-    # Update only rows where POS and REF match
-    fp_indels_VarScan[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
-                      category := "diff ALT"]
-    
-    return(fp_indels_VarScan)
-}
-
-
-final_tp_indels_VarScan <- function(path, merged_file, pick_gt_stdz){
-    #function to identify TP indels
-    VarScan_somatic_indels <- load_VarScan_vcf(path, merged_file) |> select_indels()
-    tp_var = define_tp(VarScan_somatic_indels, pick_gt_stdz)
-    return(tp_var)
-}
-
-final_fn_indels_VarScan <- function(path, merged_file, pick_gt_stdz){
-    #function to identify FN indels
-    VarScan_somatic_indels <- load_VarScan_vcf(path, merged_file) |> select_indels()
-    fn_var = define_fn(VarScan_somatic_indels, pick_gt_stdz)
-    colnames(fn_var) = c("POS", "Ground Truth REF", "Ground Truth DP", 
-                         "Ground Truth ALT", "Count", "Ground Truth AF", "mut", "type")
-    return(fn_var)
-}
-
-final_fp_indels_VarScan <- function(path, merged_file, pick_gt, gt_all){
-    #function to identify FP indels
-    VarScan_somatic_indels <- load_VarScan_vcf(path, merged_file) |> select_indels()
-    fp_var = fp_snvs_VarScan(VarScan_somatic_indels, pick_gt, gt_all)
-    return(fp_var)
-}
-
-
-call_fn_indels_VarScan <- function(path, merged_file, pick_gt_stdz){
-    #function to output categorized FN indels
-    fn_indels_VarScan = final_fn_indels_VarScan(path, merged_file, pick_gt_stdz)
-    VarScan_indels = load_VarScan_vcf(path, merged_file) |> select_indels()
-    fn_indels_VarScan_categories = categorize_fns_VarScan(VarScan_indels, fn_indels_VarScan)
-    
-    return(fn_indels_VarScan_categories)
-}
-
-call_fp_indels_VarScan <- function(path, merged_file, pick_gt_stdz){
-    #function to output categorized FP indels
-    gt_all = load_gt_report_indels(path, merged_file)$all |> standardize_indels()
-    fp_indels_VarScan = final_fp_indels_VarScan(path, merged_file, pick_gt_stdz, gt_all)
-    fp_indels_VarScan_categories = categorize_fps_VarScan(pick_gt_stdz, fp_indels_VarScan)
-    
-    return(fp_indels_VarScan_categories)
-}
-
-
-
-circular_plot_VarScan <- function(path, merged_file, caller){
+circular_plot_LoFreq <- function(path, merged_file, caller){
     #Load data
-    tp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_TP.tsv"), sep = "\t")
-    fp = fread(paste0(path, "/", merged_file, "_", caller, "_indels_FP.tsv"), sep = "\t")
-    fn = fread(paste0(path, "/", merged_file, "_", caller, "_indels_FN.tsv"), sep = "\t")
+    all=fread(paste0(path, "/", merged_file, "_", caller, "_indels.tsv"))
+    
+    tp = all[which(all$type=="TP"),]
+    fp = all[which(all$type=="FP"),]
+    fn = all[which(all$type=="FN"),]
     
     tp = tp[, .(POS, REF, ALT, type)]
     tp$REF_len <- str_length(tp$REF)
@@ -837,8 +563,8 @@ circular_plot_VarScan <- function(path, merged_file, caller){
         scale_shape_manual(values = c("diff REF" = 23, "diff ALT" = 24, "not exist" = 21)) +
         
         #Define custom colors for each type
-        scale_fill_manual(values = c("TP" = "#419fa2", "FP" = "#439aae", "FN" = "#43ae8d")) +
-        scale_color_manual(values = c("TP" = "#419fa2", "FP" = "#439aae", "FN" = "#43ae8d") |> darken(.25)) +
+        scale_fill_manual(values = c("TP" = "#9b86aa", "FP" = "#c974ba", "FN" = "#43ae8d")) +
+        scale_color_manual(values = c("TP" = "#9b86aa", "FP" = "#c974ba", "FN" = "#43ae8d") |> darken(.25)) +
         
         #Customize the x-axis and radial coordinates
         scale_x_continuous(breaks = c(0, 4751, 9503, 14255, 19007), limits = c(0, 19007)) +
@@ -860,7 +586,7 @@ circular_plot_VarScan <- function(path, merged_file, caller){
         
         #Add labels for the plot
         labs(
-            title = "Ground Truth vs VarScan INDELS",
+            title = "Ground Truth vs LoFreq INDELS",
             y = "REF vs ALT Length Difference",
             x = "Chromosomal Position"
             # color = "Type"
@@ -868,3 +594,4 @@ circular_plot_VarScan <- function(path, merged_file, caller){
     
     return(p)
 }
+
