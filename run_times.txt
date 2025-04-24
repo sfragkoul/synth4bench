@@ -1,0 +1,2 @@
+Timestamp,Caller,Directory,Script,ElapsedSeconds
+2025-04-24 16:00:19,Mutect2,/mnt/c/Users/sfragkoul/Desktop/synth_data/read_length/1000_50,S4BR.R,34

@@ -1,6 +1,6 @@
 
 #SNVS--------------------------------------------------------------------------
-plot_snvs_TP_VarDict <- function(df, vcf_GT, vcf_caller, merged_file){
+plot_snvs_TP_VarDict <- function(df, merged_file){
     #plotting function
     out1 = bar_plots_VarDict(df)
     out2 = density_plot_VarDict(df)
