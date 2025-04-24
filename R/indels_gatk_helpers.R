@@ -4,7 +4,6 @@ call_indels_gatk <- function(path, merged_file, pick_gt_stdz){
     Mutect2_indels <-select_indels(Mutect2_somatic)
     Mutect2_indels[, AD := as.numeric(sapply(strsplit(gt_AD, ","), function(x) x[2]))]#######
     Mutect2_indels <- Mutect2_indels[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
-    Mutect2_indels <- Mutect2_indels[,c("POS", "REF", "ALT", "gt_DP", "AD", "gt_AF" ,"mut" )]
     colnames(Mutect2_indels) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
     Mutect2_indels$AF = as.numeric(Mutect2_indels$AF)
     Mutect2_indels$POS = as.numeric(Mutect2_indels$POS)
