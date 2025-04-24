@@ -1,14 +1,16 @@
 source("R/libraries.R")
 #load GT-----------------------------------------------------------------------
-path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10"
+`%ni%` <- Negate(`%in%`) 
+
+path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10"
 merged_file <- "Merged"
 
-output_file <- file.path(path,
-                         paste0(merged_file, "_snvs_TV.tsv"))
+# output_file <- file.path(path,
+#                          paste0(merged_file, "_snvs_TV.tsv"))
+# 
+# gt_tv <- fread(output_file)
 
-gt_tv <- fread(output_file)
-
-load_gt_report <- function(path, merged_file) {
+load_gt_report_indels <- function(path, merged_file) {
     #function to load Ground Truth bam-report 
     a <- paste0(path, "/", merged_file, "_report.tsv") |>
         readLines() |>
@@ -28,56 +30,74 @@ load_gt_report <- function(path, merged_file) {
     )
     
     a = a[which(Count != "")]
-    
     a$POS = as.numeric(a$POS)
     a$DP = as.numeric(a$DP)
-    
     a$ALT = str_split_i(a$Count, "\\:", 1)
-    
     a$Count = str_split_i(a$Count, "\\:", 2) |>
         as.numeric()
-    
     a$Freq = round(a$Count / a$DP, digits = 6)
-    
     a = a[order(POS, -Count)]
-    
     a = a[which(REF != a$ALT & Count != 0)]
-    a$mut = paste(a$POS, #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                  a$REF, 
-                  a$ALT, sep = ":")
     
-    colnames(a) = c("POS", "REF", "DP","ALT", "AD", "Freq", "mut")################
-    
-    
-    # select SNVs
-    a_snvs = a[which(ALT %in% c("A", "C", "G", "T")), ]
+    # select indels
+    a_indels = a[which(ALT %ni% c("A", "C", "G", "T")), ]
     #filter DEPTH>2
-    #a_snvs = a_snvs[which(a_snvs$Count >2), ]
-    
+    #a_indels = a_indels[which(a_indels$Count >2), ]
     
     gt = list(
         all = a,
-        snvs = a_snvs
+        indels = a_indels
         
     )
     return(gt)
 }
 
-gt_load <- load_gt_report(path,
-                          merged_file)$snvs
-
-# All-TV=noise
-gt_load <- gt_load[!mut %in% gt_tv$mut]
-#load common functions---------------------------------------------------------
-select_snvs <- function(df){
-    # select SNVs from caller based on length of REF and ALT
-    snvs = df[nchar(df$REF) == nchar(df$ALT)]
-    snvs = snvs[which(nchar(snvs$REF) <2), ]
-    snvs = snvs[which(nchar(snvs$ALT) <2), ]
-    snvs$mut = paste(snvs$POS, snvs$REF, snvs$ALT, sep = ":")
+standardize_indels <- function(dt) {
+    #function to standardize indels
+    setDT(dt)
     
-    return(snvs)
+    #deletions
+    dt[grepl("^-", ALT), `:=` (
+        ALT = substring(REF, 1, 1), 
+        REF = paste0(REF, substring(ALT, 2)),
+        POS = POS - 1  #Adjust POS for deletions
+    )]
+    
+    #insertions
+    dt[grepl("^\\+", ALT), ALT := paste0(REF, substring(ALT, 2))]
+    
+    dt$mut = paste(dt$POS, 
+                   dt$REF, 
+                   dt$ALT, sep = ":")
+    return(dt)
 }
+
+gt_stdz_indels <- function(path, merged_file){
+    #gt_all = load_gt_report_indels(path, merged_file)$all
+    gt_indels = load_gt_report_indels(path, merged_file)$indels
+    #pick_gt = load_gt_vcf_indels(path, merged_file, gt_indels)
+    pick_gt_stdz = standardize_indels(gt_indels)
+    return(pick_gt_stdz)
+} 
+
+
+pick_gt_stdz <- gt_stdz_indels(path, merged_file)
+
+
+
+
+#load common functions---------------------------------------------------------
+select_indels <- function(df){
+    #function to select indels from caller based on length of REF and ALT
+    
+    #identify indels based on length
+    indels = df[nchar(df$REF) != nchar(df$ALT)]
+    indels$mut = paste(indels$POS, indels$REF, indels$ALT, sep = ":")
+    
+    return(indels)
+}
+
+
 define_fp <- function(caller, gt){
     #FP Variants
     fp_var = caller[which(caller$mut %ni% gt$mut)]
@@ -100,67 +120,18 @@ define_tp <- function(caller, gt){
     tp_var$type = "TP"
     return(tp_var)
 }
-`%ni%` <- Negate(`%in%`) 
+
 
 
 #load caller functions---------------------------------------------------------
-load_LoFreq_vcf <- function(path, merged_file){
-    #function to load caller vcf
-    LoFreq_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                            "_LoFreq_norm.vcf"), verbose = FALSE )
-    LoFreq_s0  = LoFreq_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()
-    LoFreq_s2 = LoFreq_somatic_vcf |> extract_info_tidy() |> setDT()
-    LoFreq_s2$AD <- sapply( strsplit(LoFreq_s2$DP4, ","), function(x) {
-            # ensure we have at least four pieces
-            if(length(x) >= 4) {
-                sum(as.integer(x[3]), as.integer(x[4]))
-            } else {
-                NA_integer_
-            }
-        }
-    )
-    
-    LoFreq_s2 = LoFreq_s2[,c( "DP", "AD","AF" )]
-    LoFreq_somatic = cbind(LoFreq_s0, LoFreq_s2)
-    return(LoFreq_somatic)
-}
 
 
-#build caller noise function---------------------------------------------------
-noise_snvs_LoFreq <- function(path, merged_file, gt_load, gt_tv){
-    
-    LoFreq_somatic <- load_LoFreq_vcf(path, merged_file)
-    LoFreq_somatic_snvs <-select_snvs(LoFreq_somatic)
-    LoFreq_somatic_snvs <- LoFreq_somatic_snvs[,c("POS", "REF", "ALT", "DP", "AD", "AF" ,"mut" )]
-    colnames(LoFreq_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
-    LoFreq_somatic_snvs$AF = as.numeric(LoFreq_somatic_snvs$AF)######
-    LoFreq_somatic_snvs <- LoFreq_somatic_snvs[!mut %in% gt_tv$mut]
-    
-    fp_var = define_fp(LoFreq_somatic_snvs, gt_load)
-    fn_var = define_fn(LoFreq_somatic_snvs, gt_load)
-    tp_var = define_tp(LoFreq_somatic_snvs, gt_load)
-    
-    recall = nrow(tp_var)/(nrow(tp_var) + nrow(fn_var))
-    precision = nrow(tp_var)/(nrow(tp_var) + nrow(fp_var))
-    
-    return(list(
-        "fp" = fp_var,
-        "fn" = fn_var,
-        "tp" = tp_var,
-        "noise_recall" = recall,
-        "noise_precision" = precision)
-    )
-}
+#build caller function---------------------------------------------------------
 
 
 
 # test function ---------------------------------------------------------------
 
-noise = noise_snvs_LoFreq(path, merged_file, gt_load, gt_tv)
-
-print(noise$noise_recall)
-print(noise$noise_precision)
 
 
 
