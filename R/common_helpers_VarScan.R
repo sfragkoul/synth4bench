@@ -1,5 +1,4 @@
 
-#TP SNVS-----------------------------------------------------------------------
 read_vcf_VarScan <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_VarScan_norm.vcf"), verbose = FALSE )
@@ -136,7 +135,7 @@ load_VarScan_vcf <- function(path, merged_file){
     VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
     VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarScan_s2 = VarScan_s2[,c( "DP", "AF" )]
+    VarScan_s2 = VarScan_s2[,c( "DP", "Strands2", "AF" )]
     VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
     return(VarScan_somatic)
 }

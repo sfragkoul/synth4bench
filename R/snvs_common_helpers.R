@@ -257,7 +257,7 @@ noise_variants <- function(path, caller, merged_file, gt_load, gt_tv) {
         
     } else if (caller == "VarScan") {
         
-        fn_var <- final_fn_snvs_VarScan(path, merged_file, gt_load, gt_tv)
+        fn_var <- noise_snvs_VarScan(path, merged_file, gt_load, gt_tv)
         
     }
     
