@@ -1,4 +1,4 @@
-#True Variants SNVS------------------------------------------------------------
+
 read_vcf_LoFreq <- function(path, gt, merged_file) {
   #takes two files and produce a caller vcf file in a certain format 
   vcf <- read.vcfR(paste0(path, "/", merged_file, "_LoFreq_norm.vcf"), verbose = FALSE )
@@ -127,7 +127,17 @@ load_LoFreq_vcf <- function(path, merged_file){
     LoFreq_s0  = LoFreq_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
     #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()
     LoFreq_s2 = LoFreq_somatic_vcf |> extract_info_tidy() |> setDT()
-    LoFreq_s2 = LoFreq_s2[,c( "DP", "AF" )]
+    LoFreq_s2$AD <- sapply( strsplit(LoFreq_s2$DP4, ","), function(x) {
+        # ensure we have at least four pieces
+        if(length(x) >= 4) {
+            sum(as.integer(x[3]), as.integer(x[4]))
+        } else {
+            NA_integer_
+        }
+    }
+    )
+    
+    LoFreq_s2 = LoFreq_s2[,c( "DP", "AD","AF" )]
     LoFreq_somatic = cbind(LoFreq_s0, LoFreq_s2)
     return(LoFreq_somatic)
 }

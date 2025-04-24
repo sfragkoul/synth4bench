@@ -89,6 +89,10 @@ Rscript R/S4BR_plot.R -c VarDict -w /mnt/c/Users/sfragkoul/Desktop/synth_data/co
 
 Rscript R/S4BR.R -c VarScan -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
 Rscript R/S4BR_plot.R -c VarScan -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged 
+
+Rscript R/S4BR.R -c LoFreq -r 10 -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged
+Rscript R/S4BR_plot.R -c LoFreq -w /mnt/c/Users/sfragkoul/Desktop/synth_data/coverage_test/300_30_10 -m Merged 
+
 #----------------------------------------------------------
 #Docker test
  

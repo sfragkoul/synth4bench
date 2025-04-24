@@ -249,7 +249,7 @@ noise_variants <- function(path, caller, merged_file, gt_load, gt_tv) {
         
     } else if (caller == "LoFreq") {
         
-        fn_var <- final_fn_snvs_LoFreq(path, merged_file, gt_load, gt_tv)
+        fn_var <- noise_snvs_LoFreq(path, merged_file, gt_load, gt_tv)
         
     } else if (caller == "VarDict") {
         

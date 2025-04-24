@@ -104,32 +104,42 @@ define_tp <- function(caller, gt){
 
 
 #load caller functions---------------------------------------------------------
-load_VarScan_vcf <- function(path, merged_file){
+load_LoFreq_vcf <- function(path, merged_file){
     #function to load caller vcf
-    VarScan_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
-                                             "_VarScan_norm.vcf"), verbose = FALSE )
-    VarScan_s0  = VarScan_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
-    #VarScan_s1  = VarScan_somatic_vcf |> extract_gt_tidy() |> setDT()
-    VarScan_s2 = VarScan_somatic_vcf |> extract_info_tidy() |> setDT()
-    VarScan_s2 = VarScan_s2[,c( "DP", "Strands2", "AF" )]
-    VarScan_somatic = cbind(VarScan_s0, VarScan_s2)
-    return(VarScan_somatic)
+    LoFreq_somatic_vcf <- read.vcfR( paste0(path, "/", merged_file, 
+                                            "_LoFreq_norm.vcf"), verbose = FALSE )
+    LoFreq_s0  = LoFreq_somatic_vcf |> vcfR::getFIX() |> as.data.frame() |> setDT()
+    #LoFreq_s1  = LoFreq_somatic_vcf |> extract_gt_tidy() |> setDT()
+    LoFreq_s2 = LoFreq_somatic_vcf |> extract_info_tidy() |> setDT()
+    LoFreq_s2$AD <- sapply( strsplit(LoFreq_s2$DP4, ","), function(x) {
+            # ensure we have at least four pieces
+            if(length(x) >= 4) {
+                sum(as.integer(x[3]), as.integer(x[4]))
+            } else {
+                NA_integer_
+            }
+        }
+    )
+    
+    LoFreq_s2 = LoFreq_s2[,c( "DP", "AD","AF" )]
+    LoFreq_somatic = cbind(LoFreq_s0, LoFreq_s2)
+    return(LoFreq_somatic)
 }
 
 
 #build caller noise function---------------------------------------------------
-noise_snvs_VarScan <- function(path, merged_file, gt_load, gt_tv){
+noise_snvs_LoFreq <- function(path, merged_file, gt_load, gt_tv){
     
-    VarScan_somatic <- load_VarScan_vcf(path, merged_file)
-    VarScan_somatic_snvs <-select_snvs(VarScan_somatic)
-    VarScan_somatic_snvs <- VarScan_somatic_snvs[,c("POS", "REF", "ALT", "DP", "Strands2", "AF" ,"mut" )]
-    colnames(VarScan_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
-    VarScan_somatic_snvs$AF = as.numeric(VarScan_somatic_snvs$AF)######
-    VarScan_somatic_snvs <- VarScan_somatic_snvs[!mut %in% gt_tv$mut]
+    LoFreq_somatic <- load_LoFreq_vcf(path, merged_file)
+    LoFreq_somatic_snvs <-select_snvs(LoFreq_somatic)
+    LoFreq_somatic_snvs <- LoFreq_somatic_snvs[,c("POS", "REF", "ALT", "DP", "AD", "AF" ,"mut" )]
+    colnames(LoFreq_somatic_snvs) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
+    LoFreq_somatic_snvs$AF = as.numeric(LoFreq_somatic_snvs$AF)######
+    LoFreq_somatic_snvs <- LoFreq_somatic_snvs[!mut %in% gt_tv$mut]
     
-    fp_var = define_fp(VarScan_somatic_snvs, gt_load)
-    fn_var = define_fn(VarScan_somatic_snvs, gt_load)
-    tp_var = define_tp(VarScan_somatic_snvs, gt_load)
+    fp_var = define_fp(LoFreq_somatic_snvs, gt_load)
+    fn_var = define_fn(LoFreq_somatic_snvs, gt_load)
+    tp_var = define_tp(LoFreq_somatic_snvs, gt_load)
     
     recall = nrow(tp_var)/(nrow(tp_var) + nrow(fn_var))
     precision = nrow(tp_var)/(nrow(tp_var) + nrow(fp_var))
@@ -147,7 +157,7 @@ noise_snvs_VarScan <- function(path, merged_file, gt_load, gt_tv){
 
 # test function ---------------------------------------------------------------
 
-noise = noise_snvs_VarScan(path, merged_file, gt_load, gt_tv)
+noise = noise_snvs_LoFreq(path, merged_file, gt_load, gt_tv)
 
 print(noise$noise_recall)
 print(noise$noise_precision)
