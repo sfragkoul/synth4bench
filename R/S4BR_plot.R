@@ -63,7 +63,7 @@ arguments$vcf_path <- arguments$working_directory
 arguments$gt_path <- arguments$working_directory
 
 
-#SNVs TP-----------------------------------------------------------------------
+#SNVs -------------------------------------------------------------------------
 # print("Plotting SNVs TP Variants")
 # plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
 #                           arguments$vcf_path,
@@ -81,8 +81,6 @@ arguments$gt_path <- arguments$working_directory
 #   width = 16, height = 12, units = "in", dpi = 600
 # )
 
-
-# #SNVs FP & FN------------------------------------------------------------------
 print("Plotting Noise FP Variants")
 plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
                               arguments$caller,
@@ -129,19 +127,19 @@ ggsave(
 
 
 # #INDELs TP & FP & FN-----------------------------------------------------------
-# print("Plotting TP & FP & FN INDELs")
-# indel_plots <- plot_indels(arguments$gt_comparison,
-#                            arguments$merged_file,
-#                            arguments$caller)
-# 
-# ggsave(
-#     plot = indel_plots, filename = paste0(arguments$gt_comparison,
-#                                             "/Plots/",
-#                                             arguments$merged_file, "_",
-#                                             arguments$caller,
-#                                             "_indels.png"),
-#     width = 14, height = 12, units = "in", dpi = 600
-# )
+print("Plotting TP & FP & FN INDELs")
+indel_plots <- plot_indels(arguments$gt_comparison,
+                           arguments$merged_file,
+                           arguments$caller)
+
+ggsave(
+    plot = indel_plots, filename = paste0(arguments$gt_comparison,
+                                            "/Plots/",
+                                            arguments$merged_file, "_",
+                                            arguments$caller,
+                                            "_indels.png"),
+    width = 14, height = 12, units = "in", dpi = 600
+)
 
 print("Plotting Completed")
 

@@ -31,7 +31,7 @@ load_gt_report_indels <- function(path, merged_file) {
     # select indels
     a_indels = a[which(ALT %ni% c("A", "C", "G", "T")), ]
     #filter DEPTH>2
-    a_indels = a_indels[which(a_indels$Count >2), ]
+    #a_indels = a_indels[which(a_indels$Count >2), ]
     
     gt = list(
         all = a,
