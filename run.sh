@@ -1,8 +1,5 @@
 #!/bin/bash
-
-# Name of the final log file; remove it if it already exists
-FINAL_LOG="final_results.txt"
-rm -f "$FINAL_LOG"
+set -e  # stop on error
 
 # Define arrays for directories and variant callers
 directories=(
@@ -23,13 +20,19 @@ callers=("Mutect2" "Freebayes" "VarDict" "VarScan" "LoFreq")
 for dir in "${directories[@]}"; do
   for caller in "${callers[@]}"; do
 
-    # Run the first R script command; redirect both stdout and stderr to the log file
-    Rscript R/S4BR.R -c "$caller" -r 10 -w "$dir" -m Merged 
+    # print a separator and status line
+    echo "========================================================"
+    echo "Running caller: $caller"
+    echo "  in directory: $dir"
+    echo "--------------------------------------------------------"
 
-    # Run the plot R script command; also redirect output
-    Rscript R/S4BR_plot.R -c "$caller" -w "$dir" -m Merged 
+    # Run the first R script command
+    Rscript R/S4BR.R -c "$caller" -r 10 -w "$dir" -m Merged
 
-    # Optional: add a newline to separate runs
-    echo "" >> "$FINAL_LOG"
+    # Run the plot R script command
+    Rscript R/S4BR_plot.R -c "$caller" -w "$dir" -m Merged
+
   done
 done
+
+echo "All jobs completed." 

@@ -1,5 +1,5 @@
 source("R/libraries.R")
-source("R/common_helpers_VarScan.R")
+source("R/common_helpers_LoFreq.R")
 #load GT-----------------------------------------------------------------------
 `%ni%` <- Negate(`%in%`) 
 path <- "C:/Users/sfragkoul/Desktop/synth_data/coverage_test/700_70_10"
@@ -110,33 +110,33 @@ define_tp <- function(caller, gt){
 
 #build caller function---------------------------------------------------------
 
-call_indels_VarScan <- function(path, merged_file, pick_gt_stdz){
+call_indels_LoFreq <- function(path, merged_file, pick_gt_stdz){
     
-    VarScan_somatic <- load_VarScan_vcf(path, merged_file)
-    VarScan_indels <-select_indels(VarScan_somatic)
-    VarScan_indels <- VarScan_indels[,c("POS", "REF", "ALT", "DP", "Strands2", "AF" ,"mut" )]
-    colnames(VarScan_indels) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
-    VarScan_indels$AF = as.numeric(VarScan_indels$AF)
-    VarScan_indels$POS = as.numeric(VarScan_indels$POS)
+    LoFreq_somatic <- load_LoFreq_vcf(path, merged_file)
+    LoFreq_indels <-select_indels(LoFreq_somatic)
+    LoFreq_indels <- LoFreq_indels[,c("POS", "REF", "ALT", "DP", "AD", "AF" ,"mut" )]
+    colnames(LoFreq_indels) <- c("POS", "REF",  "ALT",  "DP", "AD", "AF","mut" )
+    LoFreq_indels$AF = as.numeric(LoFreq_indels$AF)
+    LoFreq_indels$POS = as.numeric(LoFreq_indels$POS)
     
     #TP ------------------
-    tp_var = define_tp(VarScan_indels, pick_gt_stdz)
+    tp_var = define_tp(LoFreq_indels, pick_gt_stdz)
     tp_var$category = NaN
     
     #FN ------------------
-    fn_var = define_fn(VarScan_indels, pick_gt_stdz)
+    fn_var = define_fn(LoFreq_indels, pick_gt_stdz)
     #categorize INDELs
     ##Same POS
-    same_POS <- merge(fn_var, VarScan_indels, by = c("POS"))
+    same_POS <- merge(fn_var, LoFreq_indels, by = c("POS"))
     fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
     ##Same POS & REF
-    same_POS_REF <- merge(fn_var, VarScan_indels, by = c("POS", "REF"))
+    same_POS_REF <- merge(fn_var, LoFreq_indels, by = c("POS", "REF"))
     ##Update only rows where POS and REF match
     fn_var[POS %in% same_POS_REF$POS & REF %in% same_POS_REF$REF, 
            category := "diff ALT"]
     
     #FP ------------------
-    fp_var = define_fp(VarScan_indels, pick_gt_stdz)
+    fp_var = define_fp(LoFreq_indels, pick_gt_stdz)
     #categorize INDELs
     ##Same POS
     same_POS <- merge(fp_var, pick_gt_stdz, by = c("POS"))
@@ -164,7 +164,7 @@ call_indels_VarScan <- function(path, merged_file, pick_gt_stdz){
 
 # test function ---------------------------------------------------------------
 
-indels <- call_indels_VarScan(path, merged_file, pick_gt_stdz)
+indels <- call_indels_LoFreq(path, merged_file, pick_gt_stdz)
 
 
 indels_out = rbind(indels$tp, indels$fp, indels$fn)

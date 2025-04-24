@@ -64,67 +64,65 @@ arguments$gt_path <- arguments$working_directory
 
 
 #SNVs -------------------------------------------------------------------------
-# print("Plotting SNVs TP Variants")
-# plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
-#                           arguments$vcf_path,
-#                           arguments$gt_path,
-#                           arguments$caller,
-#                           arguments$merged_file)
-# 
-# dir.create(paste0(arguments$working_directory, "/Plots"))
-# 
-# ggsave(
-#   plot = plots_snvs_TP, filename = paste0(arguments$working_directory,
-#                                        "/Plots/Poster_",
-#                                        arguments$caller,
-#                                        "_snvs_TV.png"),
-#   width = 16, height = 12, units = "in", dpi = 600
-# )
+print("Plotting SNVs TP Variants")
+plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
+                          arguments$vcf_path,
+                          arguments$gt_path,
+                          arguments$caller,
+                          arguments$merged_file)
 
-# print("Plotting Noise FP Variants")
-# plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
-#                               arguments$caller,
-#                               arguments$merged_file)
-# 
-# ggsave(
-#     plot = plots_snvs_FP, filename = paste0(arguments$gt_comparison,
-#                                                  "/Plots/",
-#                                                  arguments$merged_file, "_",
-#                                                  arguments$caller,
-#                                                  "_snvs_Noise_FP.png"),
-#     width = 16, height = 12, units = "in", dpi = 600
-# )
-# 
-# 
-# print("Plotting Noise FN Variants")
-# plots_snvs_FN <- plot_snvs_FN(arguments$gt_comparison,
-#                               arguments$caller,
-#                               arguments$merged_file)
-# 
-# ggsave(
-#     plot = plots_snvs_FN, filename = paste0(arguments$gt_comparison,
-#                                             "/Plots/",
-#                                             arguments$merged_file, "_",
-#                                             arguments$caller,
-#                                             "_snvs_Noise_FN.png"),
-#     width = 16, height = 12, units = "in", dpi = 600
-# )
-# 
-# print("Plotting Noise TP Variants")
-# plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
-#                               arguments$caller,
-#                               arguments$merged_file)
-# 
-# ggsave(
-#     plot = plots_snvs_TP, filename = paste0(arguments$gt_comparison,
-#                                             "/Plots/",
-#                                             arguments$merged_file, "_",
-#                                             arguments$caller,
-#                                             "_snvs_Noise_TP.png"),
-#     width = 16, height = 12, units = "in", dpi = 600
-# )
+dir.create(paste0(arguments$working_directory, "/Plots"))
+
+ggsave(
+  plot = plots_snvs_TP, filename = paste0(arguments$working_directory,
+                                       "/Plots/Poster_",
+                                       arguments$caller,
+                                       "_snvs_TV.png"),
+  width = 16, height = 12, units = "in", dpi = 600
+)
+
+print("Plotting Noise FP Variants")
+plots_snvs_FP <- plot_snvs_FP(arguments$gt_comparison,
+                              arguments$caller,
+                              arguments$merged_file)
+
+ggsave(
+    plot = plots_snvs_FP, filename = paste0(arguments$gt_comparison,
+                                                 "/Plots/",
+                                                 arguments$merged_file, "_",
+                                                 arguments$caller,
+                                                 "_snvs_Noise_FP.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
 
 
+print("Plotting Noise FN Variants")
+plots_snvs_FN <- plot_snvs_FN(arguments$gt_comparison,
+                              arguments$caller,
+                              arguments$merged_file)
+
+ggsave(
+    plot = plots_snvs_FN, filename = paste0(arguments$gt_comparison,
+                                            "/Plots/",
+                                            arguments$merged_file, "_",
+                                            arguments$caller,
+                                            "_snvs_Noise_FN.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
+
+print("Plotting Noise TP Variants")
+plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
+                              arguments$caller,
+                              arguments$merged_file)
+
+ggsave(
+    plot = plots_snvs_TP, filename = paste0(arguments$gt_comparison,
+                                            "/Plots/",
+                                            arguments$merged_file, "_",
+                                            arguments$caller,
+                                            "_snvs_Noise_TP.png"),
+    width = 16, height = 12, units = "in", dpi = 600
+)
 
 # #INDELs ---------------------------------------------------------------------
 print("Plotting INDELs")
