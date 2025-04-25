@@ -436,7 +436,7 @@ plot_snvs_FP <- function(gt_comparison, caller, merged_file) {
 }
 
 #TP
-plot_snvs_TP <- function(gt_comparison, caller, merged_file) {
+plot_snvs_noise_TP <- function(gt_comparison, caller, merged_file) {
     
     # Construct file path
     file_path <- paste0(gt_comparison, "/", merged_file, "_", caller, "_snvs_Noise.tsv")

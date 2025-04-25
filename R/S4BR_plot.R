@@ -109,7 +109,7 @@ ggsave(
 )
 
 print("Plotting Noise TP Variants")
-plots_snvs_TP <- plot_snvs_TP(arguments$gt_comparison,
+plots_snvs_TP <- plot_snvs_noise_TP(arguments$gt_comparison,
                               arguments$caller,
                               arguments$merged_file)
 
