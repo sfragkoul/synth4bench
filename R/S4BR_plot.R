@@ -73,7 +73,7 @@ dir.create(paste0(arguments$working_directory, "/Plots"))
 
 ggsave(
   plot = plots_snvs_TP, filename = paste0(arguments$working_directory,
-                                       "/Plots/Poster_",
+                                       "/Plots/",
                                        arguments$caller,
                                        "_snvs_TV.png"),
   width = 16, height = 12, units = "in", dpi = 600
