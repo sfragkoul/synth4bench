@@ -506,7 +506,7 @@ circular_plot_VarDict <- function(path, merged_file, caller){
     tp$REF_len <- str_length(tp$REF)
     tp$ALT_len <- str_length(tp$ALT)
     tp$len_dif <- tp$ALT_len - tp$REF_len
-    tp$category <- "Not Found"
+    tp$category <- "Exists"
     
     fp = fp[, .(POS, REF, ALT, type, category)]
     fp$REF_len <- str_length(fp$REF)
@@ -533,7 +533,7 @@ circular_plot_VarDict <- function(path, merged_file, caller){
         ))
     
     #Ensure 'category' is a factor
-    df$Category <- factor(df$Category, levels = c("Not Found", "diff REF", "diff ALT"))
+    df$Category <- factor(df$Category, levels = c("diff POS", "diff REF", "diff ALT", "Exists"))
     df$Type <- factor(df$Type, levels = c("TP", "FP", "FN"))
     
     p <- ggplot(df, aes(x = POS, y = y_cycle)) +
@@ -554,13 +554,13 @@ circular_plot_VarDict <- function(path, merged_file, caller){
         
         # Add points at the end of each segment for the lollipop head
         geom_point(aes(fill = Type, color = Type, shape = Category, 
-                       size = ifelse(Category == "Not Found", 1.5, 3)), # Increase size for specific categories
+                       size = ifelse(Category == "diff POS", 1.5, 3)), # Increase size for specific categories
                    stroke = .15) +
         
         scale_size_identity() +
         
         #Define specific shapes for each category level
-        scale_shape_manual(values = c("diff REF" = 23, "diff ALT" = 24, "Not Found" = 21)) +
+        scale_shape_manual(values = c("diff REF" = 23, "diff ALT" = 24, "diff POS" = 21, "Exists"=25)) +
         
         #Define custom colors for each type
         scale_fill_manual(values = c("TP" = "#7465a2", "FP" = "#8d43ae", "FN" = "#43ae8d")) +

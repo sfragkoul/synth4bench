@@ -17,7 +17,7 @@ call_indels_gatk <- function(path, merged_file, pick_gt_stdz){
     #categorize INDELs
     ##Same POS
     same_POS <- merge(fn_var, Mutect2_indels, by = c("POS"))
-    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
+    fn_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "diff POS")]
     ##Same POS & REF
     same_POS_REF <- merge(fn_var, Mutect2_indels, by = c("POS", "REF"))
     ##Update only rows where POS and REF match
@@ -29,7 +29,7 @@ call_indels_gatk <- function(path, merged_file, pick_gt_stdz){
     #categorize INDELs
     ##Same POS
     same_POS <- merge(fp_var, pick_gt_stdz, by = c("POS"))
-    fp_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "not exist")]
+    fp_var[, category := ifelse(POS %in% same_POS$POS, "diff REF", "diff POS")]
     
     ##Same POS & REF
     same_POS_REF <- merge(fp_var, pick_gt_stdz, by = c("POS", "REF"))
