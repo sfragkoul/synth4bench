@@ -47,20 +47,12 @@ All data are open and available in [Zenodo](https://zenodo.org/records/10683211)
 
 
 ## Execution
+	
+Just fill in the parameters in the `parameters.yaml` file and then run `bash s4b_run.sh`.
 
 For detailed instructions regarding the execution please read our [**UserGuide**](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#executing-synth4bench).
 
 <div align='justify'> 
-	
-To run the bash scripts, fill in the parameters in the `parameters.yaml` file and then run:
-
-- `bash synth_generation_template.sh > desired_name.sh` and
-- `bash variant_calling_template.sh > desired_name.sh`
-
-Run the following commands to check the paramaters of each R script:
-
-- `Rscript R/S4BR.R --help`
-- `Rscript R/S4BR_plot.R --help`
 
 ## Documentation
 For more info regarding the documentation please visit [here](https://github.com/sfragkoul/synth4bench/blob/main/docs/Documentation.md).
