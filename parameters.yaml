@@ -4,19 +4,19 @@
 #path to working directory
 working_directory: /mnt/c/Users/sfragkoul/Desktop/synth_data/grid_datasets
 #folder for results#######################11111
-folder: 300_100
+folder: 3000_50
 #path to NEAT scripts
 path_to_neat: /mnt/e/sfragkoul/Synth_Data/Synthesizers/NEAT
 #number of individual synth batches 
 runs: 10
 #seeds for each individual synth batch#########################22222
-rng: 340,341,345,347,350,352,353,356,358,359
+rng: 466,470,473,475,477,478,480,481,482,483
 #mutation rate parameter as taken from NEAT
 mutation_rate: 0.1
 #read length parameter as taken from NEAT#########################333333
-read_length: 100
+read_length: 50
 #coverage parameter as taken from NEAT####################444444
-coverage: 30
+coverage: 300
 #fragment parameters as taken from NEAT
 fragment_stats: 
  1: 300
