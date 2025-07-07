@@ -1,39 +1,39 @@
-
+###############################################
 ### synth_generation_template.sh parameters ###
-
+###############################################
 #path to working directory
-working_directory: .
-#folder for results
-folder: results
+working_directory: /mnt/c/Users/sfragkoul/Desktop/synth_data/grid_datasets
+#folder for results#######################11111
+folder: 300_100
 #path to NEAT scripts
-path_to_neat: /NEAT
+path_to_neat: /mnt/e/sfragkoul/Synth_Data/Synthesizers/NEAT
 #number of individual synth batches 
-runs: 5
-#seeds for each individual synth batch
-rng: 213,214,215,217,218
+runs: 10
+#seeds for each individual synth batch#########################22222
+rng: 340,341,345,347,350,352,353,356,358,359
 #mutation rate parameter as taken from NEAT
 mutation_rate: 0.1
-#read length parameter as taken from NEAT
+#read length parameter as taken from NEAT#########################333333
 read_length: 100
-#coverage parameter as taken from NEAT
-coverage: 100
+#coverage parameter as taken from NEAT####################444444
+coverage: 30
 #fragment parameters as taken from NEAT
 fragment_stats: 
  1: 300
  2: 30
 #path to reference file
-path_to_reference: /reference/TP53.fasta
+path_to_reference: /mnt/e/sfragkoul/Synth_Data/Synthesizers/NEAT/testing/TP53/TP53.fasta
 #name of final merged bam file
-output_bam_merged: Merged_auto
+output_bam_merged: Merged
 
-
+##############################################
 ### variant_calling_template.sh parameters ###
-
+##############################################
 #path to bam readcount scripts
-path_to_bam_readcount: /home
+path_to_bam_readcount: /home/sfragkoul
 #somatic variant caller name
-caller: varscan
+callers: Mutect2,Freebayes,LoFreq,VarScan,VarDict
 #path to varscan_scripts_path extra scripts
-varscan_scripts_path: /Varscan2VCF
+varscan_scripts_path: /mnt/e/sfragkoul/Synth_Data/Synthesizers/NEAT/Varscan2VCF
 #genomic region of interest as taken from VarScan
 vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080

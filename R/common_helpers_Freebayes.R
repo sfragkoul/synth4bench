@@ -25,11 +25,16 @@ merge_freebayes <- function(freebayes_somatic_vcf, merged_gt) {
     merged_bnch = merge(merged_gt, freebayes_somatic,  by = "POS", all.x = TRUE)
     merged_bnch$POS = as.numeric(merged_bnch$POS)
     merged_bnch = merged_bnch[order(POS)]
+    merged_bnch = merged_bnch[,c("POS", "REF.x","ALT.x","DP","Count","Freq"  
+                                 ,"Freq Indiv","Run","DP Indiv","Count Indiv","mut"   
+                                 ,"CHROM","ID","REF.y","ALT.y","QUAL","FILTER","Key"          
+                                 ,"Indiv","gt_GT","gt_GQ","gt_GL","gt_DP"                
+                                 ,"gt_RO","gt_QR","gt_AO","gt_QA","gt_GT_alleles")]
     colnames(merged_bnch) = c(
         "POS",	"Ground Truth REF",	"Ground Truth ALT",
         "Ground Truth DP", "Ground Truth AD", "Ground Truth AF", 
         
-        "Run", "DP Indiv", "Count Indiv", "Freq Indiv", "mut",
+        "Freq Indiv", "Run", "DP Indiv", "Count Indiv",  "mut",
         
         "Freebayes CHROM", "Freebayes ID", "Freebayes REF", "Freebayes ALT", 
         "Freebayes QUAL", "Freebayes FILTER", "Freebayes key", 

@@ -79,30 +79,31 @@ printf "\n"
 # part 3 -------------------------------
 #call the variant callers
 
-printf "echo Variant Calling \n"
+printf "echo Variant Calling for: $callers\n"
 
-if [ "${caller}" == "Mutect2" ]; then
+IFS=, 
+read -ra callers_arr <<< "$callers"
 
-	bash mutect2_template.sh
+for caller in "${callers_arr[@]}"; do
 	
-elif [ "${caller}" == "Freebayes" ]; then
-
-	bash freebayes_template.sh
-	
-elif [ "${caller}" == "LoFreq" ]; then
-
-	bash lofreq_template.sh
-	
-elif [ "${caller}" == "VarScan" ]; then
-
-	bash varscan_template.sh
-	
-elif [ "${caller}" == "VarDict" ]; then
-
-	bash vardict_template.sh
-	
-else
-
-	echo "Invalid caller option. Please provide one of the following: Mutect2, Freebayes, LoFreq, VarScan, VarDict"
-	
-fi
+	if [ "${caller}" == "Mutect2" ]; then
+		bash bash/mutect2_template.sh
+		
+	elif [ "${caller}" == "Freebayes" ]; then
+		bash bash/freebayes_template.sh
+		
+	elif [ "${caller}" == "LoFreq" ]; then
+		bash bash/lofreq_template.sh
+		
+	elif [ "${caller}" == "VarScan" ]; then
+		bash bash/varscan_template.sh
+		
+	elif [ "${caller}" == "VarDict" ]; then
+		bash bash/vardict_template.sh
+		
+	else
+		echo "Invalid caller option. Please provide one of the following: Mutect2, Freebayes, LoFreq, VarScan, VarDict"
+		
+	fi
+    echo
+done

@@ -24,7 +24,7 @@ rngs=()
 read -a rngs <<< "${rng}"
 
 printf "mkdir ${working_directory}/${folder}\n"
-printf "mkdir ${working_directory}/Plots\n"
+#printf "mkdir ${working_directory}/Plots\n"
 
 printf "\n"
 
