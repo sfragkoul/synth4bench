@@ -1,272 +1,290 @@
-
 # Synth4bench User Guide
-This is the guide to help users execute our pipeline.
+
+This guide helps users execute the synth4bench pipeline from data download to analysis and visualization.
+
+---
 
 ## Contents
-- [Data Download](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#data-download)
-- [Installation](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#installation)
-- [Key Features](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#key-features)
-- [Executing synth4bench](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#executing-synth4bench)
-- [Requirements](https://github.com/sfragkoul/synth4bench/blob/main/docs/UserGuide.md#requirements)
 
+- [Data Download](#data-download)
+- [Installation](#installation)
+- [Key Features](#key-features)
+- [Executing synth4bench](#executing-synth4bench)
+- [Requirements](#requirements)
+
+---
 
 ## Data Download
 
-The datasets required for this analysis are **available** for open access on [Zenodo](https://zenodo.org/records/10683211). 
+The datasets required for this analysis are **available for open access** on [Zenodo](https://zenodo.org/records/10683211).
 
 This repository contains 10 synthetic genomics datasets, generated specifically for **benchmarking somatic variant callers**. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
 
+---
 
 ### Data Overview
 
 These datasets explore two primary variables to observe their impact on somatic variant calling:
 
-   - **Coverage:** Five datasets vary in coverage while keeping read length constant (150 bp). Coverage levels include 300x, 700x, 1000x, 3000x, and 5000x.
+- **Coverage:** Five datasets vary in coverage while keeping read length constant (150 bp). Coverage levels include 300x, 700x, 1000x, 3000x, and 5000x.
 
-   - **Read Length:** Another set of five datasets vary in read length while maintaining a coverage level of 1000x. Read lengths include 50 bp, 100 bp, 150 bp, 170 bp, 200 bp, and 300 bp.
+- **Read Length:** Another set of five datasets varies in read length while maintaining a coverage level of 1000x. Read lengths include 50 bp, 100 bp, 150 bp, 170 bp, 200 bp, and 300 bp.
 
 Each dataset contains paired-end reads, providing compatibility with most standard analysis pipelines for synthetic genomics data.
+
+---
 
 ### Available Files
 
 There are two compressed folders for download:
 
-   - **Reference folders**: reference.rar (25.7 kB)
+- **Reference folders**: `reference.rar` (25.7 kB)
 
-This folders includes reference sequences necessary for aligning or comparing generated synthetic reads.
+  Contains reference sequences necessary for aligning or comparing generated synthetic reads.
 
-   - **Synthetic folders:** synth_datasets.rar (55.9 MB)
+- **Synthetic folders**: `synth_datasets.rar` (55.9 MB)
 
-This folders includes all 10 synthetic datasets, with filenames indicating coverage and read length details. Each dataset is structured and named according to the parameters it explores.
+  Includes all 10 synthetic datasets, with filenames indicating coverage and read length details. Each dataset is structured and named according to the parameters it explores.
+
+---
 
 ## Installation
 
-**Create the Conda Environment**:
-To create the conda environment that was used for the analysis run the following command in your terminal **(Bash)**. This will install all the required dependencies specified in the environment.yml file.
+### Create the Conda Environment
 
-    conda env create -f environment.yml
+To create the conda environment used for the analysis, run:
 
-**Activate the Conda Environment:**
-After creating the environment, activate it with the following command in your terminal **(Bash)**.
+```bash
+conda env create -f environment.yml
+```
 
-    conda activate synth4bench
+---
 
-**Install NEATv3.3:**
-Download the version [v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3).
-Once downloaded, in order to call the main script and view available options, run in your terminal **(Bash)**. For any further details, please see the README.md file included in the downloaded NEATv3.3 version.
+### Activate the Conda Environment
 
-    python gen_reads.py --help
+After creating the environment, activate it with:
 
-**Install bam-readcount:**
-Follow the installation [instructions](https://github.com/genome/bam-readcount/tree/master?tab=readme-ov-file#build) from their official documentation.
-After installation, verify that it has being installed properly with the following command in your terminal **(Bash)**:
+```bash
+conda activate synth4bench
+```
 
-    build/bin/bam-readcount --help
+---
 
-**Install R Package Dependencies:**
-Install the required R packages by running the following command in your **R console**:
+### Install NEAT v3.3
 
-    install.packages(c("stringr", "data.table", "vcfR", "ggplot2", "ggvenn", "ggforce", "ggsci", "patchwork", "optparse", "GenomicAlignments", "Rsamtools"))
+Download [NEAT v3.3](https://github.com/ncsa/NEAT/releases/tag/3.3).  
+To view NEAT options:
 
-**Download VarScan Extra Script:**
-The extra script vscan_pileup2cns2vcf.py for VarScan can be found [here](https://github.com/sfragkoul/Varscan2VCF).
+```bash
+python gen_reads.py --help
+```
 
+---
+
+### Install bam-readcount
+
+Follow the installation [instructions](https://github.com/genome/bam-readcount#build).  
+Verify the install with:
+
+```bash
+build/bin/bam-readcount --help
+```
+
+---
+
+### Install R Package Dependencies
+
+Install the required R packages in your **R console**:
+
+```r
+install.packages(c(
+  "stringr", "data.table", "vcfR", "ggplot2", 
+  "ggvenn", "ggforce", "ggsci", "patchwork", 
+  "optparse", "GenomicAlignments", "Rsamtools"
+))
+```
+
+---
+
+### Download VarScan Extra Script
+
+The VarScan extra script `vscan_pileup2cns2vcf.py` is available [here](https://github.com/sfragkoul/Varscan2VCF).
+
+---
 
 ## Key Features
 
-Once the environment and dependencies have been successfully installed, follow these steps to execute the analysis:
+Once the environment and dependencies are installed, follow these steps to execute synth4bench.
 
-**Prepare the Parameters:**
-Before running the analysis, you need to configure the parameters. Start by editing the `parameters.yaml` file with your specific analysis settings. This file contains various options for input files, output directories, and other customizable parameters for the execution of the scripts. Make sure to review and adjust each section based on your project requirements.
+---
 
-**Generate the Execution Scripts:**
-To create customized execution scripts for data synthesis and variant calling, run the following commands in your **terminal (Bash)**:
+### Prepare Parameters
 
-   - **Generate the Synthesis Script**: This will create the `synth_generation_template.sh` script with the parameters specified in the `parameters.yaml` file:
+Edit the `parameters.yaml` file with your analysis settings. Example:
 
-    bash synth_generation_template.sh > desired_name.sh
+```yaml
+working_directory: "/path/to/synth4bench_analysis"
+folder: results
+runs: 10
+callers: "Mutect2,Freebayes,LoFreq,VarScan,VarDict"
+output_bam_merged: Merged
+```
 
-Replace `desired_name.sh` with the desired name for your generated script.
+Adjust paths and values for your system.
 
-   - **Generate the Variant Calling Script**: Similarly, this will create the `variant_calling_template.sh` script with the parameters from the `parameters.yaml` file:
-
-    bash variant_calling_template.sh > desired_name.sh
-
-Again, replace `desired_name.sh` with the name you would like to assign to this generated script.
-
-Once you have generated the scripts, you should review them to ensure the parameters were correctly applied.
-
-**Run the Scripts**: After generating the customized scripts, run them one by one by executing the following commands in your **terminal (Bash)**:
-
-   - **Run the Synthesis Script**:
-
-    bash synth_generation_run.sh
-   
-   - **Run the Variant Calling Script**:
-
-    bash variant_calling_run.sh
-
-This command will execute the variant calling step.
-
-**Check R Script Parameters**:
-To review and check the parameters and usage for the R scripts involved in your analysis, run the following commands in your **terminal (Bash)**:
-
-   - **Check Parameters for S4BR R Script**:
-
-    Rscript R/S4BR.R --help
-
-This will display the available options and details for the `S4BR.R` script.
-   
-   - **Check Parameters for S4BR Plotting R Script**:
-
-    Rscript R/S4BR_plot.R --help
-
-This will show you the available options and help documentation for the `S4BR_plot.R` script.
-
-**Review Output**:
-After executing the scripts, check the output files located in the directories specified in the `parameters.yaml` file. These will include any generated results from the **synthesis and variant calling** steps. You can now proceed to analyze or visualize the data as needed.
-
+---
 
 ## Executing synth4bench
 
-This guide will walk you through using Synth4bench with a practical example, from downloading data to executing the analysis and reviewing results. We assume you have the necessary environment and dependencies set up as outlined above.
+This section guides you from setup to analysis.
 
-**Set Up Your Analysis Folder**
+---
 
-   - **Create a New Analysis Folder:** Start by creating an analysis folder and navigating into it in your **terminal (Bash)**:
+### Step 1 — Create an Analysis Folder
 
-    mkdir synth4bench_analysis
-    cd synth4bench_analysis
+```bash
+mkdir synth4bench_analysis
+cd synth4bench_analysis
+```
 
-   - **Download the Data:** Download the reference files from Zenodo and extract the files into your analysis folder:
-    
-    wget https://zenodo.org/record/10683211/files/reference.rar
-    unrar x reference.rar
+Download and extract your reference files as previously described.
 
-**Configure Parameters:**
+---
 
-Edit `parameters.yaml` to set your working directory and specify paths to the output directory and reference files. Below is an example `parameters.yaml`:
+### Step 2 — Configure parameters.yaml
 
-    ### synth_generation_template.sh parameters ###
+Edit `parameters.yaml` to:
 
-    # path to working directory
-    working_directory: "/path/to/synth4bench_analysis"
-    
-    # folder for results
-    folder: results 
-    
-    # path to NEAT scripts
-    path_to_neat:  /path/to/NEAT-3.3
-    
-    # number of individual synth batches 
-    runs: 10
-    
-    # seeds for each individual synth batch
-    rng: 213,214,215,217,218
-    
-    # mutation rate parameter as taken from NEAT
-    mutation_rate: 0.1
-    
-    # read length parameter as taken from NEAT
-    read_length: 150
-    
-    # coverage parameter as taken from NEAT
-    coverage: 100
-    
-    # fragment parameters as taken from NEAT
-    fragment_stats:
-     1: 300
-     2: 30
-     
-    # path to reference file
-    path_to_reference: /path/to/reference/TP53.fasta
-    
-    # name of final merged bam file
-    output_bam_merged: Merged
-   
-   
-    ### variant_calling_template.sh parameters ###
-   
-    # path to bam readcount scripts
-    path_to_bam_readcount: /path/to/build/bin/bam_readcount
-    
-    # somatic variant caller name
-    caller: VarScan
-    
-    # path to varscan_scripts_path extra scripts
-    varscan_scripts_path: /path/to/varscan_extra_scripts
-    
-    # genomic region of interest as taken from VarScan
-    vardict_region_of_interest: hg38_knownGene_ENST00000610292.4:0-19080
+- define your working directory
+- set output folder names
+- specify coverage, read length, runs
+- choose variant callers
+- set paths to reference files
 
-If you want to run the analysis at the synth4bench_analysis folder and you have downloaded all the files at this directory, you can change /path/to with a dot.
+For local runs, you can replace `/path/to/` with `.`.
 
-### **Run the Execution Scripts**
+---
 
-   - **Generate the Synthesis Script**: Run the following to create a customized synthesis script based on the parameters in `parameters.yaml`:
+### Step 3 — Run the Full Pipeline
 
-    bash synth_generation_template.sh > synth_generation_run.sh
+Instead of manually running each Bash template, you now only need one command:
 
-   - **Generate the Variant Calling Script**: Create the variant calling script similarly:
+```bash
+bash s4b_run.sh
+```
 
-    bash variant_calling_template.sh > variant_calling_run.sh
+This performs:
 
-   - **Run the Synthesis Script**: Execute the synthesis script to generate synthetic reads:
+✅ **Synthetic read generation**  
+✅ **BAM pre-processing with samtools**  
+✅ **Variant calling** for all callers you specified  
+✅ **R analysis and plotting** for each caller
 
-    bash synth_generation_run.sh
+---
 
-This step will output synthetic BAM files ready for the variant calling analysis.
-     
-   - **Run the Variant Calling Script**: Execute the variant calling script to analyze the generated synthetic data:
+## How the Pipeline Works
 
-    bash variant_calling_run.sh
+`s4b_run.sh`:
 
-This script will output a VCF file in the specified output_directory, containing the variant calls for the synthetic data.
+- automatically parses your YAML file
+- generates and executes:
+  - `gen_<folder>.sh` → synthetic reads
+  - `vc_<folder>.sh` → variant calling
+- runs **R/S4BR.R** and **R/S4BR_plot.R** for each caller
 
+Example of what’s executed for each caller:
 
-### **Analyze the Results Using R Scripts**
+```bash
+Rscript R/S4BR.R \
+  -c Mutect2 \
+  -r 10 \
+  -v ./results \
+  -m Merged
 
-   - Check **Parameters** for S4BR R Script: 
+Rscript R/S4BR_plot.R \
+  -c Mutect2 \
+  -w ./results \
+  -m Merged
+```
 
-    Rscript R/S4BR.R --help
-    
-   
-| **Options**  | **Description**   |
-|:-----|:-|
-|-c, --caller | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)| 
-|-r, --runs |  Number of individual runs to produce synthetic data which will then be combined to form the final Merged ground truth file.|
-|-w, --working_directory| Path of working directory.Path of working directory were all files are located and the results will be generated.|
-|-m, --merged_file | Indicate the name given to the final merged ground truth file.|
-|-h, --help | Show this help message and exit.|
+This loop repeats for each caller in your YAML configuration.
 
+---
 
-   - Run **S4BR.R** to perform the analysis:
+## Generated Scripts
 
-    Rscript R/S4BR.R -c VarScan -r 10 -w ./results -m test
-    
-### **Visualization Using R Scripts**
-    
-   - Check **Parameters** for S4BR_plot R Script: 
+`s4b_run.sh` produces:
 
-    Rscript R/S4BR_plot.R --help
-    
-| **Options**  | **Description**   |
-|:-----|:-|
-|-c, --caller | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)| 
-|-w, --working_directory| Path of working directory were all files are located and the results will be generated.|
-|-m, --merged_file | Indicate the name given to the final merged ground truth file.|
-|-h, --help | Show this help message and exit.|
+```
+bash/gen_<folder>.sh
+bash/vc_<folder>.sh
+```
 
-                
-   - Run **S4BR_plot.R** to generate visualizations:
-   
-    Rscript R/S4BR_plot.R -c VarScan -w ./results -m test
+These are **auto-generated** and do not need to be run manually—they are called automatically from `s4b_run.sh`.
 
-**Review the Output**
-   
-**Check Analysis Results:** Open the `analysis_output.tsv` file in the results directory. This file summarizes the variants found in the synthetic data.
+> **Note:** These files are ignored in `.gitignore` and should not be committed to Git.
 
-**View Plots:** Navigate to the plots directory to review the generated visualizations. These plots provide insights into the variants called and their characteristics under different conditions.
+---
 
+## Check R Script Parameters
+
+To check help for either R script:
+
+```bash
+Rscript R/S4BR.R --help
+Rscript R/S4BR_plot.R --help
+```
+
+---
+
+### Options for `S4BR.R`
+
+| Option            | Description                                                               |
+|-------------------|----------------------------------------------------------------------------|
+| `-c, --caller`    | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)          |
+| `-r, --runs`      | Number of individual synthetic runs combined to form the final merged file |
+| `-v, --working_directory` | Path where files and results will be stored                      |
+| `-m, --merged_file` | Name of the merged BAM file                                             |
+| `-h, --help`      | Show help message and exit                                                |
+
+---
+
+### Options for `S4BR_plot.R`
+
+| Option            | Description                                                               |
+|-------------------|----------------------------------------------------------------------------|
+| `-c, --caller`    | Choose caller name (Freebayes, Mutect2, LoFreq, VarDict, VarScan)          |
+| `-w, --working_directory` | Path where files and results will be stored                      |
+| `-m, --merged_file` | Name of the merged BAM file                                             |
+| `-h, --help`      | Show help message and exit                                                |
+
+---
+
+## Analyze the Results
+
+After running `s4b_run.sh`:
+
+- Find variant calls and summary files under:
+  ```
+  <working_directory>/<folder>/
+  ```
+- Open files like:
+  - `analysis_output.tsv` → summarizes called variants
+  - plots from `S4BR_plot.R`
+
+These outputs help assess variant caller performance under your simulated conditions.
+
+---
 
 ## Requirements
+
+- Linux/Unix shell environment (tested on Ubuntu, WSL)
+- Conda for environment management
+- R version ≥ 4.0
+- NEAT v3.3 installed
+- bam-readcount
+
+---
+
+
+
