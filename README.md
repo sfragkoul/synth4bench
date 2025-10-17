@@ -7,7 +7,7 @@
 ## Abstract
 
 <div align='justify'> 
-Somatic variant calling algorithms are essential for detecting genomic alterations. However, evaluating their performance can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation pipeline for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets using the NEAT simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms including <strong>GATK-Mutect2, FreeBayes, VarDict, VarScan2 and LoFreq</strong> on these datasets, comparing results against the ground truth. Synthetic datasets provide an excellent ground truth for studying the performance and behavior of somatic variant calling algorithms.
+Somatic variant calling algorithms are essential for detecting genomic alterations. However, evaluating their performance can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation framework for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets using the NEAT simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms including <strong>GATK-Mutect2, FreeBayes, VarDict, VarScan2 and LoFreq</strong> on these datasets, comparing results against the ground truth. Synthetic datasets provide an excellent ground truth for studying the performance and behavior of somatic variant calling algorithms.
 </div>
 
 ---
@@ -15,8 +15,7 @@ Somatic variant calling algorithms are essential for detecting genomic alteratio
 ## Table of Contents
 
 - [Abstract](#abstract)
-- [Motivation](#motivation)
-- [Description of Framework](#description-of-framework)
+- [Description](#description)
 - [Installation](#installation)
 - [Data Download](#data-download)
 - [Execution](#execution)
@@ -26,26 +25,19 @@ Somatic variant calling algorithms are essential for detecting genomic alteratio
 
 ---
 
-## Motivation
 
-<div align='justify'>
-Variant calling plays a critical role in identifying genetic lesions. In the case of low-frequency variants (≤10%), identification becomes more challenging due to the absence of ground truth datasets for reliable and consistent benchmarking.
-</div>
-
----
-
-## Description of Framework
+## Description
 
 <p align="center">
   <img src="https://github.com/sfragkoul/synth4bench/blob/main/images/schematic.png" alt="synth4bench schematic" height="270" width="900"/>
 </p>
 
 <div align='justify'>
-Our framework addresses the challenge of variant calling, particularly for low-frequency variants (≤10%). The goal is to develop a reliable and consistent method for identifying genetic lesions in cancer-associated genomic alterations. The lack of ground truth datasets complicates benchmarking and evaluation. To overcome this, our framework includes:
+Our framekwork addresses the challenge of variant calling, particularly for low-alle frequency variants (≤10%). The goal is to develop a reliable and consistent method for identifying genetic lesions in cancer-associated genomic alterations. The lack of ground truth datasets complicates benchmarking and evaluation. To overcome this, our framework includes:
 
 1. **Synthetic Data Generation:** Using the NEAT v3.3 simulator, we generate synthetic genomics data that mimics real genome sequences, serving as a ground truth.
-
-2. **Benchmarking Variant Callers:** We evaluate five somatic variant callers — GATK-Mutect2, Freebayes, VarDict, VarScan2, and LoFreq — using these synthetic datasets.
+2. **Identifying three independent analyses**: to adress three variant types independently: SNVs true variants, SNVs noise and indels.
+3. **Benchmarking Variant Callers:** We evaluate five somatic variant callers, GATK-Mutect2, Freebayes, VarDict, VarScan2, and LoFreq — using these synthetic datasets.
 </div>
 
 ---
@@ -138,6 +130,7 @@ Our work has been submitted to the *bioRxiv* preprint repository. If you use syn
 - <div align='justify'> S.-C. Fragkouli, N. Pechlivanis, A. Orfanou, A. Anastasiadou, A. Agathangelidis and F. Psomopoulos, <em>Synth4bench: a framework for generating synthetic genomics data for the evaluation of somatic variant calling algorithms</em>, <b>17th Conference of Hellenic Society for Computational Biology and Bioinformatics (HSCBB)</b>, Oct 2023, Thessaloniki, Greece, doi:<a href="https://doi.org/10.5281/zenodo.8432060">10.5281/zenodo.8432060</a> </div>
 
 - <div align='justify'> S.-C. Fragkouli, N. Pechlivanis, A. Agathangelidis and F. Psomopoulos, <em>Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms</em>, <b>31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23)</b>, Jul 2023, Lyon, France, doi:<a href="https://doi.org/10.7490/f1000research.1119575.1">10.7490/f1000research.1119575.1</a> </div>
+
 
 
 
