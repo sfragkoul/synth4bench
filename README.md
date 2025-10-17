@@ -7,7 +7,7 @@
 ## Abstract
 
 <div align='justify'> 
-Somatic variant calling algorithms are essential for detecting genomic alterations. However, evaluating their performance can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation pipeline for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets using the NEAT simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms including <strong>GATK-Mutect2, Freebayes, VarDict, VarScan and LoFreq</strong> on these datasets, comparing results against the ground truth. Synthetic datasets provide an excellent ground truth for studying the performance and behavior of somatic variant calling algorithms.
+Somatic variant calling algorithms are essential for detecting genomic alterations. However, evaluating their performance can be challenging due to the lack of high-quality ground truth datasets. To address this issue, we developed a synthetic genomics data generation pipeline for benchmarking tumor-only somatic variant calling algorithms. We generated synthetic datasets using the NEAT simulator. Subsequently, we thoroughly evaluated the performance of variant calling algorithms including <strong>GATK-Mutect2, FreeBayes, VarDict, VarScan2 and LoFreq</strong> on these datasets, comparing results against the ground truth. Synthetic datasets provide an excellent ground truth for studying the performance and behavior of somatic variant calling algorithms.
 </div>
 
 ---
@@ -138,6 +138,7 @@ Our work has been submitted to the *bioRxiv* preprint repository. If you use syn
 - <div align='justify'> S.-C. Fragkouli, N. Pechlivanis, A. Orfanou, A. Anastasiadou, A. Agathangelidis and F. Psomopoulos, <em>Synth4bench: a framework for generating synthetic genomics data for the evaluation of somatic variant calling algorithms</em>, <b>17th Conference of Hellenic Society for Computational Biology and Bioinformatics (HSCBB)</b>, Oct 2023, Thessaloniki, Greece, doi:<a href="https://doi.org/10.5281/zenodo.8432060">10.5281/zenodo.8432060</a> </div>
 
 - <div align='justify'> S.-C. Fragkouli, N. Pechlivanis, A. Agathangelidis and F. Psomopoulos, <em>Synthetic Genomics Data Generation and Evaluation for the Use Case of Benchmarking Somatic Variant Calling Algorithms</em>, <b>31st Conference in Intelligent Systems For Molecular Biology and the 22nd European Conference On Computational Biology (ISΜB-ECCB23)</b>, Jul 2023, Lyon, France, doi:<a href="https://doi.org/10.7490/f1000research.1119575.1">10.7490/f1000research.1119575.1</a> </div>
+
 
 
 
