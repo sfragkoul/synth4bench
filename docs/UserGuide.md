@@ -16,7 +16,7 @@ This guide helps users execute the synth4bench pipeline from data download to an
 
 ## Data Download
 
-The datasets required for this analysis are **available for open access** on [Zenodo](https://zenodo.org/records/10683211).
+The datasets required for this analysis are **available for open access** on [Zenodo](https://zenodo.org/records/16524193).
 
 This repository contains 10 synthetic genomics datasets, generated specifically for **benchmarking somatic variant callers**. Each dataset was produced with [NEAT v3](https://github.com/ncsa/NEAT/releases/tag/3.3), based on the *TP53* gene of Homo sapiens, and provides valuable resources for analyzing the effects of various NGS parameters on **tumor-only somatic variant calling** algorithms.
 
