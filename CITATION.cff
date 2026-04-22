@@ -1,0 +1,43 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: synth4bench
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Styliani-Christina
+    family-names: Fragkouli
+    email: sfragkoul@certh.gr
+    affiliation: CERTH
+    orcid: 'https://orcid.org/0000-0003-4067-7123'
+  - given-names: Nikos
+    family-names: Pechlivanis
+    email: nikosp41@certh.gr
+    affiliation: CERTH
+    orcid: 'https://orcid.org/0000-0003-2502-612X'
+  - given-names: Natasa
+    family-names: Anastasiadou
+    email: nanastasiadou@certh.gr
+    affiliation: CERTH
+    orcid: 'https://orcid.org/0009-0003-2908-7656'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.19049171
+    description: release
+repository-code: 'https://github.com/sfragkoul/synth4bench'
+abstract: >-
+  A pipeline for generating synthetic genomics data for
+  benchmarking tumor-only somatic variant calling
+  algorithms.
+keywords:
+  - synthetic data
+  - benchmarking
+  - genomics
+  - variant calling
+license: MIT
+commit: c17ea1b
+version: v1.0.0
+date-released: '2026-03-16'
