@@ -32,14 +32,11 @@ printf "\n"
 
 printf "varscan pileup2cns "
 printf "${working_directory}/${folder}/${output_bam_merged}.sorted.uniq.rg.mpileup > "
-printf "${working_directory}/${folder}/VarScan.tsv"
+printf "${working_directory}/${folder}/VarScan_raw.tsv"
 printf "\n"
 
 printf "python ${varscan_scripts_path}/vscan_pileup2cns2vcf.py "
-printf "${working_directory}/${folder}/VarScan.tsv > ${working_directory}/${folder}/${output_bam_merged}_VarScan.vcf"
-printf "\n"
-
-printf "rm ${working_directory}/${folder}/VarScan.tsv"
+printf "${working_directory}/${folder}/VarScan_raw.tsv > ${working_directory}/${folder}/${output_bam_merged}_VarScan.vcf"
 printf "\n"
 
 printf "bcftools norm ${working_directory}/${folder}/${output_bam_merged}_VarScan.vcf"
