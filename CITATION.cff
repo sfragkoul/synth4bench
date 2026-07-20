@@ -23,6 +23,11 @@ authors:
     email: nanastasiadou@certh.gr
     affiliation: CERTH
     orcid: 'https://orcid.org/0009-0003-2908-7656'
+  - given-names: Fotis
+    family-names: Psomopoulos
+    email: fpsom@certh.gr
+    affiliation: CERTH
+    orcid: 'https://orcid.org/0000-0002-0222-4273'
 identifiers:
   - type: doi
     value: 10.5281/zenodo.19049171
